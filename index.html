@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>우리 반 타자 마을</title>
+<script>
+/* ============================================================
+   반 랭킹 자동 연동 주소
+   구글 Apps Script 웹 앱 주소(https://script.google.com/macros/s/…/exec)를
+   아래 따옴표 안에 붙여 넣으면 자동 연동이 켜져요. 비워 두면 꺼져요.
+   ============================================================ */
+window.TAJA_SYNC_URL = '';
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
@@ -298,6 +306,7 @@ const DECO={
 const DEFAULT_PLOTS=[null,'house_r',null,'tree',null,null,null,'house_b',null,'tree','house_y',null];
 const plotX=i=>i<6?70+i*92:750+(i-6)*92;
 const PIN_H='23555a6e',SALT='taja-maeul-2026';
+const SYNC_URL=String(window.TAJA_SYNC_URL||'').trim(),SYNC=/^https:\/\/\S+$/.test(SYNC_URL);
 
 /* ================= 도우미 ================= */
 const rand=(a,b)=>a+Math.random()*(b-a);
@@ -560,7 +569,8 @@ function finishRun(reason){if(R.over)return;R.over=true;R.phase='over';R.overT=r
  if(newTasu)g.bestTasu=tasu;
  for(const id of R.bag)SAVE.inv[id]++;R.bag=[];
  saveGame();
- R.result={reached,acc,tasu,validT,newRound,newTasu,base,accB,luckB,bestB,total};}
+ R.result={reached,acc,tasu,validT,newRound,newTasu,base,accB,luckB,bestB,total};
+ setTimeout(syncPush,300);}
 
 /* ================= 효과(파티클) ================= */
 const POW=['뿅!','펑!','콩!','빵!','팡!'];
@@ -688,7 +698,7 @@ function renderShop(){const tabs=[['item','아이템'],['up','별지기 강화']
 function doBuy(k,id){let price=0;if(k==='item')price=ITEMS[id].price;else if(k==='up'){if(SAVE.up[id]>=UPS[id].max)return;price=UPS[id].cost[SAVE.up[id]];}else price=DECO[id].price;
  if(SAVE.coins<price){ttoast('코인이 부족해요');return;}SAVE.coins-=price;
  if(k==='item')SAVE.inv[id]++;else if(k==='up')SAVE.up[id]++;else SAVE.deco.owned[id]=(SAVE.deco.owned[id]||0)+1;
- saveGame();SFX.buy();ttoast(k==='up'?`${UPS[id].name} Lv.${SAVE.up[id]}!`:k==='item'?`${ITEMS[id].name} 1개를 샀어요`:`${DECO[id].name}${josa(DECO[id].name,'을','를')} 샀어요! 마을 꾸미기에서 놓아 보세요`);renderShop();renderProfile();}
+ saveGame();if(k==='up')syncPush();SFX.buy();ttoast(k==='up'?`${UPS[id].name} Lv.${SAVE.up[id]}!`:k==='item'?`${ITEMS[id].name} 1개를 샀어요`:`${DECO[id].name}${josa(DECO[id].name,'을','를')} 샀어요! 마을 꾸미기에서 놓아 보세요`);renderShop();renderProfile();}
 
 /* ---------- 마을 꾸미기 ---------- */
 function openDeco(){scr='deco';hideAll();show('decoUI',true);DSEL=null;renderStore();}
@@ -704,6 +714,27 @@ function decoClick(x,y){if(y<470||y>680)return;let i=-1;for(let k=0;k<12;k++)if(
 /* ---------- 랭킹 ---------- */
 function myEntry(){const g={};for(const gm of READY){const s=SAVE.games[gm.id];g[gm.id]={r:s.bestRound,w:s.bestWords,t:s.bestTasu};}return{i:SAVE.id,n:SAVE.name,b:SAVE.no,lv:charLevel(),g,ts:Date.now()};}
 const validEntry=e=>e&&typeof e.i==='string'&&typeof e.n==='string'&&e.g&&typeof e.g==='object';
+
+/* ---------- 반 랭킹 자동 연동 (구글 시트 + Apps Script) ---------- */
+let liveMem=null,pushing=false,pushAgain=false,pushRetry=0;
+const tmo=(p,ms)=>Promise.race([p,new Promise((_,j)=>setTimeout(()=>j(new Error('timeout')),ms))]);
+const liveCached=()=>liveMem||store.get('taja2_live',null);
+function mergeLists(...ls){const m=new Map();for(const L of ls)for(const e of(L||[])){if(!validEntry(e))continue;const o=m.get(e.i);if(!o||(+e.ts||0)>(+o.ts||0))m.set(e.i,e);}return[...m.values()];}
+function ago(t){if(!t)return '';const s=(Date.now()-t)/1000;if(s<60)return '방금';if(s<3600)return `${Math.floor(s/60)}분 전`;const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;}
+async function syncPush(){if(!SYNC||!SAVE)return false;if(pushing){pushAgain=true;return false;}pushing=true;
+ const data=JSON.stringify(myEntry()),body=JSON.stringify({type:'record',data,sig:hash(SALT+'sync'+data)});let ok=false,res=null;
+ try{res=await tmo(fetch(SYNC_URL,{method:'POST',body}),20000);}catch(e){res=null;}
+ if(res){try{const j=await res.json();ok=!!(j&&j.ok);}catch(e){ok=false;}}
+ else{try{await tmo(fetch(SYNC_URL,{method:'POST',body,mode:'no-cors'}),20000);ok=true;}catch(e){}}
+ if(SAVE){if(ok)SAVE.syncAt=Date.now();SAVE.syncPending=!ok;saveGame();}
+ pushing=false;
+ if(pushAgain){pushAgain=false;syncPush();}
+ else if(!ok&&pushRetry<3){pushRetry++;setTimeout(syncPush,15000+Math.random()*20000);}
+ else if(ok)pushRetry=0;
+ return ok;}
+async function syncPull(){if(!SYNC)return null;try{const r=await tmo(fetch(SYNC_URL+(SYNC_URL.includes('?')?'&':'?')+'action=list&_='+Date.now()),20000);const j=await r.json();
+ if(j&&j.ok&&Array.isArray(j.list)){liveMem={t:Date.now(),list:j.list.filter(validEntry)};store.set('taja2_live',liveMem);return liveMem;}}catch(e){}return null;}
+function syncDelete(id){if(!SYNC||!id)return;const body=JSON.stringify({type:'delete',id,sig:hash(SALT+'del'+id)});fetch(SYNC_URL,{method:'POST',body}).catch(()=>fetch(SYNC_URL,{method:'POST',body,mode:'no-cors'}).catch(()=>{}));}
 function entryVal(e,game,m){if(game==='total'){if(m==='r')return READY.reduce((a,gm)=>a+(+((e.g[gm.id]||{}).r)||0),0);const ts=READY.map(gm=>+((e.g[gm.id]||{}).t)||0).filter(x=>x>0);return ts.length?Math.round(ts.reduce((a,b)=>a+b,0)/ts.length):0;}const v=e.g[game]||{};return m==='r'?(+v.r||0):(+v.t||0);}
 function rankTabs(pre,game,m){return `<div class="tabs">${READY.map(g=>`<button class="chip ${game===g.id?'on':''}" data-act="${pre}-game" data-g="${g.id}">${esc(g.name)}</button>`).join('')}<button class="chip ${game==='total'?'on':''}" data-act="${pre}-game" data-g="total">합산</button>
  <span style="width:18px"></span><button class="chip sm2 ${m==='r'?'on':''}" data-act="${pre}-metric" data-m="r">최고 라운드</button><button class="chip sm2 ${m==='t'?'on':''}" data-act="${pre}-metric" data-m="t">분당 타수</button></div>`;}
@@ -711,39 +742,49 @@ function rankHTML(list,game,m,meId){const rows=list.map(e=>({e,v:entryVal(e,game
  if(!rows.length)return '<p class="empty">아직 기록이 없어요.</p>';
  const head=m==='r'?(game==='total'?'라운드 합계':'최고 라운드'):(game==='total'?'평균 분당 타수':'분당 타수'),unit=m==='r'?'라운드':'타';let rank=0,prev=null;
  return `<table class="rank"><thead><tr><th>순위</th><th>번호</th><th>이름</th><th>${head}</th><th>별지기</th></tr></thead><tbody>${rows.map((r,i)=>{if(!prev||r.v!==prev.v||r.w!==prev.w)rank=i+1;prev=r;const md=rank<=3&&r.v>0?`<span class="medal m${rank}">${rank}</span>`:rank;return `<tr class="${r.e.i===meId?'me':''}"><td>${md}</td><td>${esc(r.e.b||'-')}</td><td>${esc(r.e.n)}</td><td>${r.v?r.v+unit:'-'}</td><td>Lv.${esc(r.e.lv||1)}</td></tr>`;}).join('')}</tbody></table>`;}
-let rkG='meteor',rkM='r';
-function openRank(){renderRank();show('pRank',true);}
-function renderRank(){const cvw=store.get('taja2_classview',null);let list=[];if(cvw&&Array.isArray(cvw.list))list=cvw.list.filter(e=>validEntry(e)&&e.i!==SAVE.id);list.push(myEntry());
- const d=cvw?new Date(cvw.t):null;
+let rkG='meteor',rkM='r',rkLoading=false,rkErr=false;
+function openRank(){rkErr=false;rkLoading=SYNC;renderRank();show('pRank',true);
+ if(SYNC)syncPull().then(d=>{rkLoading=false;rkErr=!d;if(!$('pRank').classList.contains('hidden'))renderRank();});}
+function renderRank(){const live=SYNC?liveCached():null,cvw=store.get('taja2_classview',null),base=live||cvw;
+ const list=(base&&Array.isArray(base.list)?base.list:[]).filter(e=>validEntry(e)&&e.i!==SAVE.id);list.push(myEntry());
+ let note;
+ if(SYNC)note=rkLoading?'우리 반 랭킹을 불러오는 중이에요…':rkErr?`지금은 반 랭킹에 연결하지 못했어요.${base?` ${ago(base.t)}에 불러온 랭킹을 보여 줘요.`:''}`:`자동 연동 · ${ago(base&&base.t)} 불러왔어요. 내 기록은 지금 기록으로 보여요.`;
+ else{const d=cvw?new Date(cvw.t):null;note=cvw?`선생님이 ${d.getMonth()+1}월 ${d.getDate()}일에 만든 반 랭킹이에요. 내 기록은 지금 기록으로 보여요.`:'아직 반 랭킹 코드를 넣지 않았어요. 선생님께 받은 코드를 [내 기록]에서 넣으면 우리 반 순위가 보여요.';}
  $('pRank').innerHTML=`<div class="panel wide"><h2>🏆 우리 반 랭킹</h2>${rankTabs('rk',rkG,rkM)}<div class="rankbox">${rankHTML(list,rkG,rkM,SAVE.id)}</div>
- <p class="note">${cvw?`선생님이 ${d.getMonth()+1}월 ${d.getDate()}일에 만든 반 랭킹이에요. 내 기록은 지금 기록으로 보여요.`:'아직 반 랭킹 코드를 넣지 않았어요. 선생님께 받은 코드를 [내 기록]에서 넣으면 우리 반 순위가 보여요.'}</p>
- <div class="btnrow"><button class="gbtn inline" data-act="close" data-p="pRank">닫기</button></div></div>`;}
+ <p class="note">${note}</p><div class="btnrow">${SYNC?'<button class="sbtn inline" data-act="rk-refresh">새로고침</button>':''}<button class="gbtn inline" data-act="close" data-p="pRank">닫기</button></div></div>`;}
 
 /* ---------- 내 기록 ---------- */
 function openMe(){renderMe();show('pMe',true);}
-function renderMe(code){const rows=READY.map(g=>{const s=SAVE.games[g.id];return `<div class="tile"><small>${esc(g.name)}</small><b>${s.bestRound}라운드</b></div><div class="tile"><small>최고 분당 타수</small><b>${s.bestTasu}타</b></div><div class="tile"><small>플레이</small><b>${s.plays}번</b></div><div class="tile"><small>맞힌 낱말</small><b>${s.words}개</b></div>`;}).join('');
+function renderMe(code,msg){const rows=READY.map(g=>{const s=SAVE.games[g.id];return `<div class="tile"><small>${esc(g.name)}</small><b>${s.bestRound}라운드</b></div><div class="tile"><small>최고 분당 타수</small><b>${s.bestTasu}타</b></div><div class="tile"><small>플레이</small><b>${s.plays}번</b></div><div class="tile"><small>맞힌 낱말</small><b>${s.words}개</b></div>`;}).join('');
+ const codeBox=`<div class="coderow"><textarea class="code" id="meCode" readonly placeholder="[기록 코드 만들기]를 누르면 여기에 코드가 생겨요">${code||''}</textarea><div style="display:flex;flex-direction:column;gap:8px"><button class="gbtn" data-act="me-code">기록 코드 만들기</button><button class="sbtn" data-act="copy" data-t="meCode">복사</button></div></div>`;
+ const body=SYNC?`<h3>🔗 반 랭킹 자동 연동</h3><div class="coinlist" style="display:block"><div><span>${SAVE.syncPending?'⏳ 아직 보내지 못한 기록이 있어요. 인터넷 연결을 확인해 주세요.':'✅ 게임이 끝날 때마다 기록이 선생님께 자동으로 보내져요.'}</span><span>${SAVE.syncAt?`마지막 전송 ${ago(SAVE.syncAt)}`:''}</span></div></div>
+  <div class="btnrow"><button class="sbtn inline" data-act="me-push">지금 보내기</button></div><p class="msg ${msg&&msg.ok?'ok':''}">${msg?esc(msg.t):''}</p>
+  <h3>연동이 안 될 때: 기록 코드로 보내기</h3>${codeBox}`
+ :`<h3>① 선생님께 내 기록 보내기</h3>${codeBox}<p class="note">코드를 복사해서 선생님이 알려 준 곳(예: 클래스룸 댓글)에 붙여 넣어요.</p>
+  <h3>② 반 랭킹 코드 넣기</h3><div class="coderow"><textarea class="code" id="meImport" placeholder="선생님께 받은 반 랭킹 코드(TJR1.으로 시작)를 붙여 넣어요"></textarea><button class="gbtn" data-act="me-import">넣기</button></div><p class="msg" id="meMsg"></p>`;
  $('pMe').innerHTML=`<div class="panel wide"><h2>📋 내 기록</h2><p class="sub">${esc(SAVE.no)}번 ${esc(SAVE.name)} · 별지기 Lv.${charLevel()} · 지금까지 받은 코인 ${SAVE.stats.coins.toLocaleString()}</p>
- <div class="recgrid">${rows}</div>
- <h3>① 선생님께 내 기록 보내기</h3><div class="coderow"><textarea class="code" id="meCode" readonly placeholder="[기록 코드 만들기]를 누르면 여기에 코드가 생겨요">${code||''}</textarea><div style="display:flex;flex-direction:column;gap:8px"><button class="gbtn" data-act="me-code">기록 코드 만들기</button><button class="sbtn" data-act="copy" data-t="meCode">복사</button></div></div>
- <p class="note">코드를 복사해서 선생님이 알려 준 곳(예: 클래스룸 댓글)에 붙여 넣어요.</p>
- <h3>② 반 랭킹 코드 넣기</h3><div class="coderow"><textarea class="code" id="meImport" placeholder="선생님께 받은 반 랭킹 코드(TJR1.으로 시작)를 붙여 넣어요"></textarea><button class="gbtn" data-act="me-import">넣기</button></div><p class="msg" id="meMsg"></p>
+ <div class="recgrid">${rows}</div>${body}
  <div class="btnrow"><button class="gbtn inline" data-act="close" data-p="pMe">닫기</button></div></div>`;}
 
 /* ---------- 선생님 모드 ---------- */
-let TUNLOCK=false,tTab='class',tG='meteor',tM='r',tArm='';
+let TUNLOCK=false,tTab='class',tG='meteor',tM='r',tArm='',tLoading=false;
 const tList=()=>{const d=store.get('taja2_teacher',{list:[]});return Array.isArray(d.list)?d.list.filter(validEntry):[];};
 function openTeacher(){PANELS.forEach(p=>show(p,false));if(!TUNLOCK){openPanel('pTeacher',`<div class="panel"><h2>🔒 선생님 모드</h2><p class="sub">선생님 비밀번호를 입력해 주세요.</p><div class="form"><label>비밀번호<input id="tPin" type="password" inputmode="numeric" maxlength="12" autocomplete="off"></label></div><p class="msg" id="tPinMsg"></p><button class="gbtn" data-act="t-pin">확인</button><button class="sbtn" data-act="t-close">닫기</button></div>`);setTimeout(()=>{const e=$('tPin');if(e)e.focus();},60);return;}
- renderTeacher();show('pTeacher',true);}
-function renderTeacher(out,msg){const L=tList();let body='';
- if(tTab==='class')body=`<p class="sub">학생들의 기록 코드(TJ1.로 시작)를 한꺼번에 붙여 넣고 [추가]를 누르세요. 같은 학생의 코드는 새 기록으로 바뀝니다.</p>
-  <div class="coderow"><textarea class="code" id="tCodes" placeholder="여러 학생의 코드를 줄바꿈 없이 붙여 넣어도 괜찮아요"></textarea><button class="gbtn" data-act="t-add">추가</button></div><p class="msg ${msg&&msg.ok?'ok':''}" id="tMsg">${msg?esc(msg.t):''}</p>
-  <p class="sub" style="margin:4px 0">모인 학생 ${L.length}명</p>${rankTabs('tr',tG,tM)}<div class="rankbox">${rankHTML(L,tG,tM,null)}</div>
-  <div class="btnrow"><button class="gbtn inline" data-act="t-classcode">학생용 반 랭킹 코드 만들기</button><button class="sbtn inline" data-act="t-clear">${tArm==='clear'?'정말 비울까요? 한 번 더!':'목록 비우기'}</button></div>
+ renderTeacher();show('pTeacher',true);teacherPull();}
+function teacherPull(){if(!SYNC||!TUNLOCK)return;tLoading=true;renderTeacher();
+ syncPull().then(d=>{tLoading=false;if(!$('pTeacher').classList.contains('hidden'))renderTeacher(null,d?{t:`연결됐어요! 시트에서 학생 ${d.list.length}명의 기록을 불러왔어요.`,ok:true}:{t:'구글 시트에 연결하지 못했어요. 웹 앱 주소와 [액세스 권한: 모든 사용자] 설정을 확인해 주세요.'});});}
+function renderTeacher(out,msg){const live=SYNC?liveCached():null,L=mergeLists(live&&live.list,tList());let body='';
+ if(tTab==='class')body=`${SYNC?`<p class="sub">🔗 자동 연동 켜짐 · ${tLoading?'불러오는 중…':live?`${ago(live.t)} 불러옴`:'아직 불러오지 못함'} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="t-refresh">새로고침</button></p>`:'<p class="sub">자동 연동이 꺼져 있어요. 학생들의 기록 코드(TJ1.로 시작)를 모아 아래에 붙여 넣으세요.</p>'}
+  <p class="msg ${msg&&msg.ok?'ok':''}" id="tMsg">${msg?esc(msg.t):''}</p>
+  <p class="sub" style="margin:4px 0">모인 학생 ${L.length}명</p>${rankTabs('tr',tG,tM)}<div class="rankbox" style="max-height:230px">${rankHTML(L,tG,tM,null)}</div>
+  ${SYNC?'<p class="note">기록을 지우거나 고치려면 구글 시트의 [랭킹] 탭에서 그 학생의 줄을 고치거나 지우세요.</p>':''}
+  <h3>${SYNC?'연동이 안 될 때: ':''}기록 코드로 추가하기</h3><div class="coderow"><textarea class="code" id="tCodes" placeholder="여러 학생의 코드를 한꺼번에 붙여 넣어도 괜찮아요"></textarea><button class="gbtn" data-act="t-add">추가</button></div>
+  <div class="btnrow">${SYNC?'':'<button class="gbtn inline" data-act="t-classcode">학생용 반 랭킹 코드 만들기</button>'}<button class="sbtn inline" data-act="t-clear">${tArm==='clear'?'정말 비울까요? 한 번 더!':'코드로 모은 목록 비우기'}</button></div>
   ${out?`<div class="coderow"><textarea class="code" id="tOut" readonly>${out}</textarea><button class="sbtn" data-act="copy" data-t="tOut">복사</button></div><p class="note">이 코드를 학생들에게 나눠 주면, 학생들이 [내 기록]에서 넣어 반 랭킹을 볼 수 있어요.</p>`:''}`;
  else body=SAVE?`<p class="sub">지금 이 크롬북에 저장된 학생 정보예요.</p>
   <div class="form"><label>번호<input id="tNo" type="number" min="1" max="50" value="${esc(SAVE.no)}"></label><label>이름<input id="tName" maxlength="8" value="${esc(SAVE.name)}"></label></div><button class="sbtn" data-act="t-saveprof">이름·번호 저장</button>
   <div class="form" style="align-items:flex-end"><label>코인 주기 (빼려면 -숫자)<input id="tGive" type="number" value="100"></label><button class="gbtn inline" data-act="t-give" style="margin-bottom:4px">코인 주기</button></div>
-  <p class="sub">지금 코인 ${SAVE.coins.toLocaleString()} · 별지기 Lv.${charLevel()}</p>
+  <p class="sub">지금 코인 ${SAVE.coins.toLocaleString()} · 별지기 Lv.${charLevel()} · 반 랭킹 자동 연동 ${SYNC?`켜짐${SAVE.syncAt?` (마지막 전송 ${ago(SAVE.syncAt)})`:''}${SAVE.syncPending?' · 보내지 못한 기록 있음':''}`:'꺼짐'}</p>
   <button class="sbtn" data-act="t-reset">${tArm==='reset'?'정말 처음부터? 한 번 더 누르세요':'이 크롬북 기록 모두 지우기'}</button><p class="msg ${msg&&msg.ok?'ok':''}">${msg?esc(msg.t):''}</p>`:'<p class="empty">이 기기에는 학생 정보가 없어요.</p>';
  $('pTeacher').innerHTML=`<div class="panel xl"><h2>👩‍🏫 선생님 모드</h2><div class="tabs"><button class="chip ${tTab==='class'?'on':''}" data-act="t-tab" data-t="class">반 랭킹 모으기</button><button class="chip ${tTab==='device'?'on':''}" data-act="t-tab" data-t="device">이 크롬북 관리</button></div>${body}
  <div class="btnrow"><button class="gbtn inline" data-act="t-close">닫기</button></div></div>`;}
@@ -758,7 +799,7 @@ function copyFrom(id){const t=$(id);if(!t||!t.value){ttoast('먼저 코드를 �
  try{navigator.clipboard.writeText(t.value).then(done,fail);}catch(e){fail();}}
 const ACT={
  'reg-save'(){const no=parseInt(($('rNo')||{}).value,10),name=(($('rName')||{}).value||'').trim().slice(0,8);if(!(no>=1&&no<=50)){$('rMsg').textContent='번호를 1~50 사이로 써 주세요';return;}if(!name){$('rMsg').textContent='이름을 써 주세요';return;}
-  SAVE=defaultSave(name,no);saveGame();goHome();ttoast('환영해요! 번개·얼음·방패를 하나씩 선물로 넣어 뒀어요');},
+  SAVE=defaultSave(name,no);saveGame();goHome();syncPush();ttoast('환영해요! 번개·얼음·방패를 하나씩 선물로 넣어 뒀어요');},
  play(){openGames();},
  'game-pick'(el){openLoad(el.dataset.g);},
  'load-add'(el){const id=el.dataset.it;if(!LOAD.inv[id]){ttoast('상점에서 살 수 있어요');return;}if(LOAD.bag.length>=2+SAVE.up.bag){ttoast('가방이 가득 찼어요');return;}LOAD.bag.push(id);LOAD.inv[id]--;SFX.tick();renderLoad();},
@@ -791,16 +832,19 @@ const ACT={
  sound(){OPT.sound=!OPT.sound;saveOpt();renderProfile();if(OPT.sound)SFX.tick();},
  full(){try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else{const p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(()=>ttoast('이 화면에서는 전체 화면을 쓸 수 없어요'));}}catch(e){ttoast('이 화면에서는 전체 화면을 쓸 수 없어요');}},
  't-open'(){openTeacher();},
- 't-pin'(){const v=(($('tPin')||{}).value||'').trim();if(hash('pin:'+v+SALT)===PIN_H){TUNLOCK=true;tArm='';renderTeacher();}else{$('tPinMsg').textContent='비밀번호가 달라요';$('tPin').value='';}},
+ 't-pin'(){const v=(($('tPin')||{}).value||'').trim();if(hash('pin:'+v+SALT)===PIN_H){TUNLOCK=true;tArm='';renderTeacher();teacherPull();}else{$('tPinMsg').textContent='비밀번호가 달라요';$('tPin').value='';}},
  't-close'(){show('pTeacher',false);tArm='';if(!SAVE)openReg();else if(scr==='home')goHome();},
  't-tab'(el){tTab=el.dataset.t;tArm='';renderTeacher();},
  'tr-game'(el){tG=el.dataset.g;renderTeacher();},'tr-metric'(el){tM=el.dataset.m;renderTeacher();},
  't-add'(){teacherAdd();},
+ 't-refresh'(){teacherPull();},
+ 'rk-refresh'(){openRank();},
+ 'me-push'(){renderMe(null,{t:'보내는 중…'});syncPush().then(ok=>{if(SAVE&&!$('pMe').classList.contains('hidden'))renderMe(null,ok?{t:'보냈어요!',ok:true}:{t:'보내지 못했어요. 잠시 뒤에 다시 해 보세요.'});});},
  't-classcode'(){const L=tList();if(!L.length){renderTeacher(null,{t:'먼저 학생 코드를 추가해 주세요'});return;}renderTeacher(enc('TJR1',{t:Date.now(),list:L.map(e=>({i:e.i,n:e.n,b:e.b,lv:e.lv,g:e.g,ts:e.ts}))}));},
  't-clear'(){if(tArm!=='clear'){tArm='clear';renderTeacher();return;}store.set('taja2_teacher',{list:[]});tArm='';renderTeacher(null,{t:'목록을 비웠어요',ok:true});},
- 't-saveprof'(){const no=parseInt($('tNo').value,10),name=($('tName').value||'').trim().slice(0,8);if(!(no>=1&&no<=50)||!name){renderTeacher(null,{t:'번호(1~50)와 이름을 확인해 주세요'});return;}SAVE.no=no;SAVE.name=name;saveGame();renderTeacher(null,{t:'저장했어요',ok:true});},
+ 't-saveprof'(){const no=parseInt($('tNo').value,10),name=($('tName').value||'').trim().slice(0,8);if(!(no>=1&&no<=50)||!name){renderTeacher(null,{t:'번호(1~50)와 이름을 확인해 주세요'});return;}SAVE.no=no;SAVE.name=name;saveGame();syncPush();renderTeacher(null,{t:'저장했어요',ok:true});},
  't-give'(){const n=parseInt($('tGive').value,10);if(!n){renderTeacher(null,{t:'숫자를 써 주세요'});return;}SAVE.coins=Math.max(0,SAVE.coins+n);saveGame();renderTeacher(null,{t:`${n>0?'+':''}${n} 코인 → 지금 ${SAVE.coins} 코인`,ok:true});},
- 't-reset'(){if(tArm!=='reset'){tArm='reset';renderTeacher();return;}try{localStorage.removeItem(SKEY);localStorage.removeItem('taja2_classview');}catch(e){}SAVE=null;tArm='';show('pTeacher',false);goHome();}};
+ 't-reset'(){if(tArm!=='reset'){tArm='reset';renderTeacher();return;}if(SAVE)syncDelete(SAVE.id);try{localStorage.removeItem(SKEY);localStorage.removeItem('taja2_classview');localStorage.removeItem('taja2_live');}catch(e){}liveMem=null;SAVE=null;tArm='';show('pTeacher',false);goHome();}};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const f=ACT[b.dataset.act];if(f){f(b);}});
 $('slots').addEventListener('pointerdown',e=>{if(e.target.closest('.slot[data-i]'))e.preventDefault();});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){const id=e.target&&e.target.id;if(id==='rName'||id==='rNo'){e.preventDefault();ACT['reg-save']();}else if(id==='tPin'){e.preventDefault();ACT['t-pin']();}}});
@@ -827,6 +871,7 @@ function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;ANIM_T+=dt;ct
  if(scr==='game'&&R){update(dt);if(R)drawGame();}else{drawHome(ANIM_T);if(scr==='deco'&&SAVE)drawPlots();}
  requestAnimationFrame(loop);}
 fit();goHome();
+if(SYNC&&SAVE)setTimeout(syncPush,1500);
 requestAnimationFrame(loop);
 })();
 </script>
