@@ -1053,8 +1053,9 @@ function edUp(e){PTRS.delete(e.pointerId);const d=ED.drag;if(!d)return;if(d.type
 /* 우리 반 광장 (구글 시트로 같은 반 친구들과 함께 써요) */
 async function pzReq(body){try{const r=await tmo(fetch(SYNC_URL,{method:'POST',body:JSON.stringify(body)}),20000);return await r.json();}catch(e){return null;}}
 function plazaTick(){if(ED&&ED.mode==='plaza'&&!ED.pz.busy&&!ED.pz.loading&&!document.hidden&&Date.now()-ED.pz.last>15000)plazaPull(true);}
-async function plazaPull(quiet){const ed=ED;if(!ed||ed.mode!=='plaza'||ed.pz.loading)return;ed.pz.loading=true;renderEdBar();let items=null;
- try{const r=await tmo(fetch(`${SYNC_URL}${SYNC_URL.includes('?')?'&':'?'}action=plaza&gr=${ed.gr}&cl=${ed.cl}&_=${Date.now()}`),20000);const j=await r.json();if(j&&j.ok&&Array.isArray(j.items))items=j.items;}catch(e){}
+async function plazaFetch(ed){if(ed.admin&&TPIN){const j=await pzReq({type:'plaza_full',gr:ed.gr,cl:ed.cl,pin:TPIN});if(j&&j.ok&&Array.isArray(j.items))return j.items;}
+ try{const r=await tmo(fetch(`${SYNC_URL}${SYNC_URL.includes('?')?'&':'?'}action=plaza&gr=${ed.gr}&cl=${ed.cl}&_=${Date.now()}`),20000);const j=await r.json();if(j&&j.ok&&Array.isArray(j.items))return j.items;}catch(e){}return null;}
+async function plazaPull(quiet){const ed=ED;if(!ed||ed.mode!=='plaza'||ed.pz.loading)return;ed.pz.loading=true;renderEdBar();const items=await plazaFetch(ed);
  if(ED!==ed)return;ed.pz.loading=false;ed.pz.last=Date.now();
  if(items){const back=setPlaza(items);if(back)ttoast(`광장에서 치워진 내 장식 ${back}개가 창고로 돌아왔어요`);}
  else if(!quiet)ttoast('광장을 불러오지 못했어요. 인터넷 연결을 확인해 주세요');
@@ -1161,10 +1162,15 @@ let TUNLOCK=false,TPIN='',tTab='class',tG='meteor',tM='r',tArm='',tLoading=false
 const tList=()=>{const d=store.get('taja2_teacher',{list:[]});return Array.isArray(d.list)?d.list.filter(validEntry):[];};
 function openTeacher(){PANELS.forEach(p=>show(p,false));if(!TUNLOCK){openPanel('pTeacher',`<div class="panel"><h2>🔒 선생님 모드</h2><p class="sub">선생님 비밀번호를 영어로 입력해 주세요.</p><div class="form"><label>비밀번호<input id="tPin" type="password" maxlength="12" autocomplete="off" autocapitalize="off" spellcheck="false"></label></div><p class="msg" id="tPinMsg"></p><button class="gbtn" data-act="t-pin">확인</button><button class="sbtn" data-act="t-close">닫기</button></div>`);setTimeout(()=>{const e=$('tPin');if(e)e.focus();},60);return;}
  renderTeacher();show('pTeacher',true);if(tTab==='class')teacherPull();}
+// 선생님은 비밀번호로 전체 이름이 담긴 목록을 받아요. 이 목록은 기기에 저장하지 않아요(학생 크롬북에서 열어도 남지 않게).
+let tLive=null;
+async function teacherFetch(){if(!SYNC)return null;
+ if(TPIN){const j=await pzReq({type:'list_full',pin:TPIN});if(j&&j.ok&&Array.isArray(j.list)){tLive={t:Date.now(),list:j.list.filter(validEntry),full:true};return tLive;}}
+ const d=await syncPull();if(d)tLive={t:d.t,list:d.list,full:false};return d?tLive:null;}
 function teacherPull(){if(!SYNC||!TUNLOCK)return;tLoading=true;renderTeacher();
- syncPull().then(d=>{tLoading=false;if(!$('pTeacher').classList.contains('hidden'))renderTeacher(null,d?{t:`연결됐어요! 시트에서 학생 ${d.list.length}명의 기록을 불러왔어요.`,ok:true}:{t:'구글 시트에 연결하지 못했어요. 웹 앱 주소와 [액세스 권한: 모든 사용자] 설정을 확인해 주세요.'});});}
+ teacherFetch().then(d=>{tLoading=false;if(!$('pTeacher').classList.contains('hidden'))renderTeacher(null,d?{t:`연결됐어요! 시트에서 학생 ${d.list.length}명의 기록을 불러왔어요.${d.full?'':' (이름 전체를 보려면 Apps Script를 새 버전으로 배포해 주세요)'}`,ok:true}:{t:'구글 시트에 연결하지 못했어요. 웹 앱 주소와 [액세스 권한: 모든 사용자] 설정을 확인해 주세요.'});});}
 const grOpts=v=>['<option value="">선택</option>'].concat([1,2,3,4,5,6].map(g=>`<option value="${g}" ${+v===g?'selected':''}>${g}학년</option>`)).join('');
-function renderTeacher(out,msg){const live=SYNC?liveCached():null,ALL=mergeLists(live&&live.list,tList());let body='';
+function renderTeacher(out,msg){const live=SYNC?(tLive||liveCached()):null,ALL=mergeLists(live&&live.list,tList());let body='';
  const keys=[...new Set(ALL.map(clsKey))].sort((a,b)=>{const[g1,c1]=a.split('-').map(Number),[g2,c2]=b.split('-').map(Number);return(g1||99)-(g2||99)||(c1||99)-(c2||99);});
  if(tCls!=='all'&&!keys.includes(tCls))tCls='all';
  const L=tCls==='all'?ALL:ALL.filter(e=>clsKey(e)===tCls);
@@ -1249,7 +1255,7 @@ const ACT={
  't-pin'(){const v=(($('tPin')||{}).value||'').trim();if(HANGUL.test(v)){$('tPinMsg').textContent='한글이 섞여 들어갔어요. 한/영 키를 눌러 영어로 바꾼 뒤 다시 입력해 주세요.';$('tPin').value='';$('tPin').focus();return;}
   if(hash('pin:'+v+SALT)===PIN_H){TUNLOCK=true;TPIN=v;tArm='';renderTeacher();teacherPull();}else{$('tPinMsg').textContent='비밀번호가 달라요'+(pinCaps?' (Caps Lock이 켜져 있어요)':'');$('tPin').value='';$('tPin').focus();}},
  't-close'(){show('pTeacher',false);tArm='';if(!SAVE)openReg();else if(scr==='home')goHome();},
- 't-tab'(el){tTab=el.dataset.t;tArm='';renderTeacher();if(tTab==='class'&&SYNC&&!liveCached())teacherPull();},
+ 't-tab'(el){tTab=el.dataset.t;tArm='';renderTeacher();if(tTab==='class'&&SYNC&&!tLive)teacherPull();},
  'tr-game'(el){tG=el.dataset.g;renderTeacher();},'tr-metric'(el){tM=el.dataset.m;renderTeacher();},
  'tr-cls'(el){tCls=el.dataset.c;renderTeacher();},
  't-add'(){teacherAdd();},
