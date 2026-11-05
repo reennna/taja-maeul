@@ -119,10 +119,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 #inp{width:100%;height:100%;border-radius:22px;border:4px solid var(--steel);background:linear-gradient(#ffffff,#e6eaf0);font-size:34px;text-align:center;color:#222;outline:none;box-shadow:0 5px 0 var(--steel)}
 #inp::placeholder{color:#a3a9b3;font-size:24px}
 #inp.bad{animation:shake .32s}
+#inp.caps{border-color:#f59f00}
+.capsnote{position:absolute;left:340px;top:604px;padding:2px 14px 4px;border-radius:12px 12px 0 0;background:#ffe066;border:3px solid var(--steel);border-bottom:none;font-size:20px;color:#4a1f2b;display:none}
+.capsnote.show{display:block}
 @keyframes shake{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
 .pbtn{position:absolute;left:986px;top:640px;width:62px;height:62px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#c3c9d0 55%,#7d858e);border:4px solid var(--steel);box-shadow:0 4px 0 var(--steel);display:flex;align-items:center;justify-content:center}
 .pbtn svg{width:26px;height:26px;fill:#26262c}
-.toast{position:absolute;left:50%;top:568px;transform:translateX(-50%);background:rgba(30,20,40,.93);color:#fff;font-size:26px;padding:10px 26px;border-radius:999px;opacity:0;transition:opacity .2s;white-space:nowrap}
+.toast{position:absolute;left:50%;top:552px;transform:translateX(-50%);background:rgba(30,20,40,.93);color:#fff;font-size:26px;padding:10px 26px;border-radius:999px;opacity:0;transition:opacity .2s;white-space:nowrap}
 .toast.show{opacity:1}
 #count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:210px;color:#fff;-webkit-text-stroke:20px var(--ink);paint-order:stroke fill;pointer-events:none;opacity:0}
 #count.pop{animation:pop .9s ease-out forwards}
@@ -212,6 +215,14 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 .gcard b{font-size:30px;font-weight:normal}
 .gcard span{font-size:18px;color:#6a3b48;min-height:44px}
 .gcard.lock{opacity:.55;box-shadow:none;cursor:default}
+.gcard .gmodes{display:flex;gap:10px;width:100%;margin-top:2px}
+.gcard .gmode{flex:1;border:3px solid var(--ink);border-radius:16px;background:linear-gradient(#fff8d6,#ffd84a);box-shadow:0 4px 0 var(--ink);padding:5px 4px 7px;display:flex;flex-direction:column;align-items:center;line-height:1.15}
+.gcard .gmode.en{background:linear-gradient(#e7f2ff,#8ec5ff)}
+.gcard .gmode:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.gcard .gmode b{font-size:27px}
+.gcard .gmode small{font-size:17px;color:#5a3340}
+.modetag{display:inline-block;vertical-align:middle;margin-left:8px;font-size:22px;padding:2px 14px;border-radius:999px;border:3px solid var(--ink);background:#ffd84a}
+.modetag.en{background:#8ec5ff}
 .gcard .lockbox{width:300px;height:150px;border-radius:16px;border:3px dashed #999;display:flex;align-items:center;justify-content:center;font-size:56px;background:#f1f3f5}
 /* 가방 */
 .bagrow{display:flex;gap:10px;justify-content:center;margin:8px 0 14px}
@@ -268,7 +279,8 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
     <div class="combo" id="combo"></div>
     <div class="toast" id="toast"></div>
     <div class="slots" id="slots"></div>
-    <div class="inbar"><input id="inp" aria-label="낱말 입력" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="40" placeholder="낱말을 치고 Enter!"></div>
+    <div class="inbar"><input id="inp" aria-label="낱말 입력" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="60" placeholder="낱말을 치고 Enter!"></div>
+    <div class="capsnote" id="capsNote">⇪ Caps Lock이 켜져 있어요</div>
     <button class="pbtn" data-act="pause" aria-label="멈춤"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1.5"/><rect x="14" y="4" width="5" height="16" rx="1.5"/></svg></button>
     <div id="count"></div>
   </div>
@@ -302,12 +314,18 @@ const saveOpt=()=>store.set('taja2_opt',OPT);
 const rid=()=>Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4);
 
 /* ================= 데이터 ================= */
+// 게임마다 기록과 랭킹이 따로 있어요. 한글판 id(meteor)는 예전 기록이 이어지도록 바꾸지 않아요.
 const GAMES=[
- {id:'meteor',name:'별똥별 방어전',desc:'우리 마을로 떨어지는 별똥별을 낱말로 막아요!',ready:true},
- {id:'soon1',name:'새 게임 준비 중',desc:'곧 새로운 타자 게임이 와요',ready:false},
- {id:'soon2',name:'새 게임 준비 중',desc:'기대해 주세요!',ready:false}];
+ {id:'meteor',name:'별똥별 방어전 한글',short:'별똥별 한글',lang:'ko',ready:true},
+ {id:'meteor_en',name:'별똥별 방어전 영어',short:'별똥별 영어',lang:'en',ready:true}];
 const READY=GAMES.filter(g=>g.ready);
+// 게임 고르기 카드: 한 카드 안의 버튼으로 한글·영어를 골라요
+const CARDS=[
+ {name:'별똥별 방어전',desc:'우리 마을로 떨어지는 별똥별을 낱말로 막아요!',thumb:'meteor',modes:[['meteor','한글',''],['meteor_en','영어','en']]},
+ {name:'새 게임 준비 중',desc:'곧 새로운 타자 게임이 와요'},
+ {name:'새 게임 준비 중',desc:'기대해 주세요!'}];
 const gameName=id=>(GAMES.find(g=>g.id===id)||{name:id}).name;
+const gameLang=id=>(GAMES.find(g=>g.id===id)||{}).lang||'ko';
 
 const TIERS={
  1:'하늘 바다 구름 바람 노을 별빛 달빛 햇살 무지개 소나기 눈사람 친구 학교 교실 칠판 연필 공책 지우개 필통 가방 운동장 급식실 도서관 음악실 과학실 자전거 비행기 기차역 지하철 사과 포도 수박 딸기 바나나 고구마 옥수수 떡볶이 김밥 비빔밥 호랑이 코끼리 고양이 강아지 다람쥐 거북이 돌고래 앵무새 축구공 야구장 농구공 줄넘기 피아노 컴퓨터 키보드 마우스 모니터 우주 지구 태양 행성 혜성 은하수 나침반 지도 시계 달력 편지 사진 노래 그림 미술 체육 국어 수학 사회 과학 영어 도덕 실과'.split(' '),
@@ -315,14 +333,39 @@ const TIERS={
  3:'지구온난화 재활용품 분리배출 신재생에너지 태양광발전 풍력발전소 미세먼지 기후변화 생물다양성 탄소중립 삼권분립 국민주권 인권존중 세계문화유산 국제연합 올림픽경기 학교도서관 독서감상문 과학탐구대회 실험보고서 비례배분 평행사변형 정다면체 대한민국임시정부 조선왕조실록 팔만대장경 동의보감 고인돌유적 남북통일 지속가능발전 인공지능로봇 코딩교육 가상현실 자율주행자동차 우주정거장 화성탐사선 북극곰보호 바다거북구조 숲속캠핑장 학급신문 봉사활동 현장체험학습 안전교육'.split(' '),
  4:['가는 말이 고와야 오는 말이 곱다','티끌 모아 태산','세 살 버릇 여든까지 간다','백지장도 맞들면 낫다','낮말은 새가 듣고 밤말은 쥐가 듣는다','원숭이도 나무에서 떨어진다','천 리 길도 한 걸음부터','등잔 밑이 어둡다','소 잃고 외양간 고친다','발 없는 말이 천 리 간다','고래 싸움에 새우 등 터진다','빈 수레가 요란하다','콩 심은 데 콩 난다','우물 안 개구리','누워서 떡 먹기','하늘이 무너져도 솟아날 구멍이 있다','작은 고추가 더 맵다','호랑이도 제 말 하면 온다','구슬이 서 말이라도 꿰어야 보배','윗물이 맑아야 아랫물이 맑다','돌다리도 두들겨 보고 건너라','아니 땐 굴뚝에 연기 날까','꿩 먹고 알 먹기','될성부른 나무는 떡잎부터 알아본다']};
 
+// 한글판 보스 문장: 5라운드마다 한 단계씩 어려워져요 (1단계 5라운드, 2단계 10라운드, 3단계 15라운드, 4단계 20라운드부터)
+// 1단계 짧고 쉬운 글자 → 2단계 조금 길거나 쌍자음 → 3단계 쌍자음·겹받침 → 4단계 길고 어려운 글자가 많음
+const BOSS_KO={
+ 1:['우물 안 개구리','등잔 밑이 어둡다','콩 심은 데 콩 난다','빈 수레가 요란하다','작은 고추가 더 맵다','옷이 날개다','금강산도 식후경','시작이 반이다','아는 길도 물어 가라','도토리 키 재기','언 발에 오줌 누기','고양이 목에 방울 달기'],
+ 2:['티끌 모아 태산','누워서 떡 먹기','그림의 떡','하늘의 별 따기','고생 끝에 낙이 온다','세 살 버릇 여든까지 간다','남의 떡이 커 보인다','천 리 길도 한 걸음부터','백지장도 맞들면 낫다','호랑이도 제 말 하면 온다','돌다리도 두들겨 보고 건너라','낫 놓고 기역 자도 모른다','벼는 익을수록 고개를 숙인다','말 한마디로 천 냥 빚을 갚는다','가는 말이 고와야 오는 말이 곱다'],
+ 3:['소 잃고 외양간 고친다','발 없는 말이 천 리 간다','아니 땐 굴뚝에 연기 날까','꼬리가 길면 밟힌다','지렁이도 밟으면 꿈틀한다','윗물이 맑아야 아랫물이 맑다','짚신도 짝이 있다','꿩 먹고 알 먹기','싼 게 비지떡','핑계 없는 무덤 없다','사공이 많으면 배가 산으로 간다','밑 빠진 독에 물 붓기','고래 싸움에 새우 등 터진다','원숭이도 나무에서 떨어진다','쥐구멍에도 볕 들 날 있다','하늘이 무너져도 솟아날 구멍이 있다','낮말은 새가 듣고 밤말은 쥐가 듣는다'],
+ 4:['닭 쫓던 개 지붕 쳐다본다','떡 줄 사람은 생각도 않는데 김칫국부터 마신다','똥 묻은 개가 겨 묻은 개 나무란다','서당 개 삼 년이면 풍월을 읊는다','젊어서 고생은 사서도 한다','굶어 죽기는 정승 하기보다 어렵다','뛰는 놈 위에 나는 놈 있다','까마귀 날자 배 떨어진다','앓던 이 빠진 것 같다','닭 잡아먹고 오리발 내민다','닭 벼슬이 될망정 쇠꼬리는 되지 마라','앉은 자리에 풀도 안 나겠다','구슬이 서 말이라도 꿰어야 보배','될성부른 나무는 떡잎부터 알아본다','귀신 씻나락 까먹는 소리']};
+// 15라운드부터 일반 별똥별로 섞여 나오는 속담은 쉬운 1·2단계에서만 골라요
+TIERS[4]=BOSS_KO[1].concat(BOSS_KO[2]);
+
+// 영어판 낱말 (6학년 교육과정 낱말 + 기본적으로 알면 좋은 낱말). 대문자·띄어쓰기·문장부호까지 정확하게 쳐야 맞아요.
+// 아이템 영어 이름(thunder, ice, slow, shield, heart, double)과 같은 낱말은 넣지 않아요.
+const TIERS_EN={
+ 1:'cat dog pig cow fox bee ant owl bird fish duck frog lion bear wolf goat horse sheep mouse tiger zebra monkey rabbit panda red blue pink green black white brown gray one two three four five six seven eight nine ten eye ear nose hand foot head arm leg face hair mouth mom dad baby sun moon star sky rain snow wind tree sea cloud river egg milk rice cake pizza bread apple grape lemon juice water candy salad book pen bag desk door chair box cup hat cap shoe sock ball doll car bus bike ship go run eat jump swim sing read draw play walk sleep big hot cold new old fast good nice happy sad tall short day week year time home park zoo shop'.split(' '),
+ 2:'favorite weekend birthday holiday vacation library hospital museum bakery restaurant subway airport station market theater bookstore teacher doctor nurse farmer pilot singer dancer artist writer scientist firefighter designer engineer astronaut English math science music history sunny cloudy rainy snowy windy spring summer autumn winter Monday Tuesday Wednesday Thursday Friday Saturday Sunday January February March April June July August September October November December excited tired hungry thirsty angry bored sleepy worried surprised headache toothache stomachache fever medicine breakfast lunch dinner homework exercise practice delicious beautiful wonderful interesting important difficult different dangerous careful popular famous special festival contest volunteer environment future dream hobby soccer baseball basketball badminton camping hiking picture camera computer yesterday tomorrow tonight morning afternoon evening always usually often sometimes never classroom playground kitchen bedroom bathroom grandma grandpa brother sister'.split(' '),
+ 3:'good morning|thank you|excuse me|see you later|nice to meet you|how are you|post office|police station|fire station|living room|hot dog|turn left|turn right|go straight|take a picture|play soccer|ride a bike|brush my teeth|wash my hands|do my homework|take a rest|drink water|see a doctor|catch a cold|have a fever|help my mom|clean my room|read a book|watch a movie|go camping|go shopping|go swimming|on the desk|under the bed|next to the bank|every day|once a week|twice a month|last weekend|next week|this summer|in the morning|at night|birthday party|field trip|summer vacation|best friend|a lot of|how much|what time|so much fun|be careful|of course|good job|happy birthday|long time no see|see you tomorrow|sounds good|me too|get up early|go to bed|walk my dog|feed the cat|take the bus|look at the map|plant trees|save energy|pick up trash'.split('|')};
+// 영어판 보스 문장: 1단계 짧은 문장(대문자·마침표) → 2단계 묻는 문장(?) → 3단계 '와 ,가 들어간 문장 → 4단계 긴 문장과 속담
+const BOSS_EN={
+ 1:['I like pizza.','It is sunny.','I am happy.','I can swim.','I have a dog.','She is my sister.','He is tall.','I love my mom.','We are friends.','This is my bag.','It is hot today.','Thank you.'],
+ 2:['How are you?','What time is it?','Where is the bank?','Can you help me?','Do you like soccer?','What is your name?','How old are you?','When is your birthday?','What do you want to be?','How much is it?','Who is your teacher?','What day is it today?'],
+ 3:["I'm happy.","Yes, I can.","No, I don't.","It's sunny today.","Let's go to the library.","Don't run in the hallway.","What's wrong?","I'm sorry to hear that.","I'd like a hamburger, please.","Whose bag is this? It's mine.","Why don't we play soccer?","I think it's a good idea."],
+ 4:['I want to be a scientist.','What are you going to do this summer?','I went camping with my family.','How often do you exercise?','I exercise three times a week.','You should take some medicine.','My favorite subject is science.','How can I get to the museum?','Go straight and turn left at the corner.','Practice makes perfect.','No pain, no gain.','Easy come, easy go.','Better late than never.','Where there is a will, there is a way.','A friend in need is a friend indeed.','Actions speak louder than words.']};
+
 const ITEMS={
- bolt:{name:'번개',icon:'⚡',color:'#ffe066',price:60,desc:'화면의 별똥별을 모두 부수고 보스도 1번 공격'},
- ice:{name:'얼음',icon:'❄️',color:'#a5d8ff',price:40,desc:'잠깐 동안 모두 꽁꽁 얼어요'},
- slow:{name:'느림보',icon:'🐢',color:'#c3fae8',price:30,desc:'잠깐 동안 천천히 떨어져요'},
- shield:{name:'방패',icon:'🛡️',color:'#bac8ff',price:40,desc:'놓친 별똥별을 3번 막아 줘요'},
- heart:{name:'하트',icon:'❤️',color:'#ffc9c9',price:50,desc:'하트 1개를 채워요'},
- double:{name:'두배',icon:'💰',color:'#fff3bf',price:40,desc:'10초 동안 받는 코인 2배'}};
+ bolt:{name:'번개',en:'thunder',icon:'⚡',color:'#ffe066',price:60,desc:'화면의 별똥별을 모두 부수고 보스도 1번 공격'},
+ ice:{name:'얼음',en:'ice',icon:'❄️',color:'#a5d8ff',price:40,desc:'잠깐 동안 모두 꽁꽁 얼어요'},
+ slow:{name:'느림보',en:'slow',icon:'🐢',color:'#c3fae8',price:30,desc:'잠깐 동안 천천히 떨어져요'},
+ shield:{name:'방패',en:'shield',icon:'🛡️',color:'#bac8ff',price:40,desc:'놓친 별똥별을 3번 막아 줘요'},
+ heart:{name:'하트',en:'heart',icon:'❤️',color:'#ffc9c9',price:50,desc:'하트 1개를 채워요'},
+ double:{name:'두배',en:'double',icon:'💰',color:'#fff3bf',price:40,desc:'10초 동안 받는 코인 2배'}};
 const ITEM_IDS=Object.keys(ITEMS);
+// 게임에서 치는 아이템 이름(영어판은 영어 이름)
+const itName=id=>R&&R.en?ITEMS[id].en:ITEMS[id].name;
 const UPS={
  hp:{name:'튼튼한 몸',icon:'💪',color:'#ffc9c9',max:5,cost:[100,200,320,460,620],eff:l=>`시작 하트 ${5+l}개`},
  calm:{name:'침착한 마음',icon:'😌',color:'#d0ebff',max:5,cost:[120,240,360,500,650],eff:l=>l?`별똥별 속도 -${4*l}%`:'별똥별 속도 그대로'},
@@ -389,7 +432,10 @@ const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()
 function rng(seed){return()=>{seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=s=>(s||'').normalize('NFC').trim().replace(/\s+/g,' ').toLowerCase();
-const nkey=s=>norm(s).replace(/ /g,'');
+// 채점은 정확하게: 맨 앞뒤 빈칸만 빼고 대문자·띄어쓰기·문장부호까지 똑같아야 맞아요
+const nkey=s=>String(s||'').normalize('NFC').replace(/[‘’]/g,"'").trim();
+// 틀린 까닭을 찾을 때만 쓰는 느슨한 비교(대소문자·띄어쓰기·문장부호 빼고)
+const PUNC=/[.,?!'"]/g,loose=s=>nkey(s).toLowerCase().replace(/\s/g,'').replace(PUNC,'');
 const josa=(w,a,b)=>{const c=w.charCodeAt(w.length-1);return(c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28)?a:b;};
 function rrect(c,x,y,w,h,r){r=Math.min(r,w/2,h/2);c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
 function starPath(c,x,y,R1,r1,rot){c.beginPath();for(let i=0;i<10;i++){const q=i%2?r1:R1,a=(rot||0)+i*Math.PI/5-Math.PI/2;c.lineTo(x+Math.cos(a)*q,y+Math.sin(a)*q);}c.closePath();}
@@ -642,7 +688,7 @@ function drawGoldStar(c,x,y,t){c.save();const gl=c.createRadialGradient(x,y,8,x,
 function drawCoin(c,x,y,r){c.fillStyle='#ffc928';c.beginPath();c.arc(x,y,r,0,7);c.fill();c.lineWidth=2.5;c.strokeStyle='#9a6400';c.stroke();c.strokeStyle='rgba(255,255,255,.65)';c.lineWidth=2;c.beginPath();c.arc(x,y,r*.6,0,7);c.stroke();}
 function drawLabel(c,x,y,word,typed,fs,gold,boss){fs=fs||30;c.font=`${fs}px ${FONT}`;c.textBaseline='middle';c.textAlign='left';
  const w=c.measureText(word).width,bw=w+28,bh=fs+16;let bx=Math.max(6,Math.min(W-6-bw,x-bw/2));
- const match=!!typed&&norm(word).startsWith(typed);
+ const match=!!typed&&nkey(word).startsWith(typed);
  const bg=gold?(match?'#fff0a8':'#ffd23f'):boss?(match?'#5c1020':'rgba(120,20,40,.92)'):(match?'rgba(80,36,10,.93)':'rgba(30,26,40,.86)');
  const bd=gold?(match?'#d6336c':'#ffffff'):(match?'#ffd23f':'#ffffff'),tc=gold?'#4a1f2b':'#fff',hc=gold?'#d6336c':'#ffe14d';
  c.fillStyle=bg;rrect(c,bx,y-bh/2,bw,bh,12);c.fill();c.lineWidth=boss?4:3;c.strokeStyle=bd;c.stroke();
@@ -653,22 +699,28 @@ function drawLabel(c,x,y,word,typed,fs,gold,boss){fs=fs||30;c.font=`${fs}px ${FO
 
 /* ================= 게임 진행 ================= */
 let R=null,scr='home';
-function P(){const r=R.round,rr=Math.min(r,26),calm=1-.04*SAVE.up.calm;return{speed:30*(1+.065*(rr-1))*calm,interval:Math.max(.75,2.4-.1*(r-1)),max:Math.min(8,2+Math.floor(r/2))};}
+function P(){const r=R.round,rr=Math.min(r,26),calm=1-.04*SAVE.up.calm;
+ // 영어판: 80% 속도에서 시작해 천천히 빨라지고, 한꺼번에 최대 6개, 간격도 넉넉하게
+ if(R.en)return{speed:24*(1+.05*(rr-1))*calm,interval:Math.max(1.2,3-.08*(r-1)),max:Math.min(6,2+Math.floor(r/3))};
+ return{speed:30*(1+.065*(rr-1))*calm,interval:Math.max(.75,2.4-.1*(r-1)),max:Math.min(8,2+Math.floor(r/2))};}
 const wordsFor=r=>{const n=Math.min(25,8+r);return r%5===0?Math.ceil(n/3):n;};
-const lenF=w=>{const n=[...w.replace(/ /g,'')].length;return n<=3?1:n<=5?.85:n<=8?.72:.6;};
+const lenF=(w,en)=>{const n=[...w.replace(/\s/g,'').replace(PUNC,'')].length;if(en)return n<=4?1:n<=6?.85:n<=9?.72:n<=13?.62:.55;return n<=3?1:n<=5?.85:n<=8?.72:.6;};
 function tierMix(r){if(r<=2)return[[1,1]];if(r<=5)return[[1,.6],[2,.4]];if(r<=9)return[[1,.2],[2,.6],[3,.2]];if(r<=14)return[[2,.5],[3,.5]];return[[2,.3],[3,.5],[4,.2]];}
-function pickTier(r){const mix=tierMix(r);let x=Math.random(),a=0;for(const[t,p]of mix){a+=p;if(x<=a)return t;}return mix[mix.length-1][0];}
-function pickWord(){for(let k=0;k<25;k++){const t=pickTier(R.round);const d=R.deck[t]||(R.deck[t]=[]);if(!d.length)d.push(...shuffle(TIERS[t].slice()));const w=d.pop();if(!R.ents.some(e=>e.state==='alive'&&e.word===w))return w;}return TIERS[1][Math.floor(Math.random()*TIERS[1].length)];}
-function roundHint(r){return r%5===0?'보스 별똥별이 나타나요! 문장을 치고 Enter':{1:'낱말을 치고 Enter나 스페이스바!',3:'조금 더 긴 낱말이 섞여요',6:'긴 낱말이 나오기 시작해요',10:'어려운 낱말이 많아져요',16:'속담 문장도 떨어져요!'}[r]||'';}
+// 영어판: 기본 낱말 → 6학년 교과 낱말 → 두세 낱말 표현 순서 (문장은 보스만)
+function tierMixEn(r){if(r<=5)return[[1,1]];if(r<=10)return[[1,.7],[2,.3]];if(r<=15)return[[1,.3],[2,.6],[3,.1]];if(r<=19)return[[2,.6],[3,.4]];return[[2,.4],[3,.6]];}
+function pickTier(r){const mix=(R.en?tierMixEn:tierMix)(r);let x=Math.random(),a=0;for(const[t,p]of mix){a+=p;if(x<=a)return t;}return mix[mix.length-1][0];}
+function pickWord(){for(let k=0;k<25;k++){const t=pickTier(R.round);const d=R.deck[t]||(R.deck[t]=[]);if(!d.length)d.push(...shuffle(R.T[t].slice()));const w=d.pop();if(!R.ents.some(e=>e.state==='alive'&&e.word===w))return w;}return R.T[1][Math.floor(Math.random()*R.T[1].length)];}
+function roundHint(r){if(R&&R.en)return r%5===0?'보스 별똥별! 대문자·문장부호까지 정확하게':{1:'영어 낱말을 치고 Enter나 스페이스바!',6:'조금 긴 낱말이 섞여요',11:'두세 낱말 표현이 나오기 시작해요',16:'두세 낱말 표현이 많아져요'}[r]||'';
+ return r%5===0?'보스 별똥별! 띄어쓰기까지 정확하게':{1:'낱말을 치고 Enter나 스페이스바!',3:'조금 더 긴 낱말이 섞여요',6:'긴 낱말이 나오기 시작해요',10:'어려운 낱말이 많아져요',16:'속담 문장도 떨어져요! 띄어쓰기 조심'}[r]||'';}
 
-function startRun(bag){const u=SAVE.up;
- R={game:'meteor',round:0,phase:'count',phaseT:3,lastCount:4,maxHearts:5+u.hp,hearts:5+u.hp,shield:u.guard,bag:bag.slice(),bagSize:2+u.bag,
+function startRun(bag,game){const u=SAVE.up;game=READY.some(g=>g.id===game)?game:'meteor';const en=gameLang(game)==='en';
+ R={game,en,T:en?TIERS_EN:TIERS,B:en?BOSS_EN:BOSS_KO,round:0,phase:'count',phaseT:3,lastCount:4,maxHearts:5+u.hp,hearts:5+u.hp,shield:u.guard,bag:bag.slice(),bagSize:2+u.bag,
   ents:[],parts:[],shots:[],bolts:[],boss:null,deck:{},usedProv:new Set(),
   hits:0,misses:0,strokes:0,combo:0,maxCombo:0,active:0,
   coinsHit:0,coinsRound:0,coinsBoss:0,coinsGift:0,
   freezeT:0,slowT:0,doubleT:0,flash:0,flashW:0,shake:0,aim:-Math.PI/2,t:0,
   toSpawn:0,spawned:0,resolved:0,spawnT:0,giftAt:-1,roundT:0,banner:null,paused:false,over:false,overT:0,_eff:null,_hot:null,_prog:null};
- scr='game';hideAll();show('hud',true);inp.value='';updHUD();renderSlots();renderEffects();inp.focus();ac();}
+ scr='game';hideAll();show('hud',true);inp.value='';inp.placeholder=en?'영어로 치고 Enter!':'낱말을 치고 Enter!';inp.lang=en?'en':'ko';inp.setAttribute('aria-label',en?'영어 낱말 입력':'낱말 입력');updHUD();renderSlots();renderEffects();inp.focus();ac();if(en)setTimeout(()=>{if(R&&R.phase==='count')toast('영어로 쳐요! 한/영 키를 확인하세요 ⌨️');},250);}
 function nextRound(){R.round++;R.toSpawn=wordsFor(R.round);R.spawned=0;R.resolved=0;R.spawnT=.6;R.roundT=0;R.phase='banner';R.phaseT=1.8;
  R.banner={t:`${R.round}라운드`,s:roundHint(R.round),t0:R.t};
  R.giftAt=Math.random()<.55+.05*SAVE.up.luck?rand(3,9):-1;
@@ -677,9 +729,9 @@ function roundClear(){const c=5*R.round*(R.doubleT>0?2:1);R.coinsRound+=c;R.phas
  for(const e of R.ents)if(e.kind==='gift'&&e.state==='alive'){e.state='dead';puff(e.x,e.y,'#ffe066',8);}
  SFX.level();updHUD();}
 function spawnMeteor(){const p=P(),word=pickWord();let x=640;for(let k=0;k<14;k++){x=rand(110,1170);if(!R.ents.some(e=>e.state==='alive'&&e.y<280&&Math.abs(e.x-x)<190))break;}const shape=[];for(let i=0;i<9;i++)shape.push(rand(.82,1.1));
- R.ents.push({kind:'m',word,x,y:150,vx:rand(-14,14),spd:p.speed*lenF(word)*rand(.9,1.1),rot:rand(0,6),rs:rand(-1,1),fade:0,shape,r:24,state:'alive'});R.spawned++;}
-function spawnBoss(){const n=R.round/5;const pool=TIERS[4].filter(p=>!R.usedProv.has(p));const ph=shuffle(pool.length>=3?pool:TIERS[4].slice()).slice(0,3);ph.forEach(p=>R.usedProv.add(p));const shape=[];for(let i=0;i<12;i++)shape.push(rand(.88,1.06));
- const x=rand(430,850);R.boss={kind:'boss',phrases:ph,hp:3,word:ph[0],x,bx:x,y:205,vx:0,spd:8*(1+.08*(n-1))*(1-.04*SAVE.up.calm),rot:0,rs:.25,fade:0,shape,r:58,state:'alive',phase:0};R.ents.push(R.boss);}
+ R.ents.push({kind:'m',word,x,y:150,vx:rand(-14,14),spd:p.speed*lenF(word,R.en)*rand(.9,1.1),rot:rand(0,6),rs:rand(-1,1),fade:0,shape,r:24,state:'alive'});R.spawned++;}
+function spawnBoss(){const n=R.round/5,lv=Math.max(1,Math.min(4,Math.round(n))),all=R.B[lv];const pool=all.filter(p=>!R.usedProv.has(p));const ph=shuffle(pool.length>=3?pool:all.slice()).slice(0,3);ph.forEach(p=>R.usedProv.add(p));const shape=[];for(let i=0;i<12;i++)shape.push(rand(.88,1.06));
+ const x=rand(430,850);R.boss={kind:'boss',phrases:ph,hp:3,word:ph[0],x,bx:x,y:205,vx:0,spd:8*(1+.08*(n-1))*(1-.04*SAVE.up.calm)*(R.en?.8:1),rot:0,rs:.25,fade:0,shape,r:58,state:'alive',phase:0};R.ents.push(R.boss);}
 function pickItem(){const pool=ITEM_IDS.filter(id=>!(id==='heart'&&R.hearts>=R.maxHearts));return pool[Math.floor(Math.random()*pool.length)];}
 function spawnGift(){const word=pickWord(),dir=Math.random()<.5?1:-1,y=rand(200,320);R.ents.push({kind:'gift',word,item:Math.random()<.55?pickItem():null,x:dir>0?-40:W+40,y,base:y,vx:dir*rand(80,105),phase:0,state:'alive',spd:0});}
 
@@ -708,11 +760,18 @@ function updEnt(e,dt){const k=e.kind==='gift'?1:(R.freezeT>0?0:(R.slowT>0?.45:1)
  if(e.kind==='boss'){e.phase+=dt*k;e.x=e.bx+Math.sin(e.phase*.6)*60;e.y+=e.spd*dt*k;e.rot+=e.rs*dt*k;if(e.y>=560&&!R.over)bossLand(e);return;}
  e.x+=e.vx*dt*k;if(e.x<70||e.x>1210){e.vx*=-1;e.x=Math.max(70,Math.min(1210,e.x));}e.y+=e.spd*dt*k;e.rot+=e.rs*dt*k;if(e.y>=604&&!R.over)leak(e);}
 
-function submit(raw){if(!R||R.paused||R.over||R.phase==='count')return;const v=norm(raw);inp.value='';if(!v)return;const kv=v.replace(/ /g,'');
- let best=null;for(const e of R.ents){if(e.state!=='alive')continue;if(nkey(e.word)===kv){if(!best||e.y>best.y)best=e;}}
+function submit(raw){if(!R||R.paused||R.over||R.phase==='count')return;const v=nkey(raw);inp.value='';if(!v)return;
+ if(R.en&&HANGUL.test(v)){toast('한/영 키를 눌러 영어로 바꿔요! ⌨️');return;}
+ let best=null;for(const e of R.ents){if(e.state!=='alive')continue;if(nkey(e.word)===v){if(!best||e.y>best.y)best=e;}}
  if(best){hit(best);return;}
- const idx=R.bag.findIndex(id=>ITEMS[id].name===kv);if(idx>=0){useItem(idx);return;}
- miss();}
+ const idx=R.bag.findIndex(id=>itName(id)===v);if(idx>=0){useItem(idx);return;}
+ missHint(v);miss();}
+// 글자는 맞는데 띄어쓰기·대문자·문장부호만 다르면 알려 줘요(틀린 것으로는 세요)
+function missHint(v){const L=loose(v);if(!L)return;
+ const w=R.ents.filter(e=>e.state==='alive').map(e=>e.word).concat(R.bag.map(itName)).find(x=>loose(x)===L);if(!w)return;
+ const a=nkey(w),sp=x=>x.replace(PUNC,'').toLowerCase(),ca=x=>x.replace(/\s/g,'').replace(PUNC,''),pu=x=>x.replace(/\s/g,'').toLowerCase(),parts=[];
+ if(sp(a)!==sp(v))parts.push('띄어쓰기');if(ca(a)!==ca(v))parts.push('대문자·소문자');if(pu(a)!==pu(v))parts.push('문장부호');
+ if(parts.length)toast(`${parts.join(', ')}를 확인해요!`);}
 function laser(x,y){const lx=640,ly=618;R.aim=Math.atan2(y-ly,x-lx);R.shots.push({x1:lx+Math.cos(R.aim)*62,y1:ly+Math.sin(R.aim)*62,x2:x,y2:y,t:.2,max:.2});}
 const hitCoin=()=>(1+Math.floor((R.round-1)/4))*(R.doubleT>0?2:1);
 function hit(e){const st=strokes(e.word);R.hits++;R.strokes+=st;R.combo++;R.maxCombo=Math.max(R.maxCombo,R.combo);laser(e.x,e.y);SFX.shot();
@@ -740,14 +799,14 @@ function popGift(e){e.state='dead';burst(e.x,e.y,['#ff6b9a','#ffd84a','#7ad7ff',
 
 /* ---------- 아이템 ---------- */
 function giveItem(id,x,y){const it=ITEMS[id];SFX.item();
- if(R.bag.length<R.bagSize){R.bag.push(id);const i=R.bag.length-1,sw=R.bagSize>=4?76:94;R.parts.push({kind:'fly',x,y,x0:x,y0:y,x1:(R.bagSize>=4?12:24)+i*sw+40,y1:668,vx:0,vy:0,g:0,life:.7,max:.7,text:it.icon});renderSlots(i);toast(`${it.icon} ${it.name}! '${it.name}'${josa(it.name,'을','를')} 치면 써요`);}
- else{SAVE.inv[id]++;saveGame();toast(`가방이 가득 차서 ${it.name}${josa(it.name,'은','는')} 창고에 넣었어요`);}}
+ if(R.bag.length<R.bagSize){R.bag.push(id);const i=R.bag.length-1,sw=R.bagSize>=4?76:94;R.parts.push({kind:'fly',x,y,x0:x,y0:y,x1:(R.bagSize>=4?12:24)+i*sw+40,y1:668,vx:0,vy:0,g:0,life:.7,max:.7,text:it.icon});renderSlots(i);toast(R.en?`${it.icon} ${it.en}! '${it.en}' 치고 Enter로 써요`:`${it.icon} ${it.name}! '${it.name}'${josa(it.name,'을','를')} 치면 써요`);}
+ else{SAVE.inv[id]++;saveGame();toast(R.en?`가방이 가득 차서 창고에 넣었어요: ${it.en}`:`가방이 가득 차서 ${it.name}${josa(it.name,'은','는')} 창고에 넣었어요`);}}
 function useItem(i){if(!R||R.paused||R.over||R.phase==='count')return;const id=R.bag[i];if(!id)return;if(applyItem(id)===false)return;R.bag.splice(i,1);renderSlots();}
 function boltTo(x,y){const pts=[],sx=x+rand(-60,60);for(let i=0;i<=8;i++){const k=i/8;pts.push([sx+(x-sx)*k+(i&&i<8?rand(-22,22):0),-10+(y+10)*k]);}R.bolts.push({pts,t:.45,max:.45});}
 function applyItem(id){const it=ITEMS[id],mg=SAVE.up.magic;
  if(id==='heart'&&R.hearts>=R.maxHearts){toast('하트가 이미 가득해요');return false;}
  if(id==='bolt'&&!R.ents.some(e=>e.state==='alive'&&e.kind!=='gift')){toast('지금은 부술 별똥별이 없어요');return false;}
- const ay=(R.t-(R.lastAnn||-9)<.9)?(R.annY=(R.annY||300)+72):(R.annY=300);R.lastAnn=R.t;floatText(640,ay,`${it.icon} ${it.name}!`,'#ffffff',60);
+ const ay=(R.t-(R.lastAnn||-9)<.9)?(R.annY=(R.annY||300)+72):(R.annY=300);R.lastAnn=R.t;floatText(640,ay,`${it.icon} ${R.en?it.en:it.name}!`,'#ffffff',60);
  switch(id){
   case 'bolt':{SFX.bolt();R.flashW=.35;let n=0;for(const e of R.ents){if(e.state!=='alive'||e.kind==='gift')continue;boltTo(e.x,e.y);n++;if(e.kind==='boss'){bossHit(e);continue;}const c=hitCoin();R.coinsHit+=c;coinText(e.x,e.y-62,c);pow(e.x,e.y,.9);e.state='dead';R.resolved++;burst(e.x,e.y,['#ffe14d','#ffffff','#7ad7ff'],18,'star');}
    break;}
@@ -825,7 +884,7 @@ function drawGame(){ctx.fillStyle='#1a1840';ctx.fillRect(0,0,W,H);
  ctx.lineCap='round';for(const s of R.shots){const a=s.t/s.max;ctx.strokeStyle=`rgba(127,248,255,${a})`;ctx.lineWidth=7*(.5+a*.5);ctx.beginPath();ctx.moveTo(s.x1,s.y1);ctx.lineTo(s.x2,s.y2);ctx.stroke();ctx.strokeStyle=`rgba(255,255,255,${a})`;ctx.lineWidth=2.5;ctx.stroke();}
  ctx.lineJoin='round';for(const b of R.bolts){const a=b.t/b.max;ctx.beginPath();b.pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.strokeStyle=`rgba(255,215,60,${a})`;ctx.lineWidth=12;ctx.stroke();ctx.strokeStyle=`rgba(255,255,255,${a})`;ctx.lineWidth=4;ctx.stroke();}
  drawParts();
- if(!R.over){const typed=norm(inp.value);for(const e of R.ents){if(e.state!=='alive')continue;
+ if(!R.over){const typed=nkey(inp.value);for(const e of R.ents){if(e.state!=='alive')continue;
   if(e.kind==='boss'){const L=drawLabel(ctx,e.x,e.y-90,e.word,typed,30,false,true);for(let i=0;i<3;i++){ctx.fillStyle=i<e.hp?'#ff3d55':'#4b4b55';ctx.beginPath();ctx.arc(e.x+(i-1)*26,e.y+e.r+22,9,0,7);ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#fff';ctx.stroke();}}
   else{ctx.globalAlpha=e.kind==='gift'?1:e.fade;drawLabel(ctx,e.x,e.y-56,e.word,typed,e.kind==='gift'?28:30,e.kind==='gift');ctx.globalAlpha=1;}}}
  if(R.banner&&(R.phase==='banner'||R.phase==='clear')){const b=R.banner,age=R.t-b.t0,s=age<.25?.5+age/.25*.6:1.1-Math.min(.1,(age-.25)*.4);ctx.save();ctx.translate(640,300);ctx.scale(s,s);ctx.globalAlpha=Math.min(1,age*5);ctx.font=`96px ${FONT}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineJoin='round';ctx.lineWidth=16;ctx.strokeStyle='#3a1a25';ctx.strokeText(b.t,0,0);ctx.fillStyle=R.phase==='clear'?'#ffe14d':'#ffffff';ctx.fillText(b.t,0,0);if(b.s){ctx.font=`34px ${FONT}`;ctx.lineWidth=8;ctx.strokeText(b.s,0,78);ctx.fillStyle='#fff';ctx.fillText(b.s,0,78);}ctx.restore();}
@@ -841,11 +900,11 @@ function updHUD(){if(!R)return;$('hRound').textContent=Math.max(1,R.round);let h
 function updProg(){const t=R.toSpawn||1,done=R.phase==='clear'?t:R.resolved,sig=R.round+'|'+done+'|'+t;if(sig===R._prog)return;R._prog=sig;
  $('hRoundTxt').textContent=R.round?`${R.round}라운드${R.round%5===0?' · 보스':''} (${Math.min(done,t)}/${t})`:'준비';$('hBar').style.width=Math.min(100,done/t*100)+'%';}
 function renderSlots(newIdx){const el=$('slots');el.classList.toggle('s4',R.bagSize>=4);let h='';
- for(let i=0;i<R.bagSize;i++){const id=R.bag[i];h+=id?`<button class="slot ${i===newIdx?'new':''}" data-act="use" data-i="${i}" title="${esc(ITEMS[id].desc)}" style="background:${ITEMS[id].color}"><span class="ic">${ITEMS[id].icon}</span><span class="nm">${ITEMS[id].name}</span></button>`:`<div class="slot empty"><span class="nm">빈 칸</span></div>`;}
+ for(let i=0;i<R.bagSize;i++){const id=R.bag[i];h+=id?`<div class="slot ${i===newIdx?'new':''}" data-act="slot-tip" data-i="${i}" title="${esc(ITEMS[id].desc)}" style="background:${ITEMS[id].color}"><span class="ic">${ITEMS[id].icon}</span><span class="nm">${itName(id)}</span></div>`:`<div class="slot empty"><span class="nm">빈 칸</span></div>`;}
  el.innerHTML=h;R._hot=null;}
-function renderEffects(){const a=[];if(R.freezeT>0)a.push(`❄️ 얼음 ${Math.ceil(R.freezeT)}`);if(R.slowT>0)a.push(`🐢 느림보 ${Math.ceil(R.slowT)}`);if(R.doubleT>0)a.push(`💰 2배 ${Math.ceil(R.doubleT)}`);if(R.shield>0)a.push(`🛡️ 방패 ${R.shield}`);
+function renderEffects(){const a=[],en=R.en;if(R.freezeT>0)a.push(`❄️ ${en?'ice':'얼음'} ${Math.ceil(R.freezeT)}`);if(R.slowT>0)a.push(`🐢 ${en?'slow':'느림보'} ${Math.ceil(R.slowT)}`);if(R.doubleT>0)a.push(`💰 ${en?'double':'2배'} ${Math.ceil(R.doubleT)}`);if(R.shield>0)a.push(`🛡️ ${en?'shield':'방패'} ${R.shield}`);
  const sig=a.join('|');if(sig!==R._eff){R._eff=sig;$('effects').innerHTML=a.map(x=>`<span class="eff">${x}</span>`).join('');}
- const typed=nkey(inp.value),hot=typed?R.bag.findIndex(id=>ITEMS[id].name.startsWith(typed)):-1;if(hot!==R._hot){R._hot=hot;$('slots').querySelectorAll('.slot').forEach((el,i)=>el.classList.toggle('hot',i===hot));}}
+ const typed=nkey(inp.value),hot=typed?R.bag.findIndex(id=>itName(id).startsWith(typed)):-1;if(hot!==R._hot){R._hot=hot;$('slots').querySelectorAll('.slot').forEach((el,i)=>el.classList.toggle('hot',i===hot));}}
 function showCount(t){const el=$('count');el.textContent=t;el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}
 let toastTO=0;function toast(m){const el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(toastTO);toastTO=setTimeout(()=>el.classList.remove('show'),2000);}
 let ttTO=0;function ttoast(m){const el=$('ttoast');el.textContent=m;el.classList.add('show');clearTimeout(ttTO);ttTO=setTimeout(()=>el.classList.remove('show'),2400);}
@@ -877,9 +936,9 @@ function openInfo(){if(!SAVE)return;openPanel('pReg',`<div class="panel wide"><h
  <p class="msg" id="rMsg"></p><button class="gbtn" data-act="info-save">저장하기</button></div>`);setTimeout(()=>{const e=$('rGr');if(e)e.focus();},60);}
 
 /* ---------- 게임 고르기 ---------- */
-function openGames(){openPanel('pGames',`<div class="panel xl"><h2>게임 고르기</h2><p class="sub">게임마다 따로 랭킹이 있고, 모든 게임을 더한 합산 랭킹도 있어요.</p><div class="gcards">${GAMES.map(g=>g.ready?
- `<button class="gcard" data-act="game-pick" data-g="${g.id}"><canvas data-gthumb="${g.id}"></canvas><b>${esc(g.name)}</b><span>${esc(g.desc)}<br>내 최고: ${SAVE.games[g.id].bestRound}라운드</span></button>`:
- `<div class="gcard lock"><div class="lockbox">🔒</div><b>${esc(g.name)}</b><span>${esc(g.desc)}</span></div>`).join('')}</div>
+function openGames(){openPanel('pGames',`<div class="panel xl"><h2>게임 고르기</h2><p class="sub">한글과 영어는 랭킹이 따로 있고, 모두 더한 합산 랭킹도 있어요.</p><div class="gcards">${CARDS.map(cd=>cd.modes?
+ `<div class="gcard"><canvas data-gthumb="${cd.thumb}"></canvas><b>${esc(cd.name)}</b><span>${esc(cd.desc)}</span><div class="gmodes">${cd.modes.map(([id,lb,cls])=>`<button class="gmode ${cls}" data-act="game-pick" data-g="${id}"><b>${lb}</b><small>최고 ${SAVE.games[id].bestRound}라운드</small></button>`).join('')}</div></div>`:
+ `<div class="gcard lock"><div class="lockbox">🔒</div><b>${esc(cd.name)}</b><span>${esc(cd.desc)}</span></div>`).join('')}</div>
  <div class="btnrow"><button class="sbtn inline" data-act="close" data-p="pGames">닫기</button></div></div>`);
  $('pGames').querySelectorAll('canvas[data-gthumb]').forEach(c=>{const S=2,w=300,h=150;c.width=w*S;c.height=h*S;const x=c.getContext('2d');x.setTransform(S,0,0,S,0,0);const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,'#0a1238');g.addColorStop(1,'#4b2d6b');x.fillStyle=g;x.fillRect(0,0,w,h);const r=rng(4);for(let i=0;i<50;i++){x.fillStyle=`rgba(255,255,255,${.3+r()*.6})`;x.fillRect(r()*w,r()*110,1.5,1.5);}x.fillStyle='#2a1f47';x.fillRect(0,128,w,22);NIGHT=true;[['house_r',36],['tree_round',88],['house_b',212],['clock',262]].forEach(([k,px])=>drawObjAt(x,k,px,138,.6));NIGHT=false;
   drawMeteor(x,{x:210,y:58,r:18,rot:.6,vx:-14,spd:40,fade:1,shape:[1,.9,1.05,.88,1,1.08,.92,1,.95]});drawLabel(x,210,22,'은하수','',18);drawGoldStar(x,70,50,0);});}
@@ -887,11 +946,11 @@ function openGames(){openPanel('pGames',`<div class="panel xl"><h2>게임 고르
 /* ---------- 가방 챙기기 ---------- */
 let LOAD=null;
 function openLoad(game){LOAD={game,bag:[],inv:Object.assign({},SAVE.inv)};renderLoad();show('pGames',false);show('pLoad',true);}
-function renderLoad(){const size=2+SAVE.up.bag,u=SAVE.up;let slots='';
- for(let i=0;i<size;i++){const id=LOAD.bag[i];slots+=id?`<button class="slot" data-act="load-rm" data-i="${i}" style="background:${ITEMS[id].color}"><span class="ic">${ITEMS[id].icon}</span><span class="nm">${ITEMS[id].name}</span></button>`:`<div class="slot empty"><span class="nm">빈 칸</span></div>`;}
- const inv=ITEM_IDS.map(id=>`<button class="ichip ${LOAD.inv[id]?'':'zero'}" data-act="load-add" data-it="${id}"><span class="ic" style="background:${ITEMS[id].color}">${ITEMS[id].icon}</span><b>${ITEMS[id].name}</b><span class="cnt">×${LOAD.inv[id]}</span></button>`).join('');
+function renderLoad(){const size=2+SAVE.up.bag,u=SAVE.up,en=gameLang(LOAD.game)==='en',nm=id=>en?ITEMS[id].en:ITEMS[id].name;let slots='';
+ for(let i=0;i<size;i++){const id=LOAD.bag[i];slots+=id?`<button class="slot" data-act="load-rm" data-i="${i}" style="background:${ITEMS[id].color}"><span class="ic">${ITEMS[id].icon}</span><span class="nm">${nm(id)}</span></button>`:`<div class="slot empty"><span class="nm">빈 칸</span></div>`;}
+ const inv=ITEM_IDS.map(id=>`<button class="ichip ${LOAD.inv[id]?'':'zero'}" data-act="load-add" data-it="${id}"><span class="ic" style="background:${ITEMS[id].color}">${ITEMS[id].icon}</span><b>${nm(id)}</b><span class="cnt">×${LOAD.inv[id]}</span></button>`).join('');
  const st=[`하트 ${5+u.hp}개`,u.guard?`시작 방패 ${u.guard}번`:'',u.calm?`별똥별 속도 -${u.calm*4}%`:'',u.luck?`코인 +${u.luck*10}%`:'',u.magic?`마법 +${u.magic}초`:''].filter(Boolean).join(' · ');
- $('pLoad').innerHTML=`<div class="panel wide"><h2>가방 챙기기</h2><p class="sub">아이템을 눌러 가방에 넣어요. 게임에서 아이템 이름을 치고 Enter를 누르거나 칸을 눌러서 써요.<br>안 쓴 아이템은 게임이 끝나면 창고로 돌아와요.</p>
+ $('pLoad').innerHTML=`<div class="panel wide"><h2>가방 챙기기<span class="modetag ${en?'en':''}">${en?'영어':'한글'}</span></h2><p class="sub">아이템을 눌러 가방에 넣어요. 게임에서는 아이템 ${en?'영어 이름':'이름'}을 정확하게 치고 Enter를 눌러야 써요.<br>안 쓴 아이템은 게임이 끝나면 창고로 돌아와요.</p>
  <div class="bagrow">${slots}</div><div class="invgrid">${inv}</div><p class="statline">별지기 Lv.${charLevel()} · ${st}</p>
  <div class="btnrow"><button class="sbtn inline" data-act="load-back">뒤로</button><button class="sbtn inline" data-act="shop-open">상점</button><button class="gbtn inline" data-act="load-go">출발!</button></div></div>`;}
 
@@ -1124,12 +1183,12 @@ async function syncPush(){if(!SYNC||!SAVE)return false;if(pushing){pushAgain=tru
 async function syncPull(){if(!SYNC)return null;try{const r=await tmo(fetch(SYNC_URL+(SYNC_URL.includes('?')?'&':'?')+'action=list&_='+Date.now()),20000);const j=await r.json();
  if(j&&j.ok&&Array.isArray(j.list)){liveMem={t:Date.now(),list:j.list.filter(validEntry)};store.set('taja2_live',liveMem);return liveMem;}}catch(e){}return null;}
 function syncDelete(id){if(!SYNC||!id)return;const body=JSON.stringify({type:'delete',id,sig:hash(SALT+'del'+id)});fetch(SYNC_URL,{method:'POST',body}).catch(()=>fetch(SYNC_URL,{method:'POST',body,mode:'no-cors'}).catch(()=>{}));}
-function entryVal(e,game,m){if(game==='total'){if(m==='r')return READY.reduce((a,gm)=>a+(+((e.g[gm.id]||{}).r)||0),0);const ts=READY.map(gm=>+((e.g[gm.id]||{}).t)||0).filter(x=>x>0);return ts.length?Math.round(ts.reduce((a,b)=>a+b,0)/ts.length):0;}const v=e.g[game]||{};return m==='r'?(+v.r||0):(+v.t||0);}
-function rankTabs(pre,game,m){return `<div class="tabs">${READY.map(g=>`<button class="chip ${game===g.id?'on':''}" data-act="${pre}-game" data-g="${g.id}">${esc(g.name)}</button>`).join('')}<button class="chip ${game==='total'?'on':''}" data-act="${pre}-game" data-g="total">합산</button>
+function entryVal(e,game,m){if(game==='total'){if(m==='r')return READY.reduce((a,gm)=>a+(+((e.g[gm.id]||{}).r)||0),0);return READY.reduce((a,gm)=>a+(+((e.g[gm.id]||{}).t)||0),0);}const v=e.g[game]||{};return m==='r'?(+v.r||0):(+v.t||0);}
+function rankTabs(pre,game,m){return `<div class="tabs">${READY.map(g=>`<button class="chip ${game===g.id?'on':''}" data-act="${pre}-game" data-g="${g.id}">${esc(g.short||g.name)}</button>`).join('')}<button class="chip ${game==='total'?'on':''}" data-act="${pre}-game" data-g="total">합산</button>
  <span style="width:18px"></span><button class="chip sm2 ${m==='r'?'on':''}" data-act="${pre}-metric" data-m="r">최고 라운드</button><button class="chip sm2 ${m==='t'?'on':''}" data-act="${pre}-metric" data-m="t">분당 타수</button></div>`;}
 function rankHTML(list,game,m,meId,showCls){const rows=list.map(e=>({e,v:entryVal(e,game,m),w:game==='total'?0:(+((e.g[game]||{}).w)||0)})).sort((a,b)=>b.v-a.v||b.w-a.w||(+a.e.b||0)-(+b.e.b||0));
  if(!rows.length)return '<p class="empty">아직 기록이 없어요.</p>';
- const head=m==='r'?(game==='total'?'라운드 합계':'최고 라운드'):(game==='total'?'평균 분당 타수':'분당 타수'),unit=m==='r'?'라운드':'타';let rank=0,prev=null;
+ const head=m==='r'?(game==='total'?'라운드 합계':'최고 라운드'):(game==='total'?'분당 타수 합계':'분당 타수'),unit=m==='r'?'라운드':'타';let rank=0,prev=null;
  return `<table class="rank"><thead><tr><th>순위</th>${showCls?'<th>반</th>':''}<th>번호</th><th>이름</th><th>${head}</th><th>별지기</th></tr></thead><tbody>${rows.map((r,i)=>{if(!prev||r.v!==prev.v||r.w!==prev.w)rank=i+1;prev=r;const md=rank<=3&&r.v>0?`<span class="medal m${rank}">${rank}</span>`:rank;
   return `<tr class="${meId&&r.e.i===meId?'me':''}"><td>${md}</td>${showCls?`<td>${+r.e.gr&&+r.e.cl?`${+r.e.gr}-${+r.e.cl}`:'-'}</td>`:''}<td>${esc(r.e.b||'-')}</td><td>${esc(r.e.n)}</td><td>${r.v?r.v+unit:'-'}</td><td>Lv.${esc(r.e.lv||1)}</td></tr>`;}).join('')}</tbody></table>`;}
 let rkG='meteor',rkM='r',rkLoading=false,rkErr=false;
@@ -1211,7 +1270,7 @@ const ACT={
  'load-add'(el){const id=el.dataset.it;if(!LOAD.inv[id]){ttoast('상점에서 살 수 있어요');return;}if(LOAD.bag.length>=2+SAVE.up.bag){ttoast('가방이 가득 찼어요');return;}LOAD.bag.push(id);LOAD.inv[id]--;SFX.tick();renderLoad();},
  'load-rm'(el){const i=+el.dataset.i,id=LOAD.bag[i];if(!id)return;LOAD.bag.splice(i,1);LOAD.inv[id]++;renderLoad();},
  'load-back'(){show('pLoad',false);openGames();},
- 'load-go'(){for(const id of LOAD.bag)SAVE.inv[id]--;saveGame();startRun(LOAD.bag);},
+ 'load-go'(){for(const id of LOAD.bag)SAVE.inv[id]--;saveGame();startRun(LOAD.bag,LOAD.game);},
  'shop-open'(){if(scr==='game'){R=null;scr='home';hideAll();show('home',true);renderProfile();}openShop();},
  'shop-deco'(){openShop('deco');},
  'shop-tab'(el){shopTab=el.dataset.t;renderShop();},
@@ -1248,7 +1307,7 @@ const ACT={
  pause(){if(!R||R.over||R.paused)return;R.paused=true;openPanel('pPause',`<div class="panel"><h2>잠깐 멈춤</h2><p class="sub">${R.round}라운드 · 지금까지 코인 ${runCoins()}</p><button class="gbtn" data-act="resume">계속하기</button><button class="sbtn" data-act="quit">그만하고 코인 받기</button></div>`);inp.blur();},
  resume(){if(!R)return;R.paused=false;show('pPause',false);inp.focus();},
  quit(){show('pPause',false);R.paused=false;finishRun('quit');},
- use(el){useItem(+el.dataset.i);inp.focus();},
+ 'slot-tip'(el){if(!R)return;const id=R.bag[+el.dataset.i];if(id){const nm=itName(id);toast(R.en?`'${nm}' 치고 Enter를 눌러야 써요`:`'${nm}'${josa(nm,'을','를')} 치고 Enter를 눌러야 써요`);}inp.focus();},
  sound(){OPT.sound=!OPT.sound;saveOpt();renderProfile();if(OPT.sound)SFX.tick();},
  full(){try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else{const p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(()=>ttoast('이 화면에서는 전체 화면을 쓸 수 없어요'));}}catch(e){ttoast('이 화면에서는 전체 화면을 쓸 수 없어요');}},
  't-open'(){openTeacher();},
@@ -1295,9 +1354,14 @@ inp.addEventListener('compositionend',()=>{if(pendingEnter){pendingEnter=false;s
 inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(e.isComposing||e.keyCode===229){pendingEnter=true;return;}submit(inp.value);}});
 inp.addEventListener('input',()=>{const v=inp.value;if(!R)return;
  if(v.endsWith(' ')){const t=nkey(v);if(!t){inp.value='';return;}
-  const spaced=R.ents.some(e=>e.state==='alive'&&e.word.includes(' ')),exact=R.ents.some(e=>e.state==='alive'&&nkey(e.word)===t)||R.bag.some(id=>ITEMS[id].name===t);
-  if(exact||!spaced)submit(v);return;}
- if(/[a-z]/i.test(v))toast('한/영 키를 눌러 한글로 바꿔요!');});
+  const alive=R.ents.filter(e=>e.state==='alive'),spaced=alive.some(e=>e.word.includes(' ')),
+   exact=alive.some(e=>nkey(e.word)===t)||R.bag.some(id=>itName(id)===t),longer=alive.some(e=>nkey(e.word).startsWith(t+' '));
+  // 'go'와 'go camping'이 함께 있으면 스페이스바로 끊지 않고 끝까지 치게 해요(Enter를 누르면 'go')
+  if((exact&&!longer)||!spaced)submit(v);return;}
+ if(R.en){if(HANGUL.test(v))toast('한/영 키를 눌러 영어로 바꿔요! ⌨️');}else if(/[a-z]/i.test(v))toast('한/영 키를 눌러 한글로 바꿔요!');});
+// Caps Lock 알림 (대문자까지 정확하게 쳐야 해서)
+function capsCheck(e){if(!e.getModifierState)return;const on=!!e.getModifierState('CapsLock');$('capsNote').classList.toggle('show',on);inp.classList.toggle('caps',on);}
+inp.addEventListener('keydown',capsCheck);inp.addEventListener('keyup',capsCheck);
 inp.addEventListener('animationend',()=>inp.classList.remove('bad'));
 document.addEventListener('keydown',e=>{if(scr!=='game'||!R)return;if(e.key==='Escape'){e.preventDefault();if(R.over)return;R.paused?ACT.resume():ACT.pause();return;}if(!R.paused&&!R.over&&document.activeElement!==inp)inp.focus();});
 // 마을 꾸미기 단축키
