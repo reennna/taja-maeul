@@ -36,8 +36,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .logo2 .l2{font-size:72px;color:#ff5fa8;-webkit-text-stroke:13px var(--ink);letter-spacing:3px}
 .pcard{position:absolute;left:16px;top:14px;width:290px;background:rgba(255,255,255,.94);border:4px solid var(--ink);border-radius:22px;padding:8px 16px 10px;box-shadow:0 5px 0 var(--ink)}
 .pname{font-size:30px;color:#2a2a30;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pmeta{font-size:19px;color:#7b4b58;line-height:1.25}
+.pmeta{font-size:19px;color:#7b4b58;line-height:1.25;white-space:pre-line}
 .pcoin{margin-top:2px;font-size:30px;color:#2a2a30}
+.pskin{position:absolute;right:8px;top:10px;width:72px;height:63px;pointer-events:none}
+.pcard .pname,.pcard .pmeta{margin-right:62px}
+.hreset{position:absolute;right:18px;bottom:122px;font-size:19px;background:rgba(255,255,255,.94);border:3px solid var(--ink);border-radius:999px;padding:3px 14px;box-shadow:0 3px 0 var(--ink)}
 .topbtns{position:absolute;right:18px;top:14px;display:flex;gap:10px}
 .ibtn{width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b0,#ffc928 60%,#e59a00);border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink);display:flex;align-items:center;justify-content:center;position:relative}
 .ibtn svg{width:30px;height:30px;fill:var(--ink)}
@@ -95,6 +98,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .dcard em{position:absolute;left:5px;top:5px;font-style:normal;font-size:13px;color:#fff;background:#4fa3d6;border-radius:6px;padding:0 4px}
 .dcard.tile .sw{display:block;width:64px;height:34px;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);margin:10px 0 14px}
 .dempty{font-size:21px;color:#7b4b58;padding:0 20px}
+/* 우리 반 기념비 */
+.monbar{position:absolute;left:14px;top:150px;width:300px;background:rgba(255,255,255,.94);border:3px solid var(--ink);border-radius:16px;padding:6px 12px 8px;font-size:16px;color:#4a1f2b;line-height:1.35;display:flex;flex-direction:column;gap:1px}
+.monbar b,.monpanel b{font-size:21px;font-weight:normal}
+.monbar small,.monpanel small{font-size:15px;color:#7b4b58}
+.mbar{height:12px;border-radius:999px;background:#e9ecef;border:2px solid var(--ink);margin:3px 0;overflow:hidden}
+.mbar i{display:block;height:100%;background:linear-gradient(90deg,#ffd43b,#ff8cc0)}
+.monpanel{background:#fff;border:3px solid var(--steel);border-radius:16px;padding:8px 16px;max-width:640px;margin:6px auto;display:flex;flex-direction:column;gap:2px;font-size:19px;color:#4a1f2b}
 .grid.g5{grid-template-columns:repeat(5,1fr)}
 
 /* ---------- HUD ---------- */
@@ -225,6 +235,9 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 .buy{margin-top:4px;background:linear-gradient(#ffe36b,#f7b500);border:3px solid var(--ink);border-radius:999px;padding:3px 18px;font-size:23px;box-shadow:0 3px 0 var(--ink)}
 .buy:disabled{filter:grayscale(1);opacity:.55;cursor:default}
 .buy.max{background:#e9ecef}
+.scard .skimg{width:96px;height:84px;border-radius:14px;background:linear-gradient(#22345a,#4a6aa8)}
+.scard.on{border-color:#d6336c;box-shadow:0 0 0 3px #d6336c}
+.skf{width:40px;height:35px;vertical-align:middle;margin-right:4px}
 /* 게임 선택 */
 .gcards{display:flex;gap:16px;justify-content:center;margin:10px 0}
 .gcard{width:330px;border:4px solid var(--ink);border-radius:24px;background:#fff;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 6px 0 var(--ink)}
@@ -260,14 +273,15 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 
   <!-- 홈 -->
   <div id="home" class="screen hidden">
-    <div class="pcard"><div class="pname" id="pName"></div><div class="pmeta" id="pMeta"></div><div class="pcoin"><span class="coin"></span> <b id="pCoins" style="font-weight:normal">0</b></div></div>
+    <div class="pcard"><img class="pskin" id="pSkin" alt=""><div class="pname" id="pName"></div><div class="pmeta" id="pMeta"></div><div class="pcoin"><span class="coin"></span> <b id="pCoins" style="font-weight:normal">0</b></div></div>
     <div class="logo2"><span class="l1">우리 반</span><span class="l2">타자 마을</span></div>
     <div class="topbtns">
       <button class="ibtn" data-act="sound" aria-label="소리"><svg viewBox="0 0 24 24" class="sndIcon"></svg><span class="tip">소리</span></button>
       <button class="ibtn" data-act="full" aria-label="전체 화면"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="#4a1f2b" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tip">전체 화면</span></button>
       <button class="ibtn" data-act="t-open" aria-label="선생님"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="#4a1f2b" stroke-width="2.4"/></svg><span class="tip">선생님</span></button>
     </div>
-    <div class="hometip">섬을 누르면 바로 꾸밀 수 있어요</div>
+    <div class="hometip">섬을 누르면 꾸미기 · 끌어서 둘러보기 · 휠로 크게·작게</div>
+    <button class="hreset hidden" id="hReset" data-act="home-reset">⟲ 처음 모습</button>
     <div class="homebar">
       <button class="playbtn" data-act="play">▶ 게임 시작</button>
       <button class="hb" data-act="shop-open"><span class="mi">🛒</span>상점</button>
@@ -284,6 +298,7 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
     <div class="dzoom"><button data-act="zoom-in" aria-label="크게 보기">＋</button><button data-act="zoom-out" aria-label="작게 보기">－</button><button data-act="zoom-fit" aria-label="섬 전체 보기">⤢</button></div>
     <div class="dpal" id="dPal"><div class="dcats" id="dCats"></div><div class="dstore" id="dStore"></div></div>
     <div class="dact hidden" id="dAct"></div>
+    <div class="monbar hidden" id="monBar"></div>
   </div>
 
   <!-- 게임 HUD -->
@@ -434,12 +449,39 @@ const DECO={
  observatory:{name:'천문대',cat:'build',price:600,s:2,h:94},
  rocket:{name:'로켓',cat:'build',price:800,s:1,h:128},
  castle:{name:'성',cat:'build',price:1000,s:2,h:114}};
+// 우리 반 기념 장식: 상점에서는 팔지 않아요. 우리 반 기념비 단계가 오르면 모습이 바뀌어요(하나만, 새것으로 바뀜).
+DECO.cmemo={name:'우리 반 기념 장식',cat:'deco',price:0,s:1,h:70,special:true};
+
+// 별지기 스킨 (모양만 바뀌어요. 게임 실력에는 영향이 없어요)
+const SKINS={
+ base:{name:'기본 별지기',price:0,desc:'처음부터 함께한 파란 별지기',body:'#6c7ff0',belt:'#3d3a66',dots:'#ffd966',gun:'#cfd8ff',beam:'#7ff8ff',star:'#ffd43b'},
+ straw:{name:'딸기 별지기',price:300,desc:'새콤달콤 빨간 몸에 초록 잎',body:'#ff6b81',belt:'#2f9e44',dots:'#fff3bf',gun:'#ffe3e3',beam:'#ff8fab',star:'#ffd43b',acc:'straw'},
+ mint:{name:'민트 별지기',price:300,desc:'시원한 민트색에 초코칩 콕콕',body:'#63e6be',belt:'#6f4e37',dots:'#ffffff',gun:'#e6fcf5',beam:'#8ce99a',star:'#ffd43b',acc:'mint'},
+ sun:{name:'해바라기 별지기',price:500,desc:'노란 몸에 꽃잎이 활짝',body:'#ffd43b',belt:'#8d5524',dots:'#fff3bf',gun:'#fff9db',beam:'#ffe066',star:'#ff922b',acc:'sun'},
+ cat:{name:'고양이 별지기',price:800,desc:'뾰족 귀와 수염',body:'#ffa94d',belt:'#5c3d2e',dots:'#ffe8cc',gun:'#fff4e6',beam:'#ffc078',star:'#ffd43b',acc:'cat'},
+ peng:{name:'펭귄 별지기',price:800,desc:'까만 몸에 하얀 배, 노란 부리',body:'#343a40',belt:'#1971c2',dots:'#ffd43b',gun:'#e7f5ff',beam:'#74c0fc',star:'#ffd43b',acc:'peng'},
+ astro:{name:'우주비행사 별지기',price:1200,desc:'반짝이는 우주 헬멧',body:'#f1f3f5',belt:'#495057',dots:'#ff6b6b',gun:'#dee2e6',beam:'#b197fc',star:'#ffd43b',acc:'astro'},
+ robot:{name:'로봇 별지기',price:1200,desc:'네모난 몸에 볼트 꾹꾹',body:'#adb5bd',belt:'#343a40',dots:'#69db7c',gun:'#ced4da',beam:'#66d9e8',star:'#ff6b6b',acc:'robot'},
+ dino:{name:'공룡 별지기',price:1500,desc:'초록 몸에 등 가시',body:'#69db7c',belt:'#2b8a3e',dots:'#fff3bf',gun:'#d3f9d8',beam:'#a9e34b',star:'#ffd43b',acc:'dino'},
+ gold:{name:'황금 별지기',price:3000,desc:'온몸이 반짝반짝 금빛',body:'#fcc419',belt:'#b8860b',dots:'#fff9db',gun:'#fff3bf',beam:'#ffe066',star:'#ffffff',acc:'gold'}};
+const SKIN_IDS=Object.keys(SKINS),skinOf=id=>SKINS[id]||SKINS.base;
+const hexRgb=h=>{const n=parseInt(String(h).slice(1),16);return `${n>>16&255},${n>>8&255},${n&255}`;};
+
+// 우리 반 기념비: 반 전체 별가루(맞힌 낱말 + 선생님 별×STAR_DUST)로 7단계까지 자라요.
+// 기준: 25명이 하루 두 판씩, 평균 6라운드(한 판에 약 55낱말 → 반 전체 하루 약 2,750)면 학교 가는 날 20일쯤(한 달)에 7단계.
+// 한 사람이 하루에 보탤 수 있는 별가루는 Apps Script의 DAILY_DUST(200)까지예요.
+const MON_STEPS=[0,2000,7000,15000,25000,38000,55000],STAR_DUST=100;
+const MON_NAMES=['돌 받침 별','꽃 화단','반짝이는 큰 별','분수','별빛 가로등','무지개 아치','황금 별탑'];
+const MON={};let MON_FX_T=-99;
+const monTotal=m=>m?(+m.w||0)+(+m.s||0)*STAR_DUST:0;
+function monStage(m){const v=monTotal(m);let lv=1;for(let k=1;k<MON_STEPS.length;k++)if(v>=MON_STEPS[k])lv=k+1;return lv;}
 // 땅 칠하기 (한 칸 값)
 const GTYPE={grass:{name:'잔디',price:0,col:'#7cc576'},stone:{name:'돌길',price:2,col:'#d9cdb4'},dirt:{name:'흙길',price:1,col:'#d6ac72'},sand:{name:'모래',price:2,col:'#f1dba0'},bloom:{name:'꽃잔디',price:3,col:'#8fd17f'},water:{name:'물',price:3,col:'#4fb0e6'}};
 const GT_IDS=Object.keys(GTYPE);
-const LAND=[10,12,14,16],LAND_COST={12:300,14:600,16:1000};
+const LAND=[10,12,14,16,18,20,22,24],LAND_COST={12:300,14:600,16:1000,18:1500,20:2000,22:3000,24:4000};
 const PLAZA_N=14,PLAZA_MAX=12,plazaReserved=(i,j)=>i===6||i===7||j===6||j===7;
 const HOME_AREA=[30,120,1250,596],EDIT_AREA=[16,90,1264,522];
+const HOME_VIEW_MAX=18; // 홈 화면은 18칸 섬까지만 한눈에 보여요(더 큰 섬은 끌어서 둘러봐요)
 const PIN_H='ac54e995',SALT='taja-maeul-2026';
 const SYNC_URL=String(window.TAJA_SYNC_URL||'').trim(),SYNC=/^https:\/\/\S+$/.test(SYNC_URL);
 
@@ -490,7 +532,7 @@ function fixDeco(s){let d=s.deco;
  for(const k of Object.keys(d.stock)){if(!DECO[k]||!(d.stock[k]>0))delete d.stock[k];else d.stock[k]=Math.floor(d.stock[k]);}}
 function defaultSave(name,no,gr,cl){const games={};for(const g of READY)games[g.id]={bestRound:0,bestWords:0,bestTasu:0,plays:0,words:0};
  return{v:1,id:rid(),name,no,gr:gr||0,cl:cl||0,coins:0,created:Date.now(),inv:{bolt:1,ice:1,slow:0,shield:1,heart:0,double:0},up:{hp:0,calm:0,bag:0,luck:0,magic:0,guard:0},
-  deco:starterDeco(),pz:{},games,stats:{coins:0,plays:0}};}
+  deco:starterDeco(),pz:{},games,stats:{coins:0,plays:0},skin:'base',skins:{base:1},cm:0,cmGot:0};}
 function fixSave(s){if(!s||typeof s!=='object'||!s.id)return null;const d=defaultSave(s.name||'',s.no||0,s.gr,s.cl);
  for(const k in d)if(s[k]==null&&k!=='deco')s[k]=d[k];
  for(const k of ITEM_IDS)if(typeof s.inv[k]!=='number')s.inv[k]=0;
@@ -499,6 +541,8 @@ function fixSave(s){if(!s||typeof s!=='object'||!s.id)return null;const d=defaul
  if(!s.pz||typeof s.pz!=='object')s.pz={};
  s.gr=+s.gr||0;s.cl=+s.cl||0;s.no=+s.no||0;
  for(const g of READY)if(!s.games[g.id])s.games[g.id]=d.games[g.id];
+ if(!s.skins||typeof s.skins!=='object')s.skins={base:1};s.skins.base=1;if(!SKINS[s.skin]||!s.skins[s.skin])s.skin='base';
+ s.cm=Math.max(0,Math.min(7,+s.cm||0));s.cmGot=s.cmGot?1:0;
  if(!s.stats)s.stats=d.stats;return s;}
 let SAVE=fixSave(store.get(SKEY,null));
 function saveGame(){if(SAVE&&!store.set(SKEY,SAVE))ttoast('저장할 수 없는 화면이라 창을 닫으면 기록이 사라져요');}
@@ -643,11 +687,40 @@ const DRAW={
   const tower=p=>{cyl(c,p[0],p[1],13,64,'#ced4da');fwin(c,[p[0]-5,p[1]],[p[0]+5,p[1]],0,1,30,10);cone(c,p[0],p[1]-64,16,28,'#7c3aed');stick(c,p[0],p[1]-92,2,12,'#495057');poly(c,[[p[0]+1,p[1]-104],[p[0]+13,p[1]-100],[p[0]+1,p[1]-96]],'#ffd43b');};
   tower(b.L);tower(b.Rt);tower(b.Bo);}
 };
-function drawMonument(c,i,j,label,t){isoBox(c,i,j,2,2,14,'#ced4da',.3);const[x,y]=IP(i+1,j+1);cyl(c,x,y-14,9,40,'#e9ecef');starPath(c,x,y-76,24,11,Math.sin(t*1.5)*.15);c.fillStyle='#ffd43b';c.fill();c.lineWidth=2.5;c.strokeStyle=INK2;c.stroke();
- c.font=`17px ${FONT}`;const w=c.measureText(label).width+26;rrect(c,x-w/2,y-6,w,26,9);c.fillStyle='#ff5fa8';c.fill();c.lineWidth=2;c.strokeStyle=INK2;c.stroke();txt(c,label,x,y+7,17,'#fff');}
+function drawMonument(c,i,j,label,t,lv){lv=Math.max(1,Math.min(7,lv||1));const gold=lv>=7,[x,y]=IP(i+1,j+1);
+ const bx=isoBox(c,i,j,2,2,14,gold?'#ffd43b':lv>=4?'#d0ebff':'#ced4da',.02),top=y-14,tp=bx.top,inner=(p,k)=>[x+(p[0]-x)*k,top+(p[1]-top)*k];
+ if(lv>=4){poly(c,tp.map(p=>inner(p,.8)),gold?'#ffe066':'#4dabf7',true);c.lineWidth=2;for(let q=0;q<2;q++){const ph=(t*.5+q*.5)%1,r=10+ph*30;c.strokeStyle=`rgba(255,255,255,${(1-ph)*.8})`;c.beginPath();c.ellipse(x,top,r,r*.5,0,0,7);c.stroke();}}
+ if(lv>=2){const cols=['#ff6b9a','#ffd43b','#ffffff','#c79bff','#ff922b'];let q=0;for(let e=0;e<4;e++){const a=tp[e],b=tp[(e+1)%4];for(let k=0;k<4;k++){const p=inner([a[0]+(b[0]-a[0])*(k+.5)/4,a[1]+(b[1]-a[1])*(k+.5)/4],.92);circ(c,p[0],p[1]-3,3.6,cols[q++%5],true);}}}
+ if(lv>=6){const RB=['#ff6b6b','#ffa94d','#ffd43b','#69db7c','#4dabf7','#5c7cfa','#b197fc'];c.lineWidth=4;RB.forEach((col,k)=>{c.strokeStyle=col;c.beginPath();c.arc(x,top+6,62-k*3.6,Math.PI,0);c.stroke();});}
+ const ph=gold?66:lv>=5?56:lv>=3?48:40,pr=lv>=5?10:9;cyl(c,x,top,pr,ph,gold?'#ffd43b':'#e9ecef');
+ if(lv>=5&&!gold){c.fillStyle='#ffd43b';c.fillRect(x-pr,top-ph*.55-3,pr*2,6);c.lineWidth=1.5;c.strokeStyle=INK2;c.strokeRect(x-pr,top-ph*.55-3,pr*2,6);}
+ const sr=gold?36:lv>=3?30:24,sy=top-ph-sr+4;
+ if(gold){c.save();c.translate(x,sy);c.rotate(t*.3);c.fillStyle='rgba(255,224,102,.35)';for(let k=0;k<12;k++){c.rotate(Math.PI/6);c.beginPath();c.moveTo(0,0);c.lineTo(-6,-sr*2.2);c.lineTo(6,-sr*2.2);c.closePath();c.fill();}c.restore();}
+ starPath(c,x,sy,sr,sr*.46,Math.sin(t*1.5)*.15);c.fillStyle=gold?'#fff3bf':'#ffd43b';c.fill();c.lineWidth=2.5;c.strokeStyle=INK2;c.stroke();
+ if(lv>=3)for(let k=0;k<5;k++){const a=k*1.26+t*.8,rr=sr+16+6*Math.sin(t*2+k),al=.5+.5*Math.sin(t*3+k*1.7);c.fillStyle=`rgba(255,255,255,${al})`;starPath(c,x+Math.cos(a)*rr,sy+Math.sin(a)*rr*.8,5,2,0);c.fill();}
+ if(gold)fireworks(c,x,sy-70,t);
+ if(ANIM_T-MON_FX_T<3)celebrate(c,x,sy,ANIM_T-MON_FX_T);
+ c.font=`17px ${FONT}`;const w=c.measureText(label).width+26;rrect(c,x-w/2,y-6,w,26,9);c.fillStyle=gold?'#e67700':'#ff5fa8';c.fill();c.lineWidth=2;c.strokeStyle=INK2;c.stroke();txt(c,label,x,y+7,17,'#fff');}
+function fireworks(c,x,y,t){const cols=['#ff6b9a','#ffd43b','#74c0fc'];for(let b=0;b<3;b++){const ph=(t*.45+b/3)%1;if(ph>.75)continue;const bx=x+(b-1)*70,by=y-12*b,r=ph*60;c.globalAlpha=1-ph/.75;c.fillStyle=cols[b];for(let k=0;k<10;k++){const a=k*Math.PI/5;c.beginPath();c.arc(bx+Math.cos(a)*r,by+Math.sin(a)*r,3,0,7);c.fill();}c.globalAlpha=1;}}
+function celebrate(c,x,y,d){const cols=['#ff6b9a','#ffd43b','#74c0fc','#69db7c','#b197fc'];c.globalAlpha=Math.max(0,1-d/3);for(let k=0;k<24;k++){const a=k*.26+.3,sp=60+(k%5)*18;c.fillStyle=cols[k%5];c.fillRect(x+Math.cos(a)*sp*d-3,y+Math.sin(a)*sp*d*.8+40*d*d-3,6,6);}c.globalAlpha=1;}
+// 내 섬에 놓는 '우리 반 기념 장식' (우리 반 기념비 단계에 따라 모습이 바뀌어요)
+DRAW.cmemo=function(c,i,j,s,t){t=t||0;const lv=Math.max(1,Math.min(7,(SAVE&&SAVE.cm)||1)),gold=lv>=7,[x,y]=IP(i+.5,j+.5);shadowE(c,x,y,20);
+ isoBox(c,i+.14,j+.14,.72,.72,8,gold?'#ffd43b':lv>=4?'#d0ebff':'#ced4da');const top=y-8;
+ if(lv>=4)ell(c,x,top,13,6.5,gold?'#ffe066':'#4dabf7');
+ if(lv>=2)[[-15,0],[15,0],[0,-7],[0,7],[-8,-4],[8,4]].forEach(([a,b],q)=>circ(c,x+a,top+b-1,2.6,['#ff6b9a','#ffd43b','#ffffff','#c79bff','#ff922b','#ff6b9a'][q],true));
+ if(lv>=6){const RB=['#ff6b6b','#ffd43b','#69db7c','#4dabf7','#b197fc'];c.lineWidth=2.4;RB.forEach((col,k)=>{c.strokeStyle=col;c.beginPath();c.arc(x,top+2,24-k*2.2,Math.PI,0);c.stroke();});}
+ const ph=gold?32:lv>=5?28:lv>=3?24:20;cyl(c,x,top,4.5,ph,gold?'#ffd43b':'#e9ecef');
+ if(lv>=5&&!gold){c.fillStyle='#ffd43b';c.fillRect(x-4.5,top-ph*.55-2,9,4);}
+ const sr=gold?15:lv>=3?13:11,sy=top-ph-sr+3;
+ if(gold){c.save();c.translate(x,sy);c.rotate(t*.3);c.fillStyle='rgba(255,224,102,.4)';for(let k=0;k<8;k++){c.rotate(Math.PI/4);c.beginPath();c.moveTo(0,0);c.lineTo(-3,-sr*2);c.lineTo(3,-sr*2);c.closePath();c.fill();}c.restore();}
+ starPath(c,x,sy,sr,sr*.46,Math.sin(t*1.5)*.15);c.fillStyle=gold?'#fff3bf':'#ffd43b';c.fill();c.lineWidth=2;c.strokeStyle=INK2;c.stroke();
+ if(lv>=3){c.fillStyle=`rgba(255,255,255,${.5+.5*Math.sin(t*3)})`;starPath(c,x+sr+5,sy-6,3.5,1.4,0);c.fill();starPath(c,x-sr-4,sy+4,3,1.2,0);c.fill();}};
+// 기념비 5단계부터 가운데 길에 서는 별빛 가로등
+DRAW.mlamp=function(c,i,j,s,t){t=t||0;const[x,y]=IP(i+.5,j+.5);shadowE(c,x,y,10);stick(c,x,y,5,46,'#495057');
+ c.fillStyle=`rgba(255,224,102,${.25+.15*Math.sin(t*3+i)})`;c.beginPath();c.arc(x,y-52,20,0,7);c.fill();c.fillStyle='#ffe066';starPath(c,x,y-52,10,4.5,t*.5);c.fill();c.lineWidth=2;c.strokeStyle=INK2;c.stroke();};
 function objSize(o){return o.k==='monument'?2:(DECO[o.k]?DECO[o.k].s:1);}
 function drawObj(c,o,t){if(o.k!=='monument'&&!DRAW[o.k])return;const s=objSize(o);c.save();FLIPPED=!!o.f;if(o.f){const cx=(o.i-o.j)*IW;c.translate(cx,0);c.scale(-1,1);c.translate(-cx,0);}
- try{if(o.k==='monument')drawMonument(c,o.i,o.j,o.label||'',t);else DRAW[o.k](c,o.i,o.j,s,t);}finally{c.restore();FLIPPED=false;}}
+ try{if(o.k==='monument')drawMonument(c,o.i,o.j,o.label||'',t,o.lv||1);else DRAW[o.k](c,o.i,o.j,s,t);}finally{c.restore();FLIPPED=false;}}
 const depthCmp=(a,b)=>(a.i+a.j+objSize(a))-(b.i+b.j+objSize(b))||a.i-b.i;
 function hash2(i,j){let h=Math.imul(i+1,73856093)^Math.imul(j+7,19349663);h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296;}
 function drawTile(c,i,j,type,t){const T=IP(i,j),R=IP(i+1,j),B=IP(i+1,j+1),L=IP(i,j+1),g=GTYPE[type]||GTYPE.grass;let col=g.col;if(type==='grass'&&(i+j)%2)col='#76bf70';else if(type==='bloom'&&(i+j)%2)col='#89cb79';
@@ -665,12 +738,15 @@ function drawIsland(c,n,groundAt,objs,opt){opt=opt||{};const t=ANIM_T;
   c.fillStyle='rgba(20,90,140,.22)';c.beginPath();[IP(-.25,-.25),IP(n+.25,-.25),IP(n+.25,n+.25),IP(-.25,n+.25)].forEach((p,q)=>q?c.lineTo(p[0],p[1]+30):c.moveTo(p[0],p[1]+30));c.closePath();c.fill();}
  for(let i=0;i<n;i++){const a=IP(i,n),b=IP(i+1,n);poly(c,[a,b,[b[0],b[1]+22],[a[0],a[1]+22]],'#b07a43');}
  for(let j=0;j<n;j++){const a=IP(n,j),b=IP(n,j+1);poly(c,[a,b,[b[0],b[1]+22],[a[0],a[1]+22]],'#8d5f32');}
- for(let i=0;i<n;i++)for(let j=0;j<n;j++)drawTile(c,i,j,groundAt(i,j),t);
+ const V=opt.view;
+ for(let i=0;i<n;i++)for(let j=0;j<n;j++){if(V){const tx=(i-j)*IW,ty=(i+j)*IH;if(tx+IW<V.x0||tx-IW>V.x1||ty+TLH<V.y0||ty>V.y1)continue;}drawTile(c,i,j,groundAt(i,j),t);}
  if(opt.grid){c.strokeStyle='rgba(255,255,255,.3)';c.lineWidth=1;c.beginPath();for(let k=0;k<=n;k++){let a=IP(k,0),b=IP(k,n);c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);a=IP(0,k);b=IP(n,k);c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);}c.stroke();}
  if(opt.under)opt.under(c);
  const list=objs.filter(o=>!o.hidden).sort(depthCmp);
- for(const o of list)drawObj(c,o,t);
+ for(const o of list){if(V){const z=sizeOf(o),d=o.i-o.j,y1=(o.i+o.j+2*z)*IH;if((d+z)*IW<V.x0||(d-z)*IW>V.x1||y1<V.y0||y1-2*z*IH-260>V.y1)continue;}drawObj(c,o,t);}
  if(opt.over)opt.over(c);}
+// 화면에 보이는 곳(세상 좌표). 섬이 클 때 화면 밖 땅은 그리지 않아요.
+const viewRect=(x,y,z)=>({x0:(-40-x)/z,x1:(W+40-x)/z,y0:(-40-y)/z,y1:(H+40-y)/z});
 // 물체 하나를 (x,y) 바닥 가운데에 세워 그리기
 function drawObjAt(c,k,x,y,sc,f){const s=DECO[k]?DECO[k].s:2;c.save();c.translate(x,y-s*IH*sc);c.scale(sc,sc);drawObj(c,{k,i:0,j:0,f:f?1:0},ANIM_T);c.restore();}
 // 별똥별 방어전 아래쪽에 보이는 내 마을 (키 큰 장식부터, 비싼 순서로)
@@ -681,16 +757,32 @@ function fillThumbs(root){root.querySelectorAll('canvas[data-thumb]').forEach(el
  const s=d.s,sc=Math.min((w-6)/(s*TLW),(w-6)/(s*IH+d.h+6));x.save();x.translate(w/2,w-3-s*TLH*sc);x.scale(sc,sc);for(let a=0;a<s;a++)for(let b=0;b<s;b++)drawTile(x,a,b,'grass',0);drawObj(x,{k,i:0,j:0},ANIM_T);x.restore();});}
 function camFit(n,area){const minX=-n*IW,maxX=n*IW,minY=-150,maxY=n*TLH+30,z=Math.max(.3,Math.min(2.4,Math.min((area[2]-area[0])/(maxX-minX),(area[3]-area[1])/(maxY-minY))));return{z,x:(area[0]+area[2])/2-(minX+maxX)/2*z,y:(area[1]+area[3])/2-(minY+maxY)/2*z};}
 /* ================= 별지기·별똥별 그리기 ================= */
-function drawGuardian(c,x,y,aim,t){c.save();c.translate(x,y);c.lineWidth=3;c.strokeStyle=INK2;c.lineJoin='round';
- c.save();c.rotate(aim);c.fillStyle='#cfd8ff';rrect(c,6,-9,58,18,7);c.fill();c.stroke();c.fillStyle='#7ff8ff';c.fillRect(55,-6,7,12);c.restore();
- c.beginPath();c.moveTo(-24,-18);c.quadraticCurveTo(-36,-36,-30,-50);c.stroke();c.fillStyle='#ffd43b';starPath(c,-30,-54,10,4.5,Math.sin(t*2)*.3);c.fill();c.stroke();
- c.fillStyle='#6c7ff0';c.beginPath();c.arc(0,10,42,Math.PI,0);c.closePath();c.fill();c.stroke();
+function drawGuardian(c,x,y,aim,t,sk){const S=skinOf(sk),A=S.acc;c.save();c.translate(x,y);c.lineWidth=3;c.strokeStyle=INK2;c.lineJoin='round';
+ c.save();c.rotate(aim);c.fillStyle=S.gun;rrect(c,6,-9,58,18,7);c.fill();c.stroke();c.fillStyle=S.beam;c.fillRect(55,-6,7,12);c.restore();
+ if(A==='sun')for(let k=0;k<9;k++){const q=Math.PI+k*Math.PI/8;c.save();c.translate(Math.cos(q)*45,10+Math.sin(q)*45);c.rotate(q);c.fillStyle='#ff922b';c.beginPath();c.ellipse(5,0,13,7,0,0,7);c.fill();c.stroke();c.restore();}
+ c.beginPath();c.moveTo(-24,-18);c.quadraticCurveTo(-36,-36,-30,-50);c.stroke();
+ if(A==='robot'){c.fillStyle=S.star;c.beginPath();c.arc(-30,-54,7,0,7);c.fill();c.stroke();}else{c.fillStyle=S.star;starPath(c,-30,-54,10,4.5,Math.sin(t*2)*.3);c.fill();c.stroke();}
+ if(A==='cat')[[-36,-14,-34,-44,-12,-30],[36,-14,34,-44,12,-30]].forEach(([p,q,r,u,v,w])=>{c.fillStyle=S.body;c.beginPath();c.moveTo(p,q);c.lineTo(r,u);c.lineTo(v,w);c.closePath();c.fill();c.stroke();c.fillStyle='#ffc9c9';c.beginPath();c.moveTo(p*.85+v*.15,q*.8+w*.2);c.lineTo(r*.95+p*.05,u*.85+q*.15);c.lineTo(v*.85+p*.15,w*.9+q*.1);c.closePath();c.fill();});
+ if(A==='dino')for(let k=0;k<5;k++){const q=Math.PI*1.14+k*Math.PI*.18;c.save();c.translate(Math.cos(q)*42,10+Math.sin(q)*42);c.rotate(q+Math.PI/2);c.fillStyle='#2f9e44';c.beginPath();c.moveTo(-8,2);c.lineTo(0,-14);c.lineTo(8,2);c.closePath();c.fill();c.stroke();c.restore();}
+ let bf=S.body;if(A==='gold'){const g=c.createLinearGradient(-42,-32,42,10);g.addColorStop(0,'#fff3bf');g.addColorStop(.45,'#fcc419');g.addColorStop(1,'#e67700');bf=g;}
+ c.fillStyle=bf;if(A==='robot')rrect(c,-40,-30,80,42,10);else{c.beginPath();c.arc(0,10,42,Math.PI,0);c.closePath();}c.fill();c.stroke();
+ if(A==='straw'){c.fillStyle='#fff3bf';[[-28,-4],[-16,-21],[0,-26],[16,-21],[28,-4],[-31,5],[31,5],[-6,-13],[8,-13]].forEach(([p,q])=>{c.beginPath();c.ellipse(p,q,2.2,3.2,0,0,7);c.fill();});c.fillStyle='#2f9e44';[-1,0,1].forEach(k=>{c.save();c.translate(k*10,-30);c.rotate(k*.55);c.beginPath();c.ellipse(0,-6,5,9,0,0,7);c.fill();c.stroke();c.restore();});}
+ if(A==='mint'){c.fillStyle='#5c3d2e';[[-26,-6],[-12,-23],[7,-26],[23,-14],[31,2],[-33,4]].forEach(([p,q],k)=>{c.save();c.translate(p,q);c.rotate(k);c.fillRect(-3.5,-2.2,7,4.4);c.restore();});}
+ if(A==='peng'){c.fillStyle='#ffffff';c.beginPath();c.ellipse(0,10,30,36,0,Math.PI,0);c.closePath();c.fill();}
+ if(A==='robot'){c.fillStyle='#868e96';[[-32,-22],[32,-22],[-32,4],[32,4]].forEach(([p,q])=>{c.beginPath();c.arc(p,q,3.5,0,7);c.fill();});}
  const ex=Math.cos(aim)*3,ey=Math.sin(aim)*2.5,blink=Math.sin(t*1.7)>.985;
  [-14,14].forEach(dx=>{if(blink){c.beginPath();c.moveTo(dx-7,-6);c.lineTo(dx+7,-6);c.stroke();return;}c.fillStyle='#fff';c.beginPath();c.ellipse(dx,-6,8,10,0,0,7);c.fill();c.stroke();c.fillStyle=INK2;c.beginPath();c.arc(dx+ex,-6+ey,4,0,7);c.fill();});
- c.fillStyle='rgba(255,140,170,.6)';[-27,27].forEach(dx=>{c.beginPath();c.arc(dx,4,5,0,7);c.fill();});
- c.lineWidth=2.5;c.beginPath();c.arc(0,3,6,.2,Math.PI-.2);c.stroke();c.lineWidth=3;
- c.fillStyle='#3d3a66';rrect(c,-58,10,116,22,8);c.fill();c.stroke();c.fillStyle='#ffd966';[-38,-14,14,38].forEach(px=>{c.beginPath();c.arc(px,21,4,0,7);c.fill();});
+ if(A!=='robot'&&A!=='peng'){c.fillStyle='rgba(255,140,170,.6)';[-27,27].forEach(dx=>{c.beginPath();c.arc(dx,4,5,0,7);c.fill();});}
+ if(A==='peng'){c.fillStyle='#ffa94d';c.beginPath();c.moveTo(-7,3);c.lineTo(7,3);c.lineTo(0,12);c.closePath();c.fill();c.lineWidth=2;c.stroke();c.lineWidth=3;}
+ else if(A==='robot'){c.fillStyle='#495057';rrect(c,-10,3,20,7,2);c.fill();c.lineWidth=2;c.stroke();c.lineWidth=3;}
+ else{c.lineWidth=2.5;c.beginPath();c.arc(0,3,6,.2,Math.PI-.2);c.stroke();c.lineWidth=3;}
+ if(A==='cat'){c.fillStyle='#e8590c';c.beginPath();c.moveTo(-3.5,0);c.lineTo(3.5,0);c.lineTo(0,3.5);c.closePath();c.fill();c.lineWidth=1.8;[[-22,0,-38,-3],[-22,4,-38,6],[22,0,38,-3],[22,4,38,6]].forEach(([p,q,r,u])=>{c.beginPath();c.moveTo(p,q);c.lineTo(r,u);c.stroke();});c.lineWidth=3;}
+ if(A==='astro'){c.fillStyle='rgba(170,215,255,.28)';c.beginPath();c.arc(0,6,50,Math.PI*1.03,-.03);c.closePath();c.fill();c.strokeStyle='rgba(255,255,255,.95)';c.lineWidth=3.5;c.stroke();c.strokeStyle='rgba(255,255,255,.8)';c.lineWidth=4;c.beginPath();c.arc(0,6,40,Math.PI*1.18,Math.PI*1.42);c.stroke();c.strokeStyle=INK2;c.lineWidth=3;}
+ if(A==='gold')for(let k=0;k<4;k++){const q=k*1.6+t*.7,al=.45+.45*Math.sin(t*3+k*1.9);c.fillStyle=`rgba(255,255,255,${al})`;starPath(c,Math.cos(q)*52,-8+Math.sin(q)*30,6,2.2,0);c.fill();}
+ c.fillStyle=S.belt;rrect(c,-58,10,116,22,8);c.fill();c.stroke();c.fillStyle=S.dots;[-38,-14,14,38].forEach(px=>{c.beginPath();c.arc(px,21,4,0,7);c.fill();});
  c.restore();}
+// 랭킹·상점·홈 화면에 쓰는 별지기 얼굴 그림 (스킨마다 한 번만 그려요)
+const FACE={};function skinFace(id){id=SKINS[id]?id:'base';if(FACE[id])return FACE[id];const v=document.createElement('canvas');v.width=128;v.height=112;drawGuardian(v.getContext('2d'),64,74,-Math.PI/2,.4,id);return FACE[id]=v.toDataURL();}
 function drawMeteor(c,e){const r=e.r||24,fade=e.fade==null?1:e.fade;c.save();c.globalAlpha=fade;c.translate(e.x,e.y);const sc=.6+.4*fade;c.scale(sc,sc);
  const ang=Math.atan2(-e.spd,-(e.vx||0));c.save();c.rotate(ang);const len=r*5,g=c.createLinearGradient(0,0,len,0);g.addColorStop(0,'rgba(255,214,102,.95)');g.addColorStop(.35,'rgba(255,140,50,.6)');g.addColorStop(1,'rgba(255,90,60,0)');c.fillStyle=g;c.beginPath();c.moveTo(0,-r);c.quadraticCurveTo(len*.45,-r*.55,len,0);c.quadraticCurveTo(len*.45,r*.55,0,r);c.closePath();c.fill();c.restore();
  const gl=c.createRadialGradient(0,0,r*.6,0,0,r*2);gl.addColorStop(0,e.kind==='boss'?'rgba(255,90,90,.5)':'rgba(255,170,80,.45)');gl.addColorStop(1,'rgba(255,170,80,0)');c.fillStyle=gl;c.beginPath();c.arc(0,0,r*2,0,7);c.fill();
@@ -871,13 +963,30 @@ const WAVES=[];{const r=rng(9);for(let i=0;i<46;i++)WAVES.push({x:r()*W,y:262+r(
 function drawSky(t){ctx.drawImage(BG.sea,0,0,W,H);
  for(const cl of CLOUDS){const x=((cl.x+t*cl.v)%1560)-160;cloud(ctx,x,40+(cl.y-90)*.55,cl.s*.75);}
  ctx.lineCap='round';ctx.lineWidth=2.4;for(const w of WAVES){const a=.25+.3*Math.sin(t*1.2+w.p),x=(w.x+t*6*w.s)%(W+60)-30;ctx.strokeStyle=`rgba(255,255,255,${a})`;ctx.beginPath();ctx.moveTo(x-10*w.s,w.y);ctx.quadraticCurveTo(x,w.y-5*w.s,x+10*w.s,w.y);ctx.stroke();}}
-let STARTER=null,HOMECAM={};
-function homeCam(n){return HOMECAM[n]||(HOMECAM[n]=camFit(n,HOME_AREA));}
-function drawHome(t){drawSky(t);const d=SAVE?SAVE.deco:(STARTER||(STARTER=starterDeco())),cam=homeCam(d.n);
- ctx.save();ctx.translate(cam.x,cam.y+Math.sin(t*.8)*3);ctx.scale(cam.z,cam.z);drawIsland(ctx,d.n,(i,j)=>d.ground[i+','+j]||'grass',d.objs,{});ctx.restore();}
+// ---------- 홈 화면 섬: 18칸 섬까지만 한눈에, 끌어서 둘러보기, 휠·터치패드로 크게·작게, 누르면 꾸미기 ----------
+let STARTER=null,HV=null,hDrag=null;const HPTRS=new Map(),HOMEDEF={};
+const homeMinZ=()=>camFit(HOME_VIEW_MAX,HOME_AREA).z;
+function homeDefault(n){if(HOMEDEF[n])return Object.assign({},HOMEDEF[n]);const z=camFit(Math.min(n,HOME_VIEW_MAX),HOME_AREA).z,cx=(HOME_AREA[0]+HOME_AREA[2])/2,cy=(HOME_AREA[1]+HOME_AREA[3])/2;
+ HOMEDEF[n]={n,z,x:cx,y:cy-((-150+n*TLH+30)/2)*z,moved:false};return Object.assign({},HOMEDEF[n]);}
+function homeView(n){if(!HV||HV.n!==n)HV=homeDefault(n);return HV;}
+function homeClamp(){const n=HV.n,z=HV.z,L=HV.x-n*IW*z,Rr=HV.x+n*IW*z,T=HV.y-130*z,B=HV.y+(n*TLH+22)*z;
+ if(Rr<260)HV.x+=260-Rr;if(L>1020)HV.x-=L-1020;if(B<260)HV.y+=260-B;if(T>470)HV.y-=T-470;}
+function homeZoom(f,p){if(!SAVE)return;homeView(SAVE.deco.n);const z0=HV.z,z=Math.max(homeMinZ(),Math.min(2.4,z0*f)),k=z/z0;HV.x=p.x-(p.x-HV.x)*k;HV.y=p.y-(p.y-HV.y)*k;HV.z=z;HV.moved=true;homeClamp();homeResetBtn();}
+function homeResetBtn(){const b=$('hReset');if(b)b.classList.toggle('hidden',!(HV&&HV.moved));}
+function homeDown(e){const p=toStage(e);homeView(SAVE.deco.n);HPTRS.set(e.pointerId,p);try{cv.setPointerCapture(e.pointerId);}catch(_){}
+ if(HPTRS.size>=2){const[a,b]=[...HPTRS.values()];hDrag={type:'pinch',d0:Math.max(10,Math.hypot(a.x-b.x,a.y-b.y)),m0:{x:(a.x+b.x)/2,y:(a.y+b.y)/2},v0:Object.assign({},HV)};return;}
+ hDrag={type:'pan',sx:p.x,sy:p.y,x0:HV.x,y0:HV.y,moved:false};}
+function homeMove(e){if(!HV)return;const p=toStage(e);if(HPTRS.has(e.pointerId))HPTRS.set(e.pointerId,p);const d=hDrag;if(!d)return;
+ if(d.type==='pinch'){if(HPTRS.size<2)return;const[a,b]=[...HPTRS.values()],m={x:(a.x+b.x)/2,y:(a.y+b.y)/2};Object.assign(HV,d.v0);homeZoom(Math.hypot(a.x-b.x,a.y-b.y)/d.d0,d.m0);HV.x+=m.x-d.m0.x;HV.y+=m.y-d.m0.y;homeClamp();return;}
+ const dx=p.x-d.sx,dy=p.y-d.sy;if(!d.moved&&Math.hypot(dx,dy)>6)d.moved=true;if(d.moved){HV.x=d.x0+dx;HV.y=d.y0+dy;HV.moved=true;homeClamp();homeResetBtn();}}
+function homeUp(e){HPTRS.delete(e.pointerId);const d=hDrag;if(!d)return;if(d.type==='pinch'){if(!HPTRS.size)hDrag=null;return;}hDrag=null;
+ if(d.moved||!SAVE||panelOpen()||scr!=='home')return;const n=SAVE.deco.n,v=homeView(n),p=toStage(e),wx=(p.x-v.x)/v.z,wy=(p.y-v.y)/v.z;
+ if(inPoly(wx,wy,[IP(0,n),IP(n,n),IP(n,0),up(IP(n,0),120),up(IP(0,0),120),up(IP(0,n),120)]))openEditor('deco');}
+function drawHome(t){drawSky(t);const d=SAVE?SAVE.deco:(STARTER||(STARTER=starterDeco())),v=SAVE?homeView(d.n):homeDefault(d.n),by=v.y+Math.sin(t*.8)*3;
+ ctx.save();ctx.translate(v.x,by);ctx.scale(v.z,v.z);drawIsland(ctx,d.n,(i,j)=>d.ground[i+','+j]||'grass',d.objs,{view:viewRect(v.x,by,v.z)});ctx.restore();}
 function drawEditor(){const n=edN();drawSky(ANIM_T);
  ctx.save();ctx.translate(ED.cam.x,ED.cam.y);ctx.scale(ED.cam.z,ED.cam.z);
- drawIsland(ctx,n,edGround,edObjs(),{grid:true,under:edUnder,over:edOver});ctx.restore();}
+ drawIsland(ctx,n,edGround,edObjs(),{grid:true,under:edUnder,over:edOver,view:viewRect(ED.cam.x,ED.cam.y,ED.cam.z)});ctx.restore();}
 function edUnder(c){const pulse=.35+.25*Math.sin(ANIM_T*6);
  if(ED.mode==='plaza'&&!ED.admin){const me=myTag();for(const o of ED.pzObjs)if(o.o&&o.o===me)footDiamond(c,o.i,o.j,sizeOf(o),'rgba(255,95,168,.18)','rgba(255,95,168,.75)');}
  if(ED.sel&&!ED.sel.hidden)footDiamond(c,ED.sel.i,ED.sel.j,sizeOf(ED.sel),`rgba(255,230,90,${pulse})`,'#ffd43b');}
@@ -896,9 +1005,9 @@ function drawGame(){ctx.fillStyle='#1a1840';ctx.fillRect(0,0,W,H);
  if(R.freezeT>0&&!(R.freezeT<1.5&&Math.floor(R.t*8)%2)){for(const e of R.ents){if(e.state!=='alive'||e.kind==='gift')continue;const s=e.r*1.55;ctx.fillStyle='rgba(170,225,255,.45)';rrect(ctx,e.x-s,e.y-s,s*2,s*2,14);ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='rgba(255,255,255,.9)';ctx.stroke();}}
  for(const e of R.ents)if(e.state==='alive'&&e.kind==='gift')drawGoldStar(ctx,e.x,e.y,R.t);
  if(R.shield>0){const a=.5+.2*Math.sin(R.t*4);ctx.fillStyle=`rgba(120,220,255,${a*.14})`;ctx.strokeStyle=`rgba(170,238,255,${a+.2})`;ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(640,662,700,112,0,Math.PI,0);ctx.closePath();ctx.fill();ctx.stroke();}
- drawGuardian(ctx,640,618,R.aim,R.t);
+ drawGuardian(ctx,640,618,R.aim,R.t,SAVE&&SAVE.skin);
  if(R.freezeT>0){ctx.fillStyle='rgba(140,200,255,.12)';ctx.fillRect(-30,-30,W+60,H+60);}
- ctx.lineCap='round';for(const s of R.shots){const a=s.t/s.max;ctx.strokeStyle=`rgba(127,248,255,${a})`;ctx.lineWidth=7*(.5+a*.5);ctx.beginPath();ctx.moveTo(s.x1,s.y1);ctx.lineTo(s.x2,s.y2);ctx.stroke();ctx.strokeStyle=`rgba(255,255,255,${a})`;ctx.lineWidth=2.5;ctx.stroke();}
+ ctx.lineCap='round';const BC=hexRgb(skinOf(SAVE&&SAVE.skin).beam);for(const s of R.shots){const a=s.t/s.max;ctx.strokeStyle=`rgba(${BC},${a})`;ctx.lineWidth=7*(.5+a*.5);ctx.beginPath();ctx.moveTo(s.x1,s.y1);ctx.lineTo(s.x2,s.y2);ctx.stroke();ctx.strokeStyle=`rgba(255,255,255,${a})`;ctx.lineWidth=2.5;ctx.stroke();}
  ctx.lineJoin='round';for(const b of R.bolts){const a=b.t/b.max;ctx.beginPath();b.pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.strokeStyle=`rgba(255,215,60,${a})`;ctx.lineWidth=12;ctx.stroke();ctx.strokeStyle=`rgba(255,255,255,${a})`;ctx.lineWidth=4;ctx.stroke();}
  drawParts();
  if(!R.over){const typed=nkey(inp.value);for(const e of R.ents){if(e.state!=='alive')continue;
@@ -932,7 +1041,7 @@ const show=(id,on)=>$(id).classList.toggle('hidden',!on);
 function hideAll(){PANELS.forEach(p=>show(p,false));['home','hud','decoUI'].forEach(p=>show(p,false));}
 function goHome(){if(ED){clearInterval(ED.timer);ED=null;$('ttoast').classList.remove('top');}R=null;scr='home';hideAll();inp.blur();if(!SAVE){openReg();return;}show('home',true);renderProfile();
  if(!SAVE.gr||!SAVE.cl)openInfo();else if(SAVE.decoNew){delete SAVE.decoNew;saveGame();setTimeout(()=>ttoast('마을이 넓은 섬으로 바뀌었어요! [내 마을 꾸미기]에서 새 장식을 만나 보세요'),500);}}
-function renderProfile(){$('pName').textContent=SAVE.name;$('pMeta').textContent=`${SAVE.gr&&SAVE.cl?`${SAVE.gr}학년 ${SAVE.cl}반 `:''}${SAVE.no}번 · 별지기 Lv.${charLevel()}`;$('pCoins').textContent=SAVE.coins.toLocaleString();
+function renderProfile(){$('pName').textContent=SAVE.name;$('pMeta').textContent=`${SAVE.gr&&SAVE.cl?`${SAVE.gr}학년 ${SAVE.cl}반 `:''}${SAVE.no}번\n별지기 Lv.${charLevel()}`;$('pCoins').textContent=SAVE.coins.toLocaleString();$('pSkin').src=skinFace(SAVE.skin);homeResetBtn();
  document.querySelectorAll('.sndIcon').forEach(s=>s.innerHTML=OPT.sound?'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="#4a1f2b" stroke-width="2.2" stroke-linecap="round"/>':'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="#4a1f2b" stroke-width="2.4" stroke-linecap="round"/>');}
 function openPanel(id,html){$(id).innerHTML=html;show(id,true);}
 
@@ -987,28 +1096,30 @@ function showResult(){const r=R.result,g=SAVE.games[R.game];
 let shopTab='item',shopCat='nature';
 function openShop(tab){if(tab)shopTab=tab;if(tab==='deco'&&ED&&ED.mode==='deco'&&DECO_CATS.includes(ED.cat))shopCat=ED.cat;PANELS.forEach(p=>show(p,false));renderShop();show('pShop',true);}
 const DECO_CATS=DCATS.map(c=>c[0]);
-function renderShop(){const tabs=[['item','아이템'],['up','별지기 강화'],['deco','마을 장식']].map(([k,n])=>`<button class="chip ${shopTab===k?'on':''}" data-act="shop-tab" data-t="${k}">${n}</button>`).join('');
+function renderShop(){const tabs=[['item','아이템'],['up','별지기 강화'],['skin','별지기 꾸미기'],['deco','마을 장식']].map(([k,n])=>`<button class="chip ${shopTab===k?'on':''}" data-act="shop-tab" data-t="${k}">${n}</button>`).join('');
  const buy=(k,id,price,label)=>`<button class="buy" data-act="buy" data-k="${k}" data-id="${id}" ${SAVE.coins<price?'disabled':''}><span class="coin"></span> ${label||price}</button>`;
  let cards='',sub='';
  if(shopTab==='item')cards=ITEM_IDS.map(id=>{const it=ITEMS[id];return `<div class="scard"><span class="ic" style="background:${it.color}">${it.icon}</span><b>${it.name}</b><span class="d">${it.desc}</span><span class="own">창고에 ${SAVE.inv[id]}개</span>${buy('item',id,it.price)}</div>`;}).join('');
  else if(shopTab==='up')cards=Object.keys(UPS).map(id=>{const u=UPS[id],l=SAVE.up[id],mx=l>=u.max;return `<div class="scard"><span class="ic" style="background:${u.color}">${u.icon}</span><b>${u.name}</b><span class="d">${u.eff(l)}${mx?'':`<br>→ ${u.eff(l+1)}`}</span><span class="own">Lv.${l} / ${u.max}</span>${mx?'<button class="buy max" disabled>최고 레벨!</button>':buy('up',id,u.cost[l])}</div>`;}).join('');
+ else if(shopTab==='skin')cards=SKIN_IDS.map(id=>{const k=SKINS[id],own=!!SAVE.skins[id],on=SAVE.skin===id;return `<div class="scard ${on?'on':''}"><img class="skimg" src="${skinFace(id)}" alt=""><b>${k.name}</b><span class="d">${k.desc}</span><span class="own">${on?'지금 쓰는 중':own?'가지고 있어요':''}</span>${on?'<button class="buy max" disabled>쓰는 중</button>':own?`<button class="buy" data-act="skin-use" data-id="${id}">쓰기</button>`:buy('skin',id,k.price)}</div>`;}).join('');
  else{sub=`<div class="tabs" style="margin:2px 0 8px">${DCATS.concat([['land','🏝️ 섬 넓히기']]).map(([k,n])=>`<button class="chip sm2 ${shopCat===k?'on':''}" data-act="shop-cat" data-c="${k}">${n}</button>`).join('')}</div>`;
   if(shopCat==='land'){const n=SAVE.deco.n,nx=LAND[LAND.indexOf(n)+1];cards=`<div class="scard"><span class="ic" style="background:#d3f9d8">🏝️</span><b>섬 넓히기</b><span class="d">지금 ${n}×${n}${nx?` → ${nx}×${nx}`:''}<br>넓어진 땅에 장식을 더 놓을 수 있어요</span><span class="own">${nx?`${LAND.indexOf(n)+1} / ${LAND.length-1}단계`:'가장 넓은 섬이에요!'}</span>${nx?buy('land','land',LAND_COST[nx]):'<button class="buy max" disabled>최고 크기!</button>'}</div>`;}
-  else cards=Object.keys(DECO).filter(k=>DECO[k].cat===shopCat).map(id=>{const d=DECO[id],pl=SAVE.deco.objs.filter(o=>o.k===id).length,st=SAVE.deco.stock[id]||0;return `<div class="scard"><canvas data-thumb="${id}" data-sz="72"></canvas><b>${d.name}</b><span class="own">${d.s===2?'2×2 · ':''}마을 ${pl} · 창고 ${st}</span>${buy('deco',id,d.price)}</div>`;}).join('');}
+  else cards=Object.keys(DECO).filter(k=>DECO[k].cat===shopCat&&!DECO[k].special).map(id=>{const d=DECO[id],pl=SAVE.deco.objs.filter(o=>o.k===id).length,st=SAVE.deco.stock[id]||0;return `<div class="scard"><canvas data-thumb="${id}" data-sz="72"></canvas><b>${d.name}</b><span class="own">${d.s===2?'2×2 · ':''}마을 ${pl} · 창고 ${st}</span>${buy('deco',id,d.price)}</div>`;}).join('');}
  $('pShop').innerHTML=`<div class="panel xl"><div class="shophead"><h2>🛒 상점</h2><div class="tabs">${tabs}</div><div style="display:flex;gap:10px;align-items:center"><div class="wallet"><span class="coin"></span>${SAVE.coins.toLocaleString()}</div><button class="gbtn sm" style="width:auto;margin:0;font-size:26px;padding:6px 22px" data-act="shop-close">닫기</button></div></div>
- ${sub}<div class="grid ${shopTab==='deco'?'g5':''}">${cards}</div><p class="note">${shopTab==='up'?'별지기를 강하게 만들면 라운드를 더 오래 버틸 수 있어요. 분당 타수 랭킹에는 영향이 없어요.':shopTab==='deco'?'산 장식은 창고에 들어가요. [내 마을 꾸미기]나 [우리 반 광장]에서 놓아 보세요.':'산 아이템은 게임 시작 전 [가방 챙기기]에서 가방에 넣어요.'}</p>
+ ${sub}<div class="grid ${shopTab==='deco'||shopTab==='skin'?'g5':''}">${cards}</div><p class="note">${shopTab==='skin'?'별지기 모습만 바뀌어요. 게임 실력에는 영향이 없어요. 내 별지기는 친구 랭킹에도 보여요.':shopTab==='up'?'별지기를 강하게 만들면 라운드를 더 오래 버틸 수 있어요. 분당 타수 랭킹에는 영향이 없어요.':shopTab==='deco'?'산 장식은 창고에 들어가요. [내 마을 꾸미기]나 [우리 반 광장]에서 놓아 보세요.':'산 아이템은 게임 시작 전 [가방 챙기기]에서 가방에 넣어요.'}</p>
  </div>`;
  fillThumbs($('pShop'));}
 function doBuy(k,id){let price=0;
  if(k==='item')price=ITEMS[id].price;
  else if(k==='up'){if(SAVE.up[id]>=UPS[id].max)return;price=UPS[id].cost[SAVE.up[id]];}
  else if(k==='land'){const nx=LAND[LAND.indexOf(SAVE.deco.n)+1];if(!nx)return;price=LAND_COST[nx];}
- else price=DECO[id].price;
+ else if(k==='skin'){if(!SKINS[id]||SAVE.skins[id])return;price=SKINS[id].price;}
+ else{if(!DECO[id]||DECO[id].special)return;price=DECO[id].price;}
  if(SAVE.coins<price){ttoast('코인이 부족해요');return;}
  if(k==='land'){if(landUp()){renderShop();renderProfile();}return;}
  SAVE.coins-=price;
- if(k==='item')SAVE.inv[id]++;else if(k==='up')SAVE.up[id]++;else SAVE.deco.stock[id]=(SAVE.deco.stock[id]||0)+1;
- saveGame();if(k==='up')syncPush();SFX.buy();ttoast(k==='up'?`${UPS[id].name} Lv.${SAVE.up[id]}!`:k==='item'?`${ITEMS[id].name} 1개를 샀어요`:`${DECO[id].name}${josa(DECO[id].name,'을','를')} 샀어요! 창고에 넣어 뒀어요`);renderShop();renderProfile();}
+ if(k==='item')SAVE.inv[id]++;else if(k==='up')SAVE.up[id]++;else if(k==='skin'){SAVE.skins[id]=1;SAVE.skin=id;}else SAVE.deco.stock[id]=(SAVE.deco.stock[id]||0)+1;
+ saveGame();if(k==='up'||k==='skin')syncPush();SFX.buy();ttoast(k==='skin'?`${SKINS[id].name}${josa(SKINS[id].name,'을','를')} 샀어요! 바로 쓸게요`:k==='up'?`${UPS[id].name} Lv.${SAVE.up[id]}!`:k==='item'?`${ITEMS[id].name} 1개를 샀어요`:`${DECO[id].name}${josa(DECO[id].name,'을','를')} 샀어요! 창고에 넣어 뒀어요`);renderShop();renderProfile();}
 
 /* ---------- 마을 꾸미기 · 우리 반 광장 ---------- */
 let ED=null;const edCat={deco:'nature',plaza:'all'},PTRS=new Map();
@@ -1020,7 +1131,16 @@ const edArea=()=>ED.admin?[16,90,1264,640]:EDIT_AREA;
 const edObjs=()=>ED.mode==='plaza'?ED.pzObjs:SAVE.deco.objs;
 function plazaGround(i,j){if(plazaReserved(i,j))return 'stone';const a=Math.abs(i-6.5),b=Math.abs(j-6.5);if(a<2.6&&b<2.6)return 'sand';return a+b>10?'bloom':'grass';}
 function edGround(i,j){return ED.mode==='plaza'?plazaGround(i,j):(SAVE.deco.ground[i+','+j]||'grass');}
-const pzMonument=()=>({k:'monument',i:6,j:6,label:plazaLabel(ED.gr,ED.cl)});
+const pzMonument=()=>({k:'monument',i:6,j:6,label:plazaLabel(ED.gr,ED.cl),lv:monStage(ED.mon)});
+// 광장에 늘 있는 것: 기념비와 (5단계부터) 가운데 길의 별빛 가로등 4개
+const pzFixed=()=>{const m=pzMonument();return [m].concat(m.lv>=5?[[4,6],[9,7],[7,4],[6,9]].map(([i,j])=>({k:'mlamp',i,j})):[]);};
+function monSet(ed,m){const prev=ed.mon?monStage(ed.mon):0;ed.mon=m;monUpdate(plazaLabel(ed.gr,ed.cl),m);const lv=monStage(m);
+ if(prev&&lv>prev){MON_FX_T=ANIM_T;if(ed.admin)ttoast(`🎉 기념비가 ${lv}단계가 됐어요!`);}renderMonBar();}
+function monHTML(m){const v=monTotal(m),lv=monStage(m),cur=MON_STEPS[lv-1],nx=MON_STEPS[lv],pct=nx?Math.max(2,Math.round((v-cur)/(nx-cur)*100)):100;
+ return `<b>⭐ 우리 반 기념비 ${lv}단계</b><small>${MON_NAMES[lv-1]}${nx?` → 다음: ${MON_NAMES[lv]}`:''}</small><div class="mbar"><i style="width:${pct}%"></i></div><span>별가루 ${v.toLocaleString()}${nx?` · 다음 단계까지 ${(nx-v).toLocaleString()}`:' · 가장 높은 단계예요!'}</span><span>오늘 보탠 친구 ${+m.d||0}명 / ${+m.m||0}명${+m.s?` · 선생님 별 ${+m.s}개`:''}</span>`;}
+function renderMonBar(){const el=$('monBar');if(!el)return;if(!ED||ED.mode!=='plaza'){el.classList.add('hidden');return;}
+ if(!ED.mon){if(ED.admin&&ED.pz.last){el.innerHTML='<span>기념비 정보를 받지 못했어요. Apps Script를 새 버전으로 배포했는지 확인해 주세요.</span>';el.classList.remove('hidden');}else el.classList.add('hidden');return;}
+ el.innerHTML=monHTML(ED.mon);el.classList.remove('hidden');}
 
 function openEditor(mode,opt){opt=opt||{};let gr=opt.gr||(SAVE&&SAVE.gr),cl=opt.cl||(SAVE&&SAVE.cl);
  if(mode==='plaza'){if(!SYNC){ttoast('광장은 반 랭킹 자동 연동이 켜져 있을 때 쓸 수 있어요');return;}if(!gr||!cl){openInfo();return;}}
@@ -1028,7 +1148,7 @@ function openEditor(mode,opt){opt=opt||{};let gr=opt.gr||(SAVE&&SAVE.gr),cl=opt.
  if(ED)clearInterval(ED.timer);
  R=null;scr='edit';hideAll();inp.blur();
  ED={mode,admin:!!opt.admin,gr,cl,cam:null,sel:null,carry:null,paint:null,hover:null,drag:null,pending:null,cat:edCat[mode],pz:{items:[],loading:false,busy:false,last:0},pzObjs:[],timer:0};
- if(mode==='plaza'){ED.pzObjs=[pzMonument()];ED.timer=setInterval(plazaTick,4000);plazaPull();}
+ if(mode==='plaza'){ED.pzObjs=pzFixed();ED.timer=setInterval(plazaTick,4000);plazaPull();}
  ED.cam=camFit(edN(),edArea());
  show('decoUI',true);$('ttoast').classList.add('top');renderEdBar();renderPalette();renderAct();setHint();}
 function closeEditor(){if(!ED)return;const admin=ED.admin,mode=ED.mode;if(ED.carry&&ED.carry.obj)delete ED.carry.obj.hidden;clearInterval(ED.timer);ED=null;PTRS.clear();$('ttoast').classList.remove('top');saveGame();goHome();
@@ -1038,7 +1158,7 @@ function renderEdBar(){if(!ED)return;const pz=ED.mode==='plaza';let ex='';
  if(SAVE&&!ED.admin)ex+=`<span class="dcoin"><span class="coin"></span> ${SAVE.coins.toLocaleString()}</span>`;
  if(pz){ex+=ED.admin?'<span class="dchip">선생님 관리</span>':`<span class="dchip">내 장식 ${ED.pz.items.filter(it=>it.o===myTag()).length}/${PLAZA_MAX}</span>`;ex+=`<button class="sbtn sm" data-act="pz-refresh">${ED.pz.loading?'불러오는 중…':'↻ 새로고침'}</button>`;}
  else{const n=SAVE.deco.n,nx=LAND[LAND.indexOf(n)+1];ex+=nx?`<button class="sbtn sm" data-act="ed-land" title="지금 ${n}×${n} → ${nx}×${nx}">🏝️ 넓히기 <span class="coin"></span>${LAND_COST[nx]}</button>`:`<span class="dchip">섬 ${n}×${n} (최고)</span>`;}
- $('dExtra').innerHTML=ex;$('dShop').classList.toggle('hidden',ED.admin);}
+ $('dExtra').innerHTML=ex;$('dShop').classList.toggle('hidden',ED.admin);renderMonBar();}
 function setHint(){if(!ED)return;const c=ED.carry;let h;
  if(c)h=ED.mode==='plaza'&&ED.pz.busy?'광장에 보내는 중이에요…':'초록색 자리에 놓을 수 있어요. 빨간색 자리에는 놓을 수 없어요.';
  else if(ED.mode==='plaza'){h=ED.pz.busy?'광장에 보내는 중이에요…':(ED.pz.loading&&!ED.pz.last)?'광장을 불러오는 중이에요…':ED.admin?'장식을 누르면 치울 수 있어요. 치운 장식은 그 학생의 창고로 돌아가요.':`친구들과 함께 꾸며요. 한 사람 ${PLAZA_MAX}개까지, 분홍 테두리가 내 장식이에요.`;}
@@ -1051,16 +1171,16 @@ function renderPalette(){if(!ED)return;const pz=ED.mode==='plaza',pal=$('dPal');
  else cats=DCATS.concat([['ground','🟫 땅 칠하기']]).map(([k,n])=>`<button class="chip sm2 ${ED.cat===k?'on':''}" data-act="ed-cat" data-c="${k}">${n}</button>`).join('')+`<span class="dnote">${ED.cat==='ground'?'잔디로 칠하면 원래대로 돌아가요':'숫자는 창고에 있는 개수, 동전은 놓을 때 쓰는 코인이에요'}</span>`;
  if(!pz&&ED.cat==='ground')h=GT_IDS.map(g=>`<button class="dcard tile ${ED.paint===g?'on':''}" data-act="ed-paint" data-g="${g}"><span class="sw" style="background:${GTYPE[g].col}"></span><span>${GTYPE[g].name}</span><i class="pr">${GTYPE[g].price?`<span class="coin"></span>${GTYPE[g].price}`:'무료'}</i></button>`).join('');
  else{const order=DCATS.map(c=>c[0]);let ks=Object.keys(DECO);
-  if(pz)ks=ks.filter(k=>st[k]>0).sort((a,b)=>order.indexOf(DECO[a].cat)-order.indexOf(DECO[b].cat)||DECO[a].price-DECO[b].price);
-  else ks=ks.filter(k=>DECO[k].cat===ED.cat).sort((a,b)=>((st[b]>0)-(st[a]>0))||DECO[a].price-DECO[b].price);
-  h=ks.map(k=>{const n=st[k]||0,on=ED.carry&&ED.carry.k===k&&ED.carry.src!=='move';return `<button class="dcard ${on?'on':''} ${n?'':'buy'}" data-act="ed-pick" data-k="${k}"><canvas data-thumb="${k}" data-sz="74"></canvas><span>${DECO[k].name}</span>${n?`<i>${n}</i>`:`<i class="pr"><span class="coin"></span>${DECO[k].price}</i>`}${DECO[k].s===2?'<em>2×2</em>':''}</button>`;}).join('');
+  if(pz)ks=ks.filter(k=>st[k]>0&&!DECO[k].special).sort((a,b)=>order.indexOf(DECO[a].cat)-order.indexOf(DECO[b].cat)||DECO[a].price-DECO[b].price);
+  else ks=ks.filter(k=>DECO[k].cat===ED.cat&&(!DECO[k].special||st[k]>0)).sort((a,b)=>((st[b]>0)-(st[a]>0))||DECO[a].price-DECO[b].price);
+  h=ks.map(k=>{const n=st[k]||0,on=ED.carry&&ED.carry.k===k&&ED.carry.src!=='move';return `<button class="dcard ${on?'on':''} ${n?'':'buy'}" data-act="ed-pick" data-k="${k}"><canvas data-thumb="${k}" data-sz="74"></canvas><span>${DECO[k].name}</span>${n?`<i>${n}</i>`:`<i class="pr"><span class="coin"></span>${DECO[k].price}</i>`}${DECO[k].s===2?'<em>2×2</em>':''}${k==='cmemo'?`<em>⭐${Math.max(1,SAVE.cm||1)}단계</em>`:''}</button>`;}).join('');
   if(!h)h=`<div class="dempty">창고가 비었어요. 위의 [상점]에서 장식을 사거나, 내 마을에서 장식을 창고로 옮겨 오세요.</div>`;}
  $('dCats').innerHTML=cats;const el=$('dStore'),key=ED.mode+ED.cat,sl=ED.palKey===key?el.scrollLeft:0;ED.palKey=key;el.innerHTML=h;el.scrollLeft=sl;fillThumbs(el);}
 function renderAct(){const el=$('dAct');if(!ED){el.classList.add('hidden');return;}const c=ED.carry;let h;
  if(c){const nm=DECO[c.k].name,n=SAVE.deco.stock[c.k]||0;el.innerHTML=`<b>✋ ${esc(nm)}</b><span>${c.src==='move'?'옮기는 중':c.src==='buy'?`놓으면 <span class="coin"></span> ${DECO[c.k].price}`:`창고에 ${n}개`}</span><button class="sbtn sm" data-act="ed-flip">↔ 뒤집기 (F)</button><button class="sbtn sm" data-act="ed-cancel">그만두기 (Esc)</button>`;el.classList.remove('hidden');return;}
  if(ED.paint){const g=GTYPE[ED.paint];el.innerHTML=`<b>🖌️ ${g.name}</b><span>${g.price?`한 칸에 <span class="coin"></span> ${g.price}`:'무료'}</span><button class="sbtn sm" data-act="ed-cancel">그만두기 (Esc)</button>`;el.classList.remove('hidden');return;}
  if(!ED.sel){el.classList.add('hidden');return;}const o=ED.sel;
- if(o.k==='monument')h=`<b>⭐ 우리 반 별 기념비</b><span>우리 반 광장의 한가운데예요</span>`;
+ if(o.k==='monument'){const m=ED.mon,lv=monStage(m),nx=MON_STEPS[lv];h=`<b>⭐ 우리 반 별 기념비 ${lv}단계</b><span>${m?(nx?`다음 단계까지 별가루 ${(nx-monTotal(m)).toLocaleString()}`:'가장 높은 단계예요!'):'우리 반 광장의 한가운데예요'}</span>`;}
  else{h=`<b>${esc(DECO[o.k].name)}</b>`;
   if(ED.mode==='deco')h+=`<button class="sbtn sm" data-act="ed-move">✋ 옮기기</button><button class="sbtn sm" data-act="ed-flip">↔ 뒤집기</button><button class="sbtn sm" data-act="ed-store">📦 창고로</button>`;
   else{const mine=!ED.admin&&o.o===myTag();h+=`<span>${mine?'내가 놓은 장식이에요':`${esc(o.n||'친구')} 친구가 놓았어요`}</span>`;
@@ -1100,11 +1220,11 @@ function edZoom(f,p){p=p||{x:640,y:316};const z0=ED.cam.z,z=Math.max(.35,Math.mi
 function edPoint(e){const p=toStage(e),z=ED.cam.z,wx=(p.x-ED.cam.x)/z,wy=(p.y-ED.cam.y)/z;return{sx:p.x,sy:p.y,wx,wy,fi:(wy/IH+wx/IW)/2,fj:(wy/IH-wx/IW)/2};}
 function edHover(pt){const s=ED.carry?DECO[ED.carry.k].s:1;ED.hover={ti:Math.floor(pt.fi),tj:Math.floor(pt.fj),oi:Math.floor(pt.fi-(s-1)/2),oj:Math.floor(pt.fj-(s-1)/2)};}
 function inPoly(x,y,P){let inside=false;for(let a=0,b=P.length-1;a<P.length;b=a++){const[xa,ya]=P[a],[xb,yb]=P[b];if((ya>y)!==(yb>y)&&x<(xb-xa)*(y-ya)/(yb-ya)+xa)inside=!inside;}return inside;}
-function objPoly(o){const s=sizeOf(o),h=(o.k==='monument'?100:DECO[o.k].h)+14,H=Math.max(10,h-s*IH),T=IP(o.i,o.j),Rt=IP(o.i+s,o.j),B=IP(o.i+s,o.j+s),L=IP(o.i,o.j+s);return[L,B,Rt,up(Rt,H),up(T,H),up(L,H)];}
+function objPoly(o){const s=sizeOf(o),h=(o.k==='monument'?110+(o.lv||1)*12:o.k==='mlamp'?70:DECO[o.k].h)+14,H=Math.max(10,h-s*IH),T=IP(o.i,o.j),Rt=IP(o.i+s,o.j),B=IP(o.i+s,o.j+s),L=IP(o.i,o.j+s);return[L,B,Rt,up(Rt,H),up(T,H),up(L,H)];}
 // 누른 곳에 실제로 그려진 장식을 골라요 (앞에 있는 것부터, 1픽셀 캔버스에 그려 보고 확인)
 const PICK=document.createElement('canvas');PICK.width=PICK.height=1;const pctx=PICK.getContext('2d',{willReadFrequently:true});
 function pixelHit(o,wx,wy){pctx.setTransform(1,0,0,1,0,0);pctx.clearRect(0,0,1,1);pctx.setTransform(1,0,0,1,-wx,-wy);footDiamond(pctx,o.i,o.j,sizeOf(o),'#000');drawObj(pctx,o,ANIM_T);return pctx.getImageData(0,0,1,1).data[3]>24;}
-function hitObj(pt){const list=edObjs().filter(o=>!o.hidden).sort(depthCmp);for(let q=list.length-1;q>=0;q--){const o=list[q];if(inPoly(pt.wx,pt.wy,objPoly(o))&&pixelHit(o,pt.wx,pt.wy))return o;}return null;}
+function hitObj(pt){const list=edObjs().filter(o=>!o.hidden&&o.k!=='mlamp').sort(depthCmp);for(let q=list.length-1;q>=0;q--){const o=list[q];if(inPoly(pt.wx,pt.wy,objPoly(o))&&pixelHit(o,pt.wx,pt.wy))return o;}return null;}
 function edDown(e){const pt=edPoint(e);PTRS.set(e.pointerId,{x:pt.sx,y:pt.sy});
  if(PTRS.size>=2){if(ED.carry&&ED.carry.drag)edCancel();const[a,b]=[...PTRS.values()];ED.drag={type:'pinch',d0:Math.max(10,Math.hypot(a.x-b.x,a.y-b.y)),m0:{x:(a.x+b.x)/2,y:(a.y+b.y)/2},cam0:Object.assign({},ED.cam)};return;}
  try{cv.setPointerCapture(e.pointerId);}catch(_){}
@@ -1129,16 +1249,17 @@ function edUp(e){PTRS.delete(e.pointerId);const d=ED.drag;if(!d)return;if(d.type
 /* 우리 반 광장 (구글 시트로 같은 반 친구들과 함께 써요) */
 async function pzReq(body){try{const r=await tmo(fetch(SYNC_URL,{method:'POST',body:JSON.stringify(body)}),20000);return await r.json();}catch(e){return null;}}
 function plazaTick(){if(ED&&ED.mode==='plaza'&&!ED.pz.busy&&!ED.pz.loading&&!document.hidden&&Date.now()-ED.pz.last>15000)plazaPull(true);}
-async function plazaFetch(ed){if(ed.admin&&TPIN){const j=await pzReq({type:'plaza_full',gr:ed.gr,cl:ed.cl,pin:TPIN});if(j&&j.ok&&Array.isArray(j.items))return j.items;}
- try{const r=await tmo(fetch(`${SYNC_URL}${SYNC_URL.includes('?')?'&':'?'}action=plaza&gr=${ed.gr}&cl=${ed.cl}&_=${Date.now()}`),20000);const j=await r.json();if(j&&j.ok&&Array.isArray(j.items))return j.items;}catch(e){}return null;}
-async function plazaPull(quiet){const ed=ED;if(!ed||ed.mode!=='plaza'||ed.pz.loading)return;ed.pz.loading=true;renderEdBar();const items=await plazaFetch(ed);
+async function plazaFetch(ed){if(ed.admin&&TPIN){const j=await pzReq({type:'plaza_full',gr:ed.gr,cl:ed.cl,pin:TPIN});if(j&&j.ok&&Array.isArray(j.items))return j;}
+ try{const r=await tmo(fetch(`${SYNC_URL}${SYNC_URL.includes('?')?'&':'?'}action=plaza&gr=${ed.gr}&cl=${ed.cl}&_=${Date.now()}`),20000);const j=await r.json();if(j&&j.ok&&Array.isArray(j.items))return j;}catch(e){}return null;}
+async function plazaPull(quiet){const ed=ED;if(!ed||ed.mode!=='plaza'||ed.pz.loading)return;ed.pz.loading=true;renderEdBar();const res=await plazaFetch(ed),items=res&&res.items;
  if(ED!==ed)return;ed.pz.loading=false;ed.pz.last=Date.now();
+ if(res&&res.mon)monSet(ed,res.mon);
  if(items){const back=setPlaza(items);if(back)ttoast(`광장에서 치워진 내 장식 ${back}개가 창고로 돌아왔어요`);}
  else if(!quiet)ttoast('광장을 불러오지 못했어요. 인터넷 연결을 확인해 주세요');
  edRefresh();}
 function setPlaza(items){const ed=ED,sel=ed.sel;
  ed.pz.items=items.filter(it=>it&&DECO[it.k]&&Number.isFinite(+it.x)&&Number.isFinite(+it.y)).map(it=>({x:+it.x,y:+it.y,k:String(it.k),f:+it.f?1:0,o:String(it.o||''),n:String(it.n||'')}));
- ed.pzObjs=[pzMonument()].concat(ed.pz.items.map(it=>({k:it.k,i:it.x,j:it.y,f:it.f,o:it.o,n:it.n})));
+ ed.pzObjs=pzFixed().concat(ed.pz.items.map(it=>({k:it.k,i:it.x,j:it.y,f:it.f,o:it.o,n:it.n})));
  ed.sel=sel?ed.pzObjs.find(o=>o.i===sel.i&&o.j===sel.j&&o.k===sel.k)||null:null;
  return(!ed.admin&&SAVE&&ed.gr===SAVE.gr&&ed.cl===SAVE.cl)?plazaReconcile():0;}
 // 내 창고와 광장을 맞춰요: 광장에서 없어진 내 장식은 창고로 돌아오고, 새로 놓인 내 장식은 창고에서 빠져요.
@@ -1173,7 +1294,7 @@ async function plazaAdmin(o){const ed=ED;if(ed.pz.busy)return;if(!TPIN){ttoast('
  edRefresh();}
 
 /* ---------- 랭킹 ---------- */
-function myEntry(){const g={};for(const gm of READY){const s=SAVE.games[gm.id];g[gm.id]={r:s.bestRound,w:s.bestWords,t:s.bestTasu};}return{i:SAVE.id,gr:SAVE.gr||0,cl:SAVE.cl||0,n:SAVE.name,b:SAVE.no,lv:charLevel(),g,ts:Date.now()};}
+function myEntry(){const g={};let cw=0;for(const gm of READY){const s=SAVE.games[gm.id];g[gm.id]={r:s.bestRound,w:s.bestWords,t:s.bestTasu};cw+=+s.words||0;}return{i:SAVE.id,gr:SAVE.gr||0,cl:SAVE.cl||0,n:SAVE.name,b:SAVE.no,lv:charLevel(),sk:SAVE.skin||'base',cw,g,ts:Date.now()};}
 const validEntry=e=>e&&typeof e.i==='string'&&typeof e.n==='string'&&e.g&&typeof e.g==='object';
 // 시트에서 온 기록은 학생ID 대신 암호 꼬리표(8자리)를 써요. 코드로 모은 기록도 같은 꼬리표로 바꿔서 겹치지 않게 해요.
 const tagOf=id=>/^[0-9a-f]{8}$/.test(String(id))?String(id):hash(SALT+'tag'+id);
@@ -1212,7 +1333,13 @@ function syncReply(j){if(!SAVE||!j)return;
  const n=typeof j.n==='string'?j.n.replace(/\s+/g,' ').trim().slice(0,10):'',b=+j.b||0,ch=[];
  if([...n].length>=2&&n!==SAVE.name){SAVE.name=n;ch.push('이름');}
  if(b>=1&&b<=99&&b!==SAVE.no){SAVE.no=b;ch.push('번호');}
- if(ch.length){saveGame();renderProfile();ttoast(`선생님이 ${ch.join('·')}를 바꿨어요: ${SAVE.name} · ${SAVE.no}번`);}}
+ if(ch.length){saveGame();renderProfile();ttoast(`선생님이 ${ch.join('·')}를 바꿨어요: ${SAVE.name} · ${SAVE.no}번`);}
+ if(j.mon&&SAVE.gr&&SAVE.cl)monUpdate(plazaLabel(SAVE.gr,SAVE.cl),j.mon);}
+// 우리 반 기념비 소식: 처음이면 기념 장식을 주고, 단계가 오르면 기념 장식이 새것으로 바뀌어요(하나만 있어요)
+function monUpdate(lab,m){if(!m||typeof m!=='object')return;MON[lab]={w:+m.w||0,s:+m.s||0,d:+m.d||0,m:+m.m||0};
+ if(!SAVE||!SAVE.gr||!SAVE.cl||lab!==plazaLabel(SAVE.gr,SAVE.cl))return;const lv=monStage(MON[lab]);
+ if(!SAVE.cmGot){SAVE.cmGot=1;SAVE.cm=lv;SAVE.deco.stock.cmemo=(SAVE.deco.stock.cmemo||0)+1;saveGame();SFX.level();ttoast('⭐ 우리 반 기념 장식을 받았어요! 내 마을 꾸미기에서 꺼내 놓아 보세요');if(ED&&ED.mode==='deco')renderPalette();return;}
+ if(lv!==SAVE.cm){const upLv=lv>SAVE.cm;SAVE.cm=lv;saveGame();if(upLv){SFX.level();ttoast(`🎉 우리 반 기념비가 ${lv}단계가 됐어요! 내 기념 장식도 바뀌었어요`);}if(ED&&ED.mode==='deco')renderPalette();}}
 function accountDeleted(){try{localStorage.removeItem(SKEY);localStorage.removeItem('taja2_classview');localStorage.removeItem('taja2_live');}catch(e){}
  liveMem=null;SAVE=null;PANELS.forEach(p=>show(p,false));goHome();
  const sub=$('pReg').querySelector('.sub');if(sub)sub.innerHTML='<b style="color:#d0263a">선생님이 이 크롬북의 계정을 지웠어요.</b><br>학년, 반, 번호, 이름을 다시 써서 처음부터 시작해요.';}
@@ -1224,7 +1351,7 @@ function rankHTML(list,game,m,meId,showCls){const rows=list.map(e=>({e,v:entryVa
  if(!rows.length)return '<p class="empty">아직 기록이 없어요.</p>';
  const head=m==='r'?(game==='total'?'라운드 합계':'최고 라운드'):(game==='total'?'분당 타수 합계':'분당 타수'),unit=m==='r'?'라운드':'타';let rank=0,prev=null;
  return `<table class="rank"><thead><tr><th>순위</th>${showCls?'<th>반</th>':''}<th>번호</th><th>이름</th><th>${head}</th><th>별지기</th></tr></thead><tbody>${rows.map((r,i)=>{if(!prev||r.v!==prev.v||r.w!==prev.w)rank=i+1;prev=r;const md=rank<=3&&r.v>0?`<span class="medal m${rank}">${rank}</span>`:rank;
-  return `<tr class="${meId&&r.e.i===meId?'me':''}"><td>${md}</td>${showCls?`<td>${+r.e.gr&&+r.e.cl?`${+r.e.gr}-${+r.e.cl}`:'-'}</td>`:''}<td>${esc(r.e.b||'-')}</td><td>${esc(r.e.n)}</td><td>${r.v?r.v+unit:'-'}</td><td>Lv.${esc(r.e.lv||1)}</td></tr>`;}).join('')}</tbody></table>`;}
+  return `<tr class="${meId&&r.e.i===meId?'me':''}"><td>${md}</td>${showCls?`<td>${+r.e.gr&&+r.e.cl?`${+r.e.gr}-${+r.e.cl}`:'-'}</td>`:''}<td>${esc(r.e.b||'-')}</td><td>${esc(r.e.n)}</td><td>${r.v?r.v+unit:'-'}</td><td><img class="skf" src="${skinFace(r.e.sk)}" alt="">Lv.${esc(r.e.lv||1)}</td></tr>`;}).join('')}</tbody></table>`;}
 let rkG='meteor',rkM='r',rkLoading=false,rkErr=false;
 function openRank(){rkErr=false;rkLoading=SYNC;renderRank();show('pRank',true);
  if(SYNC)syncPull().then(d=>{rkLoading=false;rkErr=!d;if(!$('pRank').classList.contains('hidden'))renderRank();});}
@@ -1251,7 +1378,7 @@ function renderMe(code,msg){const rows=READY.map(g=>{const s=SAVE.games[g.id];re
  <div class="btnrow"><button class="gbtn inline" data-act="close" data-p="pMe">닫기</button></div></div>`;}
 
 /* ---------- 선생님 모드 ---------- */
-let tmEdit='',tmDel='',tmBusy=false;
+let tmEdit='',tmDel='',tmBusy=false,tMon=null;
 let TUNLOCK=false,TPIN='',tTab='class',tG='meteor',tM='r',tArm='',tLoading=false,tCls='all';
 const tList=()=>{const d=store.get('taja2_teacher',{list:[]});return Array.isArray(d.list)?d.list.filter(validEntry):[];};
 function openTeacher(){PANELS.forEach(p=>show(p,false));if(!TUNLOCK){openPanel('pTeacher',`<div class="panel"><h2>🔒 선생님 모드</h2><p class="sub">선생님 비밀번호를 영어로 입력해 주세요.</p><div class="form"><label>비밀번호<input id="tPin" type="password" maxlength="12" autocomplete="off" autocapitalize="off" spellcheck="false"></label></div><p class="msg" id="tPinMsg"></p><button class="gbtn" data-act="t-pin">확인</button><button class="sbtn" data-act="t-close">닫기</button></div>`);setTimeout(()=>{const e=$('tPin');if(e)e.focus();},60);return;}
@@ -1280,7 +1407,7 @@ function renderTeacher(out,msg){const live=SYNC?(tLive||liveCached()):null,ALL=m
  else if(tTab==='plaza'){const pg=store.get('taja2_tpz',null)||{gr:(SAVE&&SAVE.gr)||'',cl:(SAVE&&SAVE.cl)||''};
   body=SYNC?`<p class="sub">반을 골라 광장을 열고, 장식을 눌러 [치우기]를 누르면 없어져요.<br>치운 장식은 그 학생이 다음에 광장을 열 때 학생의 창고로 돌아가요.</p>
   <div class="form" style="align-items:flex-end"><label>학년<select id="tpGr">${grOpts(pg.gr)}</select></label><label>반<input id="tpCl" type="number" min="1" max="20" value="${esc(pg.cl)}"></label><button class="gbtn inline" data-act="t-plaza" style="margin-bottom:4px">광장 열기</button></div>
-  <p class="msg" id="tPzMsg">${msg?esc(msg.t):''}</p><p class="note">구글 시트의 [광장] 탭에서 줄을 지워도 그 장식이 없어져요. 한 학생은 광장에 장식을 ${PLAZA_MAX}개까지 놓을 수 있어요.</p>`
+  <p class="msg" id="tPzMsg">${msg?esc(msg.t):''}</p><div id="tMonBox">${tMonHTML()}</div><p class="note">구글 시트의 [광장] 탭에서 줄을 지워도 그 장식이 없어져요. 한 학생은 광장에 장식을 ${PLAZA_MAX}개까지 놓을 수 있어요.</p>`
   :'<p class="empty">우리 반 광장은 반 랭킹 자동 연동(구글 시트)이 켜져 있어야 쓸 수 있어요.</p>';}
  else body=SAVE?`<p class="sub">지금 이 크롬북에 저장된 학생 정보예요. 여기서 고친 이름·번호도 시트에 '선생님이 정한 이름·번호'로 남아요.</p>${regForm('t',SAVE,true)}<button class="sbtn" data-act="t-saveprof">학생 정보 저장</button><p class="msg" id="tDevMsg"></p>
   <div class="form" style="align-items:flex-end"><label>코인 주기 (빼려면 -숫자)<input id="tGive" type="number" value="100"></label><button class="gbtn inline" data-act="t-give" style="margin-bottom:4px">코인 주기</button></div>
@@ -1330,6 +1457,22 @@ function tmAfter(res,okText){if(res&&Array.isArray(res.list))tLive={t:Date.now()
  else{if(res&&res.error==='none'){tmEdit='';tmDel='';}
   msg={t:!res?'구글 시트에 연결하지 못했어요. 잠시 뒤에 다시 해 주세요.':({bad:'Apps Script를 새 버전으로 배포해 주세요. (학생 관리 기능이 들어 있는 새 Code.gs)',pin:'선생님 비밀번호가 맞지 않아요. 선생님 모드를 닫고 다시 들어와 주세요.',none:'시트에서 그 학생을 찾지 못했어요. 목록을 새로 불러왔어요.',name:'이름을 두 글자 이상 써 주세요',no:'번호를 1~50 사이 숫자로 써 주세요',busy:'시트가 바빠요. 잠시 뒤에 다시 해 주세요.'}[res.error]||'저장하지 못했어요. 잠시 뒤에 다시 해 주세요.')};}
  if(!$('pTeacher').classList.contains('hidden'))renderTeacher(null,msg);}
+// 선생님 모드: 우리 반 기념비 보기와 선생님 별 주기 (별 1개 = 별가루 STAR_DUST)
+function tMonHTML(){const btn='<button class="sbtn inline" data-act="t-mon">⭐ 기념비 보기</button>';
+ if(!tMon)return `<p class="note">학년·반을 쓰고 [⭐ 기념비 보기]를 누르면 그 반 기념비의 단계와 별가루가 보여요. 수업 태도·과제처럼 타자 밖의 노력에는 선생님 별을 주세요 (별 1개 = 별가루 ${STAR_DUST}).</p><div class="btnrow">${btn}</div>`;
+ if(!tMon.mon)return `<p class="msg">${esc(tMon.err||'')}</p><div class="btnrow">${btn}</div>`;
+ return `<div class="monpanel"><small>${tMon.gr}학년 ${tMon.cl}반</small>${monHTML(tMon.mon)}</div><div class="btnrow">${btn}<button class="gbtn inline" data-act="t-star" data-d="1">⭐ 별 1개 주기</button><button class="gbtn inline" data-act="t-star" data-d="5">⭐ 별 5개 주기</button><button class="sbtn inline" data-act="t-star" data-d="-1">별 1개 빼기</button></div><p class="msg ${tMon.ok?'ok':''}">${esc(tMon.msg||'')}</p>`;}
+function tMonRender(){if(tTab==='plaza'&&!$('pTeacher').classList.contains('hidden')){const el=$('tMonBox');if(el)el.innerHTML=tMonHTML();}}
+async function tMonLoad(gr,cl){tMon={gr,cl,mon:null,err:'불러오는 중…'};tMonRender();let j=null;
+ try{const r=await tmo(fetch(`${SYNC_URL}${SYNC_URL.includes('?')?'&':'?'}action=mon&gr=${gr}&cl=${cl}&_=${Date.now()}`),20000);j=await r.json();}catch(e){}
+ if(!tMon||tMon.gr!==gr||tMon.cl!==cl)return;tMon.mon=j&&j.ok&&j.mon?j.mon:null;
+ tMon.err=tMon.mon?'':j?'Apps Script를 새 버전으로 배포해 주세요. (기념비 기능이 들어 있는 새 Code.gs)':'구글 시트에 연결하지 못했어요. 잠시 뒤에 다시 해 주세요.';
+ if(tMon.mon)monUpdate(plazaLabel(gr,cl),tMon.mon);tMonRender();}
+async function tMonStar(d){if(!tMon||!tMon.mon||tMon.busy)return;tMon.busy=true;tMon.msg='보내는 중…';tMon.ok=false;tMonRender();
+ const res=await pzReq({type:'mon_star',pin:TPIN,gr:tMon.gr,cl:tMon.cl,d});tMon.busy=false;
+ if(res&&res.ok&&res.mon){tMon.mon=res.mon;tMon.ok=true;tMon.msg=d>0?`별 ${d}개를 줬어요! (별가루 +${(d*STAR_DUST).toLocaleString()})`:`별 ${-d}개를 뺐어요`;monUpdate(plazaLabel(tMon.gr,tMon.cl),res.mon);}
+ else{tMon.ok=false;tMon.msg=!res?'구글 시트에 연결하지 못했어요.':res.error==='pin'?'선생님 비밀번호가 맞지 않아요. 선생님 모드를 닫고 다시 들어와 주세요.':res.error==='bad'?'Apps Script를 새 버전으로 배포해 주세요.':'보내지 못했어요. 잠시 뒤에 다시 해 주세요.';}
+ tMonRender();}
 function teacherAdd(){const txt=($('tCodes')||{}).value||'';const codes=txt.match(/TJR?1\.[A-Za-z0-9_-]+\.[0-9a-f]{6}/g)||[];const d=store.get('taja2_teacher',{list:[]});if(!Array.isArray(d.list))d.list=[];let add=0,upd=0,bad=0;
  const put=e=>{if(!validEntry(e)){bad++;return;}const i=d.list.findIndex(x=>x.i===e.i);if(i<0){d.list.push(e);add++;}else if((e.ts||0)>(d.list[i].ts||0)){d.list[i]=e;upd++;}};
  for(const c of codes){const r=dec(c);if(!r){bad++;continue;}if(r.pre==='TJ1')put(r.data);else if(Array.isArray(r.data.list))r.data.list.forEach(put);}
@@ -1355,6 +1498,8 @@ const ACT={
  'shop-cat'(el){shopCat=el.dataset.c;renderShop();},
  'shop-close'(){show('pShop',false);if(scr==='edit'&&ED)edRefresh();else if(SAVE){show('home',true);renderProfile();}},
  buy(el){doBuy(el.dataset.k,el.dataset.id);},
+ 'skin-use'(el){const id=el.dataset.id;if(!SAVE||!SKINS[id]||!SAVE.skins[id])return;SAVE.skin=id;saveGame();syncPush();SFX.tick();ttoast(`${SKINS[id].name}${josa(SKINS[id].name,'으로','로')} 바꿨어요`);renderShop();renderProfile();},
+ 'home-reset'(){HV=null;homeResetBtn();},
  'deco-open'(){openEditor('deco');},
  'plaza-open'(){openEditor('plaza');},
  'deco-done'(){closeEditor();},
@@ -1402,6 +1547,8 @@ const ACT={
  'tr-cls'(el){tCls=el.dataset.c;renderTeacher();},
  't-add'(){teacherAdd();},
  't-refresh'(){teacherPull();},
+ 't-mon'(){const gr=parseInt(($('tpGr')||{}).value,10),cl=parseInt(($('tpCl')||{}).value,10);if(!(gr>=1&&gr<=6)||!(cl>=1&&cl<=20)){$('tPzMsg').textContent='학년과 반을 확인해 주세요';return;}store.set('taja2_tpz',{gr,cl});tMonLoad(gr,cl);},
+ 't-star'(el){tMonStar(+el.dataset.d);},
  't-plaza'(){const gr=parseInt(($('tpGr')||{}).value,10),cl=parseInt(($('tpCl')||{}).value,10);if(!(gr>=1&&gr<=6)||!(cl>=1&&cl<=20)){$('tPzMsg').textContent='학년과 반을 확인해 주세요';return;}
   store.set('taja2_tpz',{gr,cl});show('pTeacher',false);openEditor('plaza',{gr,cl,admin:true});},
  'rk-refresh'(){openRank();},
@@ -1456,14 +1603,12 @@ document.addEventListener('keydown',e=>{if(scr!=='edit'||!ED||panelOpen())return
  else if(k==='+'||k==='='){edZoom(1.2);}else if(k==='-'||k==='_'){edZoom(1/1.2);}
  else if(k.startsWith('Arrow')){e.preventDefault();const s=48;if(k==='ArrowLeft')ED.cam.x+=s;else if(k==='ArrowRight')ED.cam.x-=s;else if(k==='ArrowUp')ED.cam.y+=s;else ED.cam.y-=s;clampCam();}});
 function toStage(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};}
-cv.addEventListener('pointerdown',e=>{if(scr==='game'&&R&&!R.paused&&!R.over){e.preventDefault();inp.focus();}else if(scr==='edit'&&ED){e.preventDefault();edDown(e);}});
-window.addEventListener('pointermove',e=>{if(scr==='edit'&&ED)edMove(e);});
-window.addEventListener('pointerup',e=>{if(scr==='edit'&&ED)edUp(e);});
-window.addEventListener('pointercancel',e=>{PTRS.delete(e.pointerId);if(ED&&ED.drag&&ED.drag.type!=='pinch'){if(ED.carry&&ED.carry.drag)edCancel();ED.drag=null;}});
-cv.addEventListener('wheel',e=>{if(scr!=='edit'||!ED)return;e.preventDefault();edZoom(Math.exp(-e.deltaY*(e.ctrlKey?.01:.0015)),toStage(e));},{passive:false});
+cv.addEventListener('pointerdown',e=>{if(scr==='game'&&R&&!R.paused&&!R.over){e.preventDefault();inp.focus();}else if(scr==='edit'&&ED){e.preventDefault();edDown(e);}else if(scr==='home'&&SAVE&&!panelOpen()){e.preventDefault();homeDown(e);}});
+window.addEventListener('pointermove',e=>{if(scr==='edit'&&ED)edMove(e);else if(hDrag)homeMove(e);});
+window.addEventListener('pointerup',e=>{if(scr==='edit'&&ED)edUp(e);else if(hDrag||HPTRS.size)homeUp(e);});
+window.addEventListener('pointercancel',e=>{PTRS.delete(e.pointerId);HPTRS.delete(e.pointerId);if(!HPTRS.size)hDrag=null;if(ED&&ED.drag&&ED.drag.type!=='pinch'){if(ED.carry&&ED.carry.drag)edCancel();ED.drag=null;}});
+cv.addEventListener('wheel',e=>{const f=Math.exp(-e.deltaY*(e.ctrlKey?.01:.0015));if(scr==='edit'&&ED){e.preventDefault();edZoom(f,toStage(e));}else if(scr==='home'&&SAVE&&!panelOpen()){e.preventDefault();homeZoom(f,toStage(e));}},{passive:false});
 cv.addEventListener('contextmenu',e=>{if(scr==='edit')e.preventDefault();});
-cv.addEventListener('click',e=>{if(scr!=='home'||!SAVE||panelOpen())return;const n=SAVE.deco.n,cam=homeCam(n),p=toStage(e),wx=(p.x-cam.x)/cam.z,wy=(p.y-cam.y)/cam.z;
- if(inPoly(wx,wy,[IP(0,n),IP(n,n),IP(n,0),up(IP(n,0),120),up(IP(0,0),120),up(IP(0,n),120)]))openEditor('deco');});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&scr==='game'&&R&&!R.over&&!R.paused)ACT.pause();});
 window.addEventListener('resize',fit);
 
