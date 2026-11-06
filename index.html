@@ -186,6 +186,23 @@ table.rank{width:100%;border-collapse:collapse;font-size:23px}
 table.rank th{position:sticky;top:0;background:#2a2a30;color:#fff;font-weight:normal;padding:6px}
 table.rank td{padding:5px 6px;border-top:1px solid #e3e5ea}
 table.rank tr.me td{background:#fff3b8}
+/* 선생님 모드 [학생 관리] */
+table.rank.mg{font-size:21px}
+table.rank.mg td{vertical-align:middle}
+table.rank tr.dup td{background:#ffefc2}
+table.rank tr.grp td{background:#eef1f6;font-size:19px;color:#4b4f5c;text-align:left;padding:3px 12px}
+table.rank tr.edit td,table.rank tr.del td{background:#fff7e6}
+table.rank tr.del td{text-align:left;padding:8px 12px;line-height:1.5}
+table.rank tr.del small{color:#a3273a;font-size:18px}
+table.rank input{height:44px;border:3px solid var(--steel);border-radius:12px;font-size:23px;text-align:center;outline:none;font-family:inherit}
+table.rank input#tmNo{width:78px}
+table.rank input#tmName{width:210px}
+table.rank .hint{font-size:16px;color:#6b6d75}
+.dupnote{display:inline-block;margin-left:6px;font-size:16px;color:#8a4b00;background:#ffd66b;border-radius:999px;padding:0 9px;vertical-align:middle}
+table.rank .tn{display:inline-block;margin-left:6px;font-size:15px;color:#3f5fa8;vertical-align:middle}
+.mgbtns{white-space:nowrap}
+.mgbtns .sbtn,.mgbtns .gbtn{display:inline-block;width:auto;margin:0 2px;font-size:19px;padding:2px 12px;box-shadow:0 3px 0 var(--ink)}
+.sbtn.danger{background:linear-gradient(#fff0f0,#ffb8b8)}
 .medal{display:inline-block;width:32px;height:32px;line-height:32px;border-radius:50%;color:#fff;font-size:20px}
 .m1{background:#f2b705}.m2{background:#9aa3ad}.m3{background:#c77b3a}
 .empty{padding:26px;font-size:23px;color:#777}
@@ -1137,7 +1154,7 @@ async function plazaPut(k,i,j,f){const ed=ED;if(ed.pz.busy)return;const lab=plaz
  if(ED!==ed)return;ed.pz.busy=false;ed.pending=null;ed.pz.last=Date.now();
  if(res&&Array.isArray(res.items))setPlaza(res.items);
  if(res&&res.ok){SFX.pop();ttoast(`${nm}${josa(nm,'을','를')} 광장에 놓았어요!`);if(!(SAVE.deco.stock[k]>0))ed.carry=null;}
- else if(res){SFX.miss();ttoast({taken:'다른 친구가 먼저 그 자리에 놓았어요',path:'가운데 길에는 놓을 수 없어요',max:`광장에는 한 사람이 ${PLAZA_MAX}개까지 놓을 수 있어요`,range:'광장 밖이에요'}[res.error]||'놓지 못했어요. 잠시 뒤에 다시 해 보세요');}
+ else if(res){SFX.miss();ttoast({taken:'다른 친구가 먼저 그 자리에 놓았어요',path:'가운데 길에는 놓을 수 없어요',max:`광장에는 한 사람이 ${PLAZA_MAX}개까지 놓을 수 있어요`,range:'광장 밖이에요',deleted:'선생님이 이 계정을 지웠어요'}[res.error]||'놓지 못했어요. 잠시 뒤에 다시 해 보세요');if(res.error==='deleted')syncPush();}
  else{ttoast('연결이 불안정해요. 광장을 다시 불러올게요');plazaPull(true);}
  edRefresh();}
 async function plazaTake(o){const ed=ED;if(ed.pz.busy)return;const lab=plazaLabel(ed.gr,ed.cl),id=SAVE.id,nm=DECO[o.k].name;ed.pz.busy=true;setHint();
@@ -1169,19 +1186,36 @@ const tmo=(p,ms)=>Promise.race([p,new Promise((_,j)=>setTimeout(()=>j(new Error(
 const liveCached=()=>liveMem||store.get('taja2_live',null);
 function mergeLists(...ls){const m=new Map();for(const L of ls)for(const e0 of(L||[])){if(!validEntry(e0))continue;const e=Object.assign({},e0,{i:tagOf(e0.i)}),o=m.get(e.i);if(!o||(+e.ts||0)>(+o.ts||0))m.set(e.i,e);}return[...m.values()];}
 function ago(t){if(!t)return '';const s=(Date.now()-t)/1000;if(s<60)return '방금';if(s<3600)return `${Math.floor(s/60)}분 전`;const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;}
-async function syncPush(){if(!SYNC||!SAVE)return false;if(pushing){pushAgain=true;return false;}pushing=true;
- const data=JSON.stringify(myEntry()),body=JSON.stringify({type:'record',data,sig:hash(SALT+'sync'+data)});let ok=false,res=null;
+// pin: [이 크롬북 관리]에서 선생님이 고친 정보를 보낼 때만 (시트에 '선생님이 정한 이름·번호'로 남아요)
+let pushPin='';
+async function syncPush(pin){if(typeof pin==='string'&&pin)pushPin=pin;if(!SYNC||!SAVE)return false;if(pushing){pushAgain=true;return false;}pushing=true;
+ const data=JSON.stringify(myEntry()),req={type:'record',data,sig:hash(SALT+'sync'+data)},usedPin=pushPin;if(usedPin)req.pin=usedPin;
+ const body=JSON.stringify(req);let ok=false,res=null,j=null;
  try{res=await tmo(fetch(SYNC_URL,{method:'POST',body}),20000);}catch(e){res=null;}
- if(res){try{const j=await res.json();ok=!!(j&&j.ok);}catch(e){ok=false;}}
+ if(res){try{j=await res.json();ok=!!(j&&j.ok);}catch(e){ok=false;}}
  else{try{await tmo(fetch(SYNC_URL,{method:'POST',body,mode:'no-cors'}),20000);ok=true;}catch(e){}}
- if(SAVE){if(ok)SAVE.syncAt=Date.now();SAVE.syncPending=!ok;saveGame();}
+ if(ok&&usedPin===pushPin)pushPin='';
  pushing=false;
+ if(j)syncReply(j);
+ if(!SAVE)return false;
+ SAVE.syncPending=!ok&&!(j&&j.error==='deleted');if(ok)SAVE.syncAt=Date.now();saveGame();
  if(pushAgain){pushAgain=false;syncPush();}
  else if(!ok&&pushRetry<3){pushRetry++;setTimeout(syncPush,15000+Math.random()*20000);}
  else if(ok)pushRetry=0;
  return ok;}
 async function syncPull(){if(!SYNC)return null;try{const r=await tmo(fetch(SYNC_URL+(SYNC_URL.includes('?')?'&':'?')+'action=list&_='+Date.now()),20000);const j=await r.json();
  if(j&&j.ok&&Array.isArray(j.list)){liveMem={t:Date.now(),list:j.list.filter(validEntry)};store.set('taja2_live',liveMem);return liveMem;}}catch(e){}return null;}
+// 시트의 답: 선생님이 바꾼 이름·번호는 이 크롬북에도 바꾸고, 선생님이 지운 계정이면 이 크롬북을 처음 상태로 돌려요
+function syncReply(j){if(!SAVE||!j)return;
+ if(j.error==='deleted'){if(R&&!R.over)return;accountDeleted();return;}
+ if(!j.ok)return;
+ const n=typeof j.n==='string'?j.n.replace(/\s+/g,' ').trim().slice(0,10):'',b=+j.b||0,ch=[];
+ if([...n].length>=2&&n!==SAVE.name){SAVE.name=n;ch.push('이름');}
+ if(b>=1&&b<=99&&b!==SAVE.no){SAVE.no=b;ch.push('번호');}
+ if(ch.length){saveGame();renderProfile();ttoast(`선생님이 ${ch.join('·')}를 바꿨어요: ${SAVE.name} · ${SAVE.no}번`);}}
+function accountDeleted(){try{localStorage.removeItem(SKEY);localStorage.removeItem('taja2_classview');localStorage.removeItem('taja2_live');}catch(e){}
+ liveMem=null;SAVE=null;PANELS.forEach(p=>show(p,false));goHome();
+ const sub=$('pReg').querySelector('.sub');if(sub)sub.innerHTML='<b style="color:#d0263a">선생님이 이 크롬북의 계정을 지웠어요.</b><br>학년, 반, 번호, 이름을 다시 써서 처음부터 시작해요.';}
 function syncDelete(id){if(!SYNC||!id)return;const body=JSON.stringify({type:'delete',id,sig:hash(SALT+'del'+id)});fetch(SYNC_URL,{method:'POST',body}).catch(()=>fetch(SYNC_URL,{method:'POST',body,mode:'no-cors'}).catch(()=>{}));}
 function entryVal(e,game,m){if(game==='total'){if(m==='r')return READY.reduce((a,gm)=>a+(+((e.g[gm.id]||{}).r)||0),0);return READY.reduce((a,gm)=>a+(+((e.g[gm.id]||{}).t)||0),0);}const v=e.g[game]||{};return m==='r'?(+v.r||0):(+v.t||0);}
 function rankTabs(pre,game,m){return `<div class="tabs">${READY.map(g=>`<button class="chip ${game===g.id?'on':''}" data-act="${pre}-game" data-g="${g.id}">${esc(g.short||g.name)}</button>`).join('')}<button class="chip ${game==='total'?'on':''}" data-act="${pre}-game" data-g="total">합산</button>
@@ -1217,6 +1251,7 @@ function renderMe(code,msg){const rows=READY.map(g=>{const s=SAVE.games[g.id];re
  <div class="btnrow"><button class="gbtn inline" data-act="close" data-p="pMe">닫기</button></div></div>`;}
 
 /* ---------- 선생님 모드 ---------- */
+let tmEdit='',tmDel='',tmBusy=false;
 let TUNLOCK=false,TPIN='',tTab='class',tG='meteor',tM='r',tArm='',tLoading=false,tCls='all';
 const tList=()=>{const d=store.get('taja2_teacher',{list:[]});return Array.isArray(d.list)?d.list.filter(validEntry):[];};
 function openTeacher(){PANELS.forEach(p=>show(p,false));if(!TUNLOCK){openPanel('pTeacher',`<div class="panel"><h2>🔒 선생님 모드</h2><p class="sub">선생님 비밀번호를 영어로 입력해 주세요.</p><div class="form"><label>비밀번호<input id="tPin" type="password" maxlength="12" autocomplete="off" autocapitalize="off" spellcheck="false"></label></div><p class="msg" id="tPinMsg"></p><button class="gbtn" data-act="t-pin">확인</button><button class="sbtn" data-act="t-close">닫기</button></div>`);setTimeout(()=>{const e=$('tPin');if(e)e.focus();},60);return;}
@@ -1237,21 +1272,64 @@ function renderTeacher(out,msg){const live=SYNC?(tLive||liveCached()):null,ALL=m
   body=`${SYNC?`<p class="sub">🔗 자동 연동 켜짐 · ${tLoading?'불러오는 중…':live?`${ago(live.t)} 불러옴`:'아직 불러오지 못함'} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="t-refresh">새로고침</button></p>`:'<p class="sub">자동 연동이 꺼져 있어요. 학생들의 기록 코드(TJ1.로 시작)를 모아 아래에 붙여 넣으세요.</p>'}
   <p class="msg ${msg&&msg.ok?'ok':''}" id="tMsg">${msg?esc(msg.t):''}</p>${chips}
   <p class="sub" style="margin:4px 0">${tCls==='all'?'모인 학생':clsName(tCls)} ${L.length}명</p>${rankTabs('tr',tG,tM)}<div class="rankbox" style="max-height:220px">${rankHTML(L,tG,tM,null,tCls==='all'&&keys.length>1)}</div>
-  ${SYNC?'<p class="note">기록을 지우거나 고치려면 구글 시트의 [랭킹] 탭에서 그 학생의 줄을 고치거나 지우세요.</p>':''}
+  ${SYNC?'<p class="note">학생 이름·번호를 바꾸거나 계정을 지우려면 [학생 관리] 탭을 쓰세요.</p>':''}
   <h3>${SYNC?'연동이 안 될 때: ':''}기록 코드로 추가하기</h3><div class="coderow"><textarea class="code" id="tCodes" placeholder="여러 학생의 코드를 한꺼번에 붙여 넣어도 괜찮아요"></textarea><button class="gbtn" data-act="t-add">추가</button></div>
   <div class="btnrow">${SYNC?'':'<button class="gbtn inline" data-act="t-classcode">학생용 반 랭킹 코드 만들기</button>'}<button class="sbtn inline" data-act="t-clear">${tArm==='clear'?'정말 비울까요? 한 번 더!':'코드로 모은 목록 비우기'}</button></div>
   ${out?`<div class="coderow"><textarea class="code" id="tOut" readonly>${out}</textarea><button class="sbtn" data-act="copy" data-t="tOut">복사</button></div><p class="note">이 코드를 학생들에게 나눠 주면, 학생들이 [내 기록]에서 넣어 반 랭킹을 볼 수 있어요.</p>`:''}`;}
+ else if(tTab==='manage')body=renderManage(msg);
  else if(tTab==='plaza'){const pg=store.get('taja2_tpz',null)||{gr:(SAVE&&SAVE.gr)||'',cl:(SAVE&&SAVE.cl)||''};
   body=SYNC?`<p class="sub">반을 골라 광장을 열고, 장식을 눌러 [치우기]를 누르면 없어져요.<br>치운 장식은 그 학생이 다음에 광장을 열 때 학생의 창고로 돌아가요.</p>
   <div class="form" style="align-items:flex-end"><label>학년<select id="tpGr">${grOpts(pg.gr)}</select></label><label>반<input id="tpCl" type="number" min="1" max="20" value="${esc(pg.cl)}"></label><button class="gbtn inline" data-act="t-plaza" style="margin-bottom:4px">광장 열기</button></div>
   <p class="msg" id="tPzMsg">${msg?esc(msg.t):''}</p><p class="note">구글 시트의 [광장] 탭에서 줄을 지워도 그 장식이 없어져요. 한 학생은 광장에 장식을 ${PLAZA_MAX}개까지 놓을 수 있어요.</p>`
   :'<p class="empty">우리 반 광장은 반 랭킹 자동 연동(구글 시트)이 켜져 있어야 쓸 수 있어요.</p>';}
- else body=SAVE?`<p class="sub">지금 이 크롬북에 저장된 학생 정보예요.</p>${regForm('t',SAVE,true)}<button class="sbtn" data-act="t-saveprof">학생 정보 저장</button><p class="msg" id="tDevMsg"></p>
+ else body=SAVE?`<p class="sub">지금 이 크롬북에 저장된 학생 정보예요. 여기서 고친 이름·번호도 시트에 '선생님이 정한 이름·번호'로 남아요.</p>${regForm('t',SAVE,true)}<button class="sbtn" data-act="t-saveprof">학생 정보 저장</button><p class="msg" id="tDevMsg"></p>
   <div class="form" style="align-items:flex-end"><label>코인 주기 (빼려면 -숫자)<input id="tGive" type="number" value="100"></label><button class="gbtn inline" data-act="t-give" style="margin-bottom:4px">코인 주기</button></div>
   <p class="sub">지금 코인 ${SAVE.coins.toLocaleString()} · 별지기 Lv.${charLevel()} · 반 랭킹 자동 연동 ${SYNC?`켜짐${SAVE.syncAt?` (마지막 전송 ${ago(SAVE.syncAt)})`:''}${SAVE.syncPending?' · 보내지 못한 기록 있음':''}`:'꺼짐'}</p>
   <button class="sbtn" data-act="t-reset">${tArm==='reset'?'정말 처음부터? 한 번 더 누르세요':'이 크롬북 기록 모두 지우기'}</button><p class="msg ${msg&&msg.ok?'ok':''}">${msg?esc(msg.t):''}</p>`:'<p class="empty">이 기기에는 학생 정보가 없어요.</p>';
- $('pTeacher').innerHTML=`<div class="panel xl"><h2>👩‍🏫 선생님 모드</h2><div class="tabs"><button class="chip ${tTab==='class'?'on':''}" data-act="t-tab" data-t="class">반 랭킹 모으기</button><button class="chip ${tTab==='plaza'?'on':''}" data-act="t-tab" data-t="plaza">우리 반 광장</button><button class="chip ${tTab==='device'?'on':''}" data-act="t-tab" data-t="device">이 크롬북 관리</button></div>${body}
+ $('pTeacher').innerHTML=`<div class="panel xl"><h2>👩‍🏫 선생님 모드</h2><div class="tabs"><button class="chip ${tTab==='class'?'on':''}" data-act="t-tab" data-t="class">반 랭킹 모으기</button><button class="chip ${tTab==='manage'?'on':''}" data-act="t-tab" data-t="manage">학생 관리</button><button class="chip ${tTab==='plaza'?'on':''}" data-act="t-tab" data-t="plaza">우리 반 광장</button><button class="chip ${tTab==='device'?'on':''}" data-act="t-tab" data-t="device">이 크롬북 관리</button></div>${body}
  <div class="btnrow"><button class="gbtn inline" data-act="t-close">닫기</button></div></div>`;}
+// ---------- 선생님 모드 [학생 관리]: 이름·번호 바꾸기, 계정 지우기 ----------
+const clsSort=(a,b)=>{const[g1,c1]=a.split('-').map(Number),[g2,c2]=b.split('-').map(Number);return(g1||99)-(g2||99)||(c1||99)-(c2||99);};
+// 같은 반에 번호나 이름이 겹치는 학생 (한 학생이 크롬북 두 대에 등록한 경우를 찾기 쉽게)
+function dupInfo(L){const by={},out={};for(const e of L){const k=clsKey(e),nm=String(e.n||'').trim();
+  if(+e.b>0)(by[k+'|b|'+e.b]=by[k+'|b|'+e.b]||[]).push(e.i);
+  if(nm)(by[k+'|n|'+nm]=by[k+'|n|'+nm]||[]).push(e.i);}
+ for(const key in by)if(by[key].length>1)for(const i of by[key])(out[i]=out[i]||[]).push(key.includes('|b|')?'같은 번호':'같은 이름');
+ return out;}
+function renderManage(msg){
+ if(!SYNC)return '<p class="empty">학생 관리는 반 랭킹 자동 연동(구글 시트)이 켜져 있어야 쓸 수 있어요.</p>';
+ const live=tLive&&tLive.full?tLive:null,ALL=live?live.list:[],keys=[...new Set(ALL.map(clsKey))].sort(clsSort);
+ if(tCls!=='all'&&!keys.includes(tCls))tCls='all';
+ const L=(tCls==='all'?ALL:ALL.filter(e=>clsKey(e)===tCls)).slice().sort((a,b)=>clsSort(clsKey(a),clsKey(b))||(+a.b||99)-(+b.b||99)||String(a.n).localeCompare(String(b.n),'ko'));
+ const dup=dupInfo(ALL),rd=(e,gm)=>{const v=+(((e.g||{})[gm]||{}).r)||0;return v?`${v}라운드`:'-';},dis=tmBusy?'disabled':'';
+ const chips=keys.length>1?`<div class="tabs" style="margin:0 0 4px"><button class="chip sm2 ${tCls==='all'?'on':''}" data-act="tr-cls" data-c="all">모든 반</button>${keys.map(k=>`<button class="chip sm2 ${tCls===k?'on':''}" data-act="tr-cls" data-c="${k}">${clsName(k)}</button>`).join('')}</div>`:'';
+ let rows='',lastK=null;
+ for(const e of L){const k=clsKey(e);
+  if(tCls==='all'&&k!==lastK){rows+=`<tr class="grp"><td colspan="6">${clsName(k)} · ${ALL.filter(x=>clsKey(x)===k).length}명</td></tr>`;lastK=k;}
+  const d=dup[e.i],dn=d?d.map(x=>`<span class="dupnote">${x}</span>`).join(''):'';
+  if(tmEdit===e.i){rows+=`<tr class="edit"><td><input id="tmNo" type="number" min="1" max="50" inputmode="numeric" value="${+e.b||''}" aria-label="번호"></td><td colspan="4" style="text-align:left"><input id="tmName" maxlength="10" autocomplete="off" spellcheck="false" value="${esc(e.n)}" aria-label="이름"> <span class="hint">별명도 괜찮지만 진짜 이름이 꼭 들어가야 해요</span></td><td class="mgbtns"><button class="gbtn" data-act="tm-save" ${dis}>저장</button><button class="sbtn" data-act="tm-cancel">취소</button></td></tr>`;continue;}
+  if(tmDel===e.i){rows+=`<tr class="del"><td colspan="6">정말 <b>${esc(e.n)}</b> (${+e.b||'-'}번) 계정을 지울까요? &nbsp;한글 ${rd(e,'meteor')} · 영어 ${rd(e,'meteor_en')} · 마지막 연결 ${ago(e.ts)||'-'}<br><small>그 크롬북의 코인·마을·기록은 다음에 게임을 열 때 모두 지워져요.</small> <span class="mgbtns"><button class="sbtn danger" data-act="tm-delok" ${dis}>정말 지우기</button><button class="sbtn" data-act="tm-cancel">취소</button></span></td></tr>`;continue;}
+  rows+=`<tr class="${d?'dup':''}"><td>${+e.b||'-'}</td><td style="text-align:left">${esc(e.n)}${e.tn?'<span class="tn">✏️ 선생님이 정함</span>':''}${dn}</td><td>${rd(e,'meteor')}</td><td>${rd(e,'meteor_en')}</td><td>${ago(e.ts)||'-'}</td><td class="mgbtns"><button class="sbtn" data-act="tm-edit" data-t="${e.i}" ${dis}>이름·번호</button><button class="sbtn danger" data-act="tm-del" data-t="${e.i}" ${dis}>지우기</button></td></tr>`;}
+ const dupN=L.filter(e=>dup[e.i]).length;
+ return `<p class="sub">🔗 ${tLoading?'불러오는 중…':live?`${ago(live.t)} 불러옴`:'아직 불러오지 못함'} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="t-refresh">새로고침</button></p>
+  <p class="msg ${msg&&msg.ok?'ok':''}" id="tMsg">${msg?esc(msg.t):''}</p>${chips}
+  <p class="sub" style="margin:4px 0">${tCls==='all'?'모든 반':clsName(tCls)} ${L.length}명${dupN?` · <span class="dupnote">노란 줄 ${dupN}명</span> 같은 반에 번호나 이름이 겹쳐요`:''}</p>
+  <div class="rankbox" style="max-height:330px">${L.length?`<table class="rank mg"><tr><th>번호</th><th>이름</th><th>한글</th><th>영어</th><th>마지막 연결</th><th></th></tr>${rows}</table>`:`<p class="empty">${live?'아직 시트에 학생이 없어요':tLoading?'목록을 불러오는 중이에요':'목록을 불러오지 못했어요. [새로고침]을 눌러 주세요'}</p>`}</div>
+  <p class="note">이름·번호를 바꾸면 그 학생이 다음에 게임을 열 때 크롬북에도 바뀌어요. 계정을 지우면 그 크롬북은 다음에 게임을 열 때 처음부터 시작해요.<br>그 크롬북이 게임을 열기 전이라면, 구글 시트의 [지운 학생] 탭에서 그 줄을 지워 되돌릴 수 있어요.</p>`;}
+function tmMsg(t){const m=$('tMsg');if(m){m.className='msg';m.textContent=t;}}
+async function tmSave(){if(tmBusy||!tmEdit)return;const no=parseInt((($('tmNo')||{}).value||''),10),name=(($('tmName')||{}).value||'').replace(/\s+/g,' ').trim().slice(0,10);
+ if(!(no>=1&&no<=50)){tmMsg('번호를 1~50 사이 숫자로 써 주세요');return;}
+ if([...name].length<2){tmMsg('이름을 두 글자 이상 써 주세요 (진짜 이름이 들어가야 해요)');return;}
+ tmBusy=true;tmMsg('저장하는 중…');const res=await pzReq({type:'admin_edit',pin:TPIN,t:tmEdit,n:name,b:no});tmBusy=false;
+ tmAfter(res,`바꿨어요: ${name} · ${no}번. 그 학생이 다음에 게임을 열면 크롬북에도 바뀌어요.`);}
+async function tmDelete(){if(tmBusy||!tmDel)return;const e=((tLive&&tLive.list)||[]).find(x=>x.i===tmDel);
+ tmBusy=true;tmMsg('지우는 중…');const res=await pzReq({type:'admin_delete',pin:TPIN,t:tmDel});tmBusy=false;
+ tmAfter(res,`${e?e.n:'그 학생'} 계정을 지웠어요. 그 크롬북은 다음에 게임을 열 때 처음부터 시작해요.`);}
+function tmAfter(res,okText){if(res&&Array.isArray(res.list))tLive={t:Date.now(),list:res.list.filter(validEntry),full:true};
+ let msg;if(res&&res.ok){tmEdit='';tmDel='';msg={t:okText,ok:true};}
+ else{if(res&&res.error==='none'){tmEdit='';tmDel='';}
+  msg={t:!res?'구글 시트에 연결하지 못했어요. 잠시 뒤에 다시 해 주세요.':({bad:'Apps Script를 새 버전으로 배포해 주세요. (학생 관리 기능이 들어 있는 새 Code.gs)',pin:'선생님 비밀번호가 맞지 않아요. 선생님 모드를 닫고 다시 들어와 주세요.',none:'시트에서 그 학생을 찾지 못했어요. 목록을 새로 불러왔어요.',name:'이름을 두 글자 이상 써 주세요',no:'번호를 1~50 사이 숫자로 써 주세요',busy:'시트가 바빠요. 잠시 뒤에 다시 해 주세요.'}[res.error]||'저장하지 못했어요. 잠시 뒤에 다시 해 주세요.')};}
+ if(!$('pTeacher').classList.contains('hidden'))renderTeacher(null,msg);}
 function teacherAdd(){const txt=($('tCodes')||{}).value||'';const codes=txt.match(/TJR?1\.[A-Za-z0-9_-]+\.[0-9a-f]{6}/g)||[];const d=store.get('taja2_teacher',{list:[]});if(!Array.isArray(d.list))d.list=[];let add=0,upd=0,bad=0;
  const put=e=>{if(!validEntry(e)){bad++;return;}const i=d.list.findIndex(x=>x.i===e.i);if(i<0){d.list.push(e);add++;}else if((e.ts||0)>(d.list[i].ts||0)){d.list[i]=e;upd++;}};
  for(const c of codes){const r=dec(c);if(!r){bad++;continue;}if(r.pre==='TJ1')put(r.data);else if(Array.isArray(r.data.list))r.data.list.forEach(put);}
@@ -1313,8 +1391,13 @@ const ACT={
  't-open'(){openTeacher();},
  't-pin'(){const v=(($('tPin')||{}).value||'').trim();if(HANGUL.test(v)){$('tPinMsg').textContent='한글이 섞여 들어갔어요. 한/영 키를 눌러 영어로 바꾼 뒤 다시 입력해 주세요.';$('tPin').value='';$('tPin').focus();return;}
   if(hash('pin:'+v+SALT)===PIN_H){TUNLOCK=true;TPIN=v;tArm='';renderTeacher();teacherPull();}else{$('tPinMsg').textContent='비밀번호가 달라요'+(pinCaps?' (Caps Lock이 켜져 있어요)':'');$('tPin').value='';$('tPin').focus();}},
- 't-close'(){show('pTeacher',false);tArm='';if(!SAVE)openReg();else if(scr==='home')goHome();},
- 't-tab'(el){tTab=el.dataset.t;tArm='';renderTeacher();if(tTab==='class'&&SYNC&&!tLive)teacherPull();},
+ 't-close'(){show('pTeacher',false);tArm='';tmEdit='';tmDel='';if(!SAVE)openReg();else if(scr==='home')goHome();},
+ 't-tab'(el){tTab=el.dataset.t;tArm='';tmEdit='';tmDel='';renderTeacher();if(SYNC&&((tTab==='class'&&!tLive)||(tTab==='manage'&&!tLoading&&(!(tLive&&tLive.full)||Date.now()-tLive.t>30000))))teacherPull();},
+ 'tm-edit'(el){if(tmBusy)return;tmEdit=el.dataset.t;tmDel='';renderTeacher();setTimeout(()=>{const x=$('tmName');if(x){x.focus();x.select();}},30);},
+ 'tm-del'(el){if(tmBusy)return;tmDel=el.dataset.t;tmEdit='';renderTeacher();},
+ 'tm-cancel'(){tmEdit='';tmDel='';renderTeacher();},
+ 'tm-save'(){tmSave();},
+ 'tm-delok'(){tmDelete();},
  'tr-game'(el){tG=el.dataset.g;renderTeacher();},'tr-metric'(el){tM=el.dataset.m;renderTeacher();},
  'tr-cls'(el){tCls=el.dataset.c;renderTeacher();},
  't-add'(){teacherAdd();},
@@ -1325,7 +1408,7 @@ const ACT={
  'me-push'(){renderMe(null,{t:'보내는 중…'});syncPush().then(ok=>{if(SAVE&&!$('pMe').classList.contains('hidden'))renderMe(null,ok?{t:'보냈어요!',ok:true}:{t:'보내지 못했어요. 잠시 뒤에 다시 해 보세요.'});});},
  't-classcode'(){const L=tList().filter(e=>tCls==='all'||clsKey(e)===tCls);if(!L.length){renderTeacher(null,{t:'먼저 학생 코드를 추가해 주세요'});return;}renderTeacher(enc('TJR1',{t:Date.now(),list:L.map(e=>({i:e.i,gr:e.gr,cl:e.cl,n:e.n,b:e.b,lv:e.lv,g:e.g,ts:e.ts}))}));},
  't-clear'(){if(tArm!=='clear'){tArm='clear';renderTeacher();return;}store.set('taja2_teacher',{list:[]});tArm='';renderTeacher(null,{t:'목록을 비웠어요',ok:true});},
- 't-saveprof'(){const v=readInfo('t');if(v.err){$('tDevMsg').textContent=v.err;return;}Object.assign(SAVE,{gr:v.gr,cl:v.cl,no:v.no,name:v.name});saveGame();syncPush();renderTeacher(null,{t:'학생 정보를 저장했어요',ok:true});},
+ 't-saveprof'(){const v=readInfo('t');if(v.err){$('tDevMsg').textContent=v.err;return;}Object.assign(SAVE,{gr:v.gr,cl:v.cl,no:v.no,name:v.name});saveGame();syncPush(TPIN);renderTeacher(null,{t:'학생 정보를 저장했어요',ok:true});},
  't-give'(){const n=parseInt($('tGive').value,10);if(!n){renderTeacher(null,{t:'숫자를 써 주세요'});return;}SAVE.coins=Math.max(0,SAVE.coins+n);saveGame();renderTeacher(null,{t:`${n>0?'+':''}${n} 코인 → 지금 ${SAVE.coins} 코인`,ok:true});},
  't-reset'(){if(tArm!=='reset'){tArm='reset';renderTeacher();return;}if(SAVE)syncDelete(SAVE.id);try{localStorage.removeItem(SKEY);localStorage.removeItem('taja2_classview');localStorage.removeItem('taja2_live');}catch(e){}liveMem=null;SAVE=null;tArm='';show('pTeacher',false);goHome();}};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const f=ACT[b.dataset.act];if(f){f(b);}});
@@ -1333,7 +1416,8 @@ $('slots').addEventListener('pointerdown',e=>{if(e.target.closest('.slot[data-i]
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){const id=(e.target&&e.target.id)||'';
  if(/^r(Gr|Cl|No|Name)$/.test(id)){e.preventDefault();ACT[$('pReg').querySelector('[data-act=info-save]')?'info-save':'reg-save']();}
  else if(id==='tPin'){e.preventDefault();ACT['t-pin']();}
- else if(id==='tpCl'){e.preventDefault();ACT['t-plaza']();}}});
+ else if(id==='tpCl'){e.preventDefault();ACT['t-plaza']();}
+ else if(id==='tmName'||id==='tmNo'){e.preventDefault();tmSave();}}});
 
 /* 선생님 비밀번호 칸: 한글 상태·Caps Lock 알림 */
 const HANGUL=/[ㄱ-ㅎㅏ-ㅣ가-힣]/;let pinCaps=false,pinKo=false;
