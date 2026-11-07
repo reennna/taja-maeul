@@ -40,6 +40,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .pcoin{margin-top:2px;font-size:30px;color:#2a2a30}
 .pskin{position:absolute;right:8px;top:10px;width:72px;height:63px;pointer-events:none}
 .pcard .pname,.pcard .pmeta{margin-right:62px}
+.updnote{position:absolute;left:50%;top:118px;transform:translateX(-50%);background:rgba(40,20,30,.94);color:#fff;font-size:28px;padding:12px 30px;border-radius:999px;border:3px solid #ffd43b;white-space:nowrap;z-index:20;pointer-events:none!important;box-shadow:0 6px 16px rgba(0,0,0,.3)}
+.updnote b{color:#ffd43b;font-weight:normal}
+.verline{font-size:15px;color:#9a9ca5;margin-top:6px}
+table.rank .vok{color:#2b8a3e;font-size:17px}
+table.rank .vold{color:#c2410c;font-size:17px}
 .hreset{position:absolute;right:18px;bottom:122px;font-size:19px;background:rgba(255,255,255,.94);border:3px solid var(--ink);border-radius:999px;padding:3px 14px;box-shadow:0 3px 0 var(--ink)}
 .topbtns{position:absolute;right:18px;top:14px;display:flex;gap:10px}
 .ibtn{width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b0,#ffc928 60%,#e59a00);border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink);display:flex;align-items:center;justify-content:center;position:relative}
@@ -265,6 +270,33 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 .ichip.zero{opacity:.45}
 .statline{font-size:20px;color:#5d5f68;margin-top:12px}
 .recgrid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+/* 반별 랭킹 · 친구 마을 · 다른 반 광장 */
+.hb{position:relative}
+.hbadge{position:absolute;top:-18px;right:-6px;background:linear-gradient(#fff3b0,#ffc928);border:3px solid var(--ink);border-radius:999px;font-size:17px;line-height:1.3;padding:1px 10px;box-shadow:0 3px 0 var(--ink);white-space:nowrap;animation:hbwig 1.8s ease-in-out infinite}
+@keyframes hbwig{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg) scale(1.06)}}
+.rkview{display:flex;justify-content:center;gap:10px;margin:0 0 6px}
+.rkview .chip{font-size:24px;padding:4px 22px}
+.clshead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:19px;color:#5d5f68;margin:2px 6px 6px}
+.lasttop{background:#fff3b8;border:2px solid #e0a800;border-radius:999px;padding:1px 12px;color:#7a4a00;white-space:nowrap}
+.cbars{background:#fff;border:3px solid var(--steel);border-radius:16px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;max-height:262px;overflow:auto}
+.cbar{display:grid;grid-template-columns:40px 86px 1fr 96px 132px;align-items:center;gap:8px;font-size:22px;padding:3px 6px;border-radius:12px}
+.cbar.me{background:#fff3b8;box-shadow:inset 0 0 0 2px #e0a800}
+.cbar .cn,.cbar .cs{font-weight:normal;white-space:nowrap}
+.cbar .cn{text-align:left}
+.cbar .cs{text-align:right}
+.ctrack{height:24px;border-radius:999px;background:#eef1f6;border:2px solid #c9ccd3;overflow:hidden}
+.ctrack i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#74c0fc,#4dabf7)}
+.cbar.me .ctrack i{background:linear-gradient(90deg,#ffd43b,#ff8cc0)}
+.cbar small{font-size:17px;color:#6b6d75;text-align:left;white-space:nowrap}
+.cout{font-size:18px;color:#6b6d75;margin:6px 6px 0;text-align:left}
+.cmsg{font-size:22px;color:#4a1f2b;margin:8px 0 0;line-height:1.35}
+.cmsg b{color:#d6336c;font-weight:normal}
+.skbtn{border:none;background:none;padding:2px 6px;border-radius:10px;font-size:inherit;color:inherit;cursor:pointer;white-space:nowrap}
+.skbtn:hover{background:#eaf4ff;box-shadow:inset 0 0 0 2px #74c0fc}
+.vgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:8px 0 4px}
+.vgrid .sbtn{margin:0;padding:8px 0}
+.monbar .mvisit{margin-top:6px;font-size:19px}
+#dTitle .skf{width:44px;height:38px;margin:-6px 4px 0 0}
 </style>
 </head>
 <body>
@@ -282,19 +314,20 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
     </div>
     <div class="hometip">섬을 누르면 꾸미기 · 끌어서 둘러보기 · 휠로 크게·작게</div>
     <button class="hreset hidden" id="hReset" data-act="home-reset">⟲ 처음 모습</button>
+    <div class="updnote hidden" id="updNote"></div>
     <div class="homebar">
       <button class="playbtn" data-act="play">▶ 게임 시작</button>
       <button class="hb" data-act="shop-open"><span class="mi">🛒</span>상점</button>
       <button class="hb" data-act="deco-open"><span class="mi">🏡</span>내 마을 꾸미기</button>
       <button class="hb pz" data-act="plaza-open"><span class="mi">🎪</span>우리 반 광장</button>
-      <button class="hb" data-act="rank-open"><span class="mi">🏆</span>랭킹</button>
+      <button class="hb" data-act="rank-open"><span class="mi">🏆</span>랭킹<span class="hbadge hidden" id="rkBadge" data-act="rank-cls"></span></button>
       <button class="hb" data-act="me-open"><span class="mi">📋</span>내 기록</button>
     </div>
   </div>
 
   <!-- 마을 꾸미기 · 우리 반 광장 -->
   <div id="decoUI" class="screen hidden">
-    <div class="dbar"><b id="dTitle">🏡 내 마을 꾸미기</b><span id="dHint"></span><span class="dextra" id="dExtra"></span><button class="sbtn sm" id="dShop" data-act="shop-deco">🛒 상점</button><button class="gbtn sm" data-act="deco-done">다 했어요</button></div>
+    <div class="dbar"><b id="dTitle">🏡 내 마을 꾸미기</b><span id="dHint"></span><span class="dextra" id="dExtra"></span><button class="sbtn sm" id="dShop" data-act="shop-deco">🛒 상점</button><button class="gbtn sm" id="dDone" data-act="deco-done">다 했어요</button></div>
     <div class="dzoom"><button data-act="zoom-in" aria-label="크게 보기">＋</button><button data-act="zoom-out" aria-label="작게 보기">－</button><button data-act="zoom-fit" aria-label="섬 전체 보기">⤢</button></div>
     <div class="dpal" id="dPal"><div class="dcats" id="dCats"></div><div class="dstore" id="dStore"></div></div>
     <div class="dact hidden" id="dAct"></div>
@@ -326,12 +359,16 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
   <div id="pRank" class="overlay hidden"></div>
   <div id="pMe" class="overlay hidden"></div>
   <div id="pTeacher" class="overlay hidden"></div>
+  <div id="pVisit" class="overlay hidden"></div>
   <div id="ttoast"></div>
 </div>
 
 <script>
 (()=>{
 'use strict';
+// 게임 버전: 새 파일을 만들 때마다 꼭 올려요(날짜-그날 몇 번째). 학생 크롬북이 이 번호로 새 버전을 알아채요.
+const APP_VER='2026-11-07-01';
+const vnum=v=>Number(String(v||'').replace(/\D/g,''))||0;
 const $=id=>document.getElementById(id);
 const W=1280,H=720,GROUND=650;
 const FONT="'Jua','Malgun Gothic','Apple SD Gothic Neo',sans-serif";
@@ -986,7 +1023,7 @@ function drawHome(t){drawSky(t);const d=SAVE?SAVE.deco:(STARTER||(STARTER=starte
  ctx.save();ctx.translate(v.x,by);ctx.scale(v.z,v.z);drawIsland(ctx,d.n,(i,j)=>d.ground[i+','+j]||'grass',d.objs,{view:viewRect(v.x,by,v.z)});ctx.restore();}
 function drawEditor(){const n=edN();drawSky(ANIM_T);
  ctx.save();ctx.translate(ED.cam.x,ED.cam.y);ctx.scale(ED.cam.z,ED.cam.z);
- drawIsland(ctx,n,edGround,edObjs(),{grid:true,under:edUnder,over:edOver,view:viewRect(ED.cam.x,ED.cam.y,ED.cam.z)});ctx.restore();}
+ drawIsland(ctx,n,edGround,edObjs(),{grid:!edRO(),under:edUnder,over:edOver,view:viewRect(ED.cam.x,ED.cam.y,ED.cam.z)});ctx.restore();}
 function edUnder(c){const pulse=.35+.25*Math.sin(ANIM_T*6);
  if(ED.mode==='plaza'&&!ED.admin){const me=myTag();for(const o of ED.pzObjs)if(o.o&&o.o===me)footDiamond(c,o.i,o.j,sizeOf(o),'rgba(255,95,168,.18)','rgba(255,95,168,.75)');}
  if(ED.sel&&!ED.sel.hidden)footDiamond(c,ED.sel.i,ED.sel.j,sizeOf(ED.sel),`rgba(255,230,90,${pulse})`,'#ffd43b');}
@@ -1036,12 +1073,13 @@ let toastTO=0;function toast(m){const el=$('toast');el.textContent=m;el.classLis
 let ttTO=0;function ttoast(m){const el=$('ttoast');el.textContent=m;el.classList.add('show');clearTimeout(ttTO);ttTO=setTimeout(()=>el.classList.remove('show'),2400);}
 
 /* ================= 화면 전환 ================= */
-const PANELS=['pReg','pGames','pLoad','pPause','pResult','pShop','pRank','pMe','pTeacher'];
+const PANELS=['pReg','pGames','pLoad','pPause','pResult','pShop','pRank','pMe','pTeacher','pVisit'];
 const show=(id,on)=>$(id).classList.toggle('hidden',!on);
 function hideAll(){PANELS.forEach(p=>show(p,false));['home','hud','decoUI'].forEach(p=>show(p,false));}
 function goHome(){if(ED){clearInterval(ED.timer);ED=null;$('ttoast').classList.remove('top');}R=null;scr='home';hideAll();inp.blur();if(!SAVE){openReg();return;}show('home',true);renderProfile();
+ if(UPD.ready)setTimeout(updMaybe,800);
  if(!SAVE.gr||!SAVE.cl)openInfo();else if(SAVE.decoNew){delete SAVE.decoNew;saveGame();setTimeout(()=>ttoast('마을이 넓은 섬으로 바뀌었어요! [내 마을 꾸미기]에서 새 장식을 만나 보세요'),500);}}
-function renderProfile(){$('pName').textContent=SAVE.name;$('pMeta').textContent=`${SAVE.gr&&SAVE.cl?`${SAVE.gr}학년 ${SAVE.cl}반 `:''}${SAVE.no}번\n별지기 Lv.${charLevel()}`;$('pCoins').textContent=SAVE.coins.toLocaleString();$('pSkin').src=skinFace(SAVE.skin);homeResetBtn();
+function renderProfile(){$('pName').textContent=SAVE.name;$('pMeta').textContent=`${SAVE.gr&&SAVE.cl?`${SAVE.gr}학년 ${SAVE.cl}반 `:''}${SAVE.no}번\n별지기 Lv.${charLevel()}`;$('pCoins').textContent=SAVE.coins.toLocaleString();$('pSkin').src=skinFace(SAVE.skin);homeResetBtn();renderBadge();
  document.querySelectorAll('.sndIcon').forEach(s=>s.innerHTML=OPT.sound?'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="#4a1f2b" stroke-width="2.2" stroke-linecap="round"/>':'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="#4a1f2b" stroke-width="2.4" stroke-linecap="round"/>');}
 function openPanel(id,html){$(id).innerHTML=html;show(id,true);}
 
@@ -1126,46 +1164,76 @@ let ED=null;const edCat={deco:'nature',plaza:'all'},PTRS=new Map();
 const plazaLabel=(gr,cl)=>`${gr}학년 ${cl}반`;
 const myTag=()=>SAVE?hash(SALT+'tag'+SAVE.id):'';
 const panelOpen=()=>PANELS.some(p=>!$(p).classList.contains('hidden'));
-const edN=()=>ED.mode==='plaza'?PLAZA_N:SAVE.deco.n;
-const edArea=()=>ED.admin?[16,90,1264,640]:EDIT_AREA;
-const edObjs=()=>ED.mode==='plaza'?ED.pzObjs:SAVE.deco.objs;
+/* ---------- 새 버전 자동 반영 ----------
+   3분마다(그리고 탭으로 돌아올 때) GitHub의 게임 파일이 바뀌었는지 머리글만 살짝 확인하고, 바뀌었을 때만 파일을 받아 버전을 비교해요.
+   새 버전이면 하던 일(게임·꾸미기·창)을 마치고 홈 화면에 왔을 때 5초 안내 후 저절로 새로 고쳐요. 기록은 크롬북에 그대로 남아요. */
+const UPD={sig:'',busy:false,ready:'',last:0,left:0,hold:0},UPD_EVERY=180000,UPD_KEY='taja2_upd';
+(()=>{try{const u=JSON.parse(sessionStorage.getItem(UPD_KEY)||'null');if(!u)return;
+ if(vnum(APP_VER)>=vnum(u.to)){sessionStorage.removeItem(UPD_KEY);UPD.done=1;}
+ else if(Date.now()-u.at<600000)UPD.hold=u.at+300000;}catch(e){}})(); // 새로 고쳤는데도 예전 파일이 오면 5분 동안은 다시 새로 고치지 않아요
+async function updCheck(force){if(!/^https?:$/.test(location.protocol)||UPD.busy)return;const now=Date.now();if(!force&&now-UPD.last<UPD_EVERY-5000)return;UPD.busy=true;UPD.last=now;
+ try{const url=location.pathname+'?_v='+now;let sig='';
+  try{const h=await tmo(fetch(url,{method:'HEAD',cache:'no-store'}),15000);if(h.ok)sig=[h.headers.get('etag'),h.headers.get('last-modified'),h.headers.get('content-length')].map(x=>x||'').join('|');}catch(e){}
+  if(sig&&sig!=='||'&&sig===UPD.sig)return;
+  const r=await tmo(fetch(url,{cache:'no-store'}),20000);if(!r.ok)return;const txt=await r.text(),m=/const APP_VER='([^']+)'/.exec(txt);
+  if(sig&&sig!=='||')UPD.sig=sig;
+  if(m&&vnum(m[1])>vnum(APP_VER)&&/<\/html>\s*$/.test(txt)){UPD.ready=m[1];updMaybe();}}
+ catch(e){}finally{UPD.busy=false;}}
+const updSafe=()=>!!UPD.ready&&Date.now()>=UPD.hold&&scr==='home'&&!R&&!ED&&!hDrag&&!panelOpen()&&!document.hidden&&!!SAVE;
+function updMaybe(){if(UPD.left||!updSafe())return;UPD.left=5;updTick();}
+function updTick(){const el=$('updNote');if(!updSafe()){UPD.left=0;el.classList.add('hidden');return;} // 다른 화면을 열면 다음 안전한 때로 미뤄요
+ if(UPD.left<=0){updGo();return;}el.innerHTML=`🎉 새 버전이 나왔어요! <b>${UPD.left}</b>초 뒤에 새로 고쳐요`;el.classList.remove('hidden');UPD.left--;setTimeout(updTick,1000);}
+async function updGo(){saveGame();try{sessionStorage.setItem(UPD_KEY,JSON.stringify({to:UPD.ready,at:Date.now()}));}catch(e){}
+ if(SYNC&&SAVE&&SAVE.syncPending)await Promise.race([syncPush(),new Promise(r=>setTimeout(r,4000))]);
+ location.replace(location.pathname+'?v='+encodeURIComponent(UPD.ready));}
+const edN=()=>ED.mode==='plaza'?PLAZA_N:ED.mode==='friend'?ED.fv.n:SAVE.deco.n;
+const edRO=()=>!!(ED&&(ED.visit||ED.mode==='friend')); // 구경만 하는 화면
+const edArea=()=>ED.admin||edRO()?[16,90,1264,640]:EDIT_AREA;
+const edObjs=()=>ED.mode==='plaza'?ED.pzObjs:ED.mode==='friend'?ED.fv.objs:SAVE.deco.objs;
 function plazaGround(i,j){if(plazaReserved(i,j))return 'stone';const a=Math.abs(i-6.5),b=Math.abs(j-6.5);if(a<2.6&&b<2.6)return 'sand';return a+b>10?'bloom':'grass';}
-function edGround(i,j){return ED.mode==='plaza'?plazaGround(i,j):(SAVE.deco.ground[i+','+j]||'grass');}
+function edGround(i,j){return ED.mode==='plaza'?plazaGround(i,j):((ED.mode==='friend'?ED.fv.ground:SAVE.deco.ground)[i+','+j]||'grass');}
 const pzMonument=()=>({k:'monument',i:6,j:6,label:plazaLabel(ED.gr,ED.cl),lv:monStage(ED.mon)});
 // 광장에 늘 있는 것: 기념비와 (5단계부터) 가운데 길의 별빛 가로등 4개
 const pzFixed=()=>{const m=pzMonument();return [m].concat(m.lv>=5?[[4,6],[9,7],[7,4],[6,9]].map(([i,j])=>({k:'mlamp',i,j})):[]);};
 function monSet(ed,m){const prev=ed.mon?monStage(ed.mon):0;ed.mon=m;monUpdate(plazaLabel(ed.gr,ed.cl),m);const lv=monStage(m);
  if(prev&&lv>prev){MON_FX_T=ANIM_T;if(ed.admin)ttoast(`🎉 기념비가 ${lv}단계가 됐어요!`);}renderMonBar();}
-function monHTML(m){const v=monTotal(m),lv=monStage(m),cur=MON_STEPS[lv-1],nx=MON_STEPS[lv],pct=nx?Math.max(2,Math.round((v-cur)/(nx-cur)*100)):100;
- return `<b>⭐ 우리 반 기념비 ${lv}단계</b><small>${MON_NAMES[lv-1]}${nx?` → 다음: ${MON_NAMES[lv]}`:''}</small><div class="mbar"><i style="width:${pct}%"></i></div><span>별가루 ${v.toLocaleString()}${nx?` · 다음 단계까지 ${(nx-v).toLocaleString()}`:' · 가장 높은 단계예요!'}</span><span>오늘 보탠 친구 ${+m.d||0}명 / ${+m.m||0}명${+m.s?` · 선생님 별 ${+m.s}개`:''}</span>`;}
+function monHTML(m,lab){const v=monTotal(m),lv=monStage(m),cur=MON_STEPS[lv-1],nx=MON_STEPS[lv],pct=nx?Math.max(2,Math.round((v-cur)/(nx-cur)*100)):100;
+ return `<b>⭐ ${lab||'우리 반'} 기념비 ${lv}단계</b><small>${MON_NAMES[lv-1]}${nx?` → 다음: ${MON_NAMES[lv]}`:''}</small><div class="mbar"><i style="width:${pct}%"></i></div><span>별가루 ${v.toLocaleString()}${nx?` · 다음 단계까지 ${(nx-v).toLocaleString()}`:' · 가장 높은 단계예요!'}</span><span>오늘 보탠 친구 ${+m.d||0}명 / ${+m.m||0}명${+m.s?` · 선생님 별 ${+m.s}개`:''}</span>`;}
 function renderMonBar(){const el=$('monBar');if(!el)return;if(!ED||ED.mode!=='plaza'){el.classList.add('hidden');return;}
  if(!ED.mon){if(ED.admin&&ED.pz.last){el.innerHTML='<span>기념비 정보를 받지 못했어요. Apps Script를 새 버전으로 배포했는지 확인해 주세요.</span>';el.classList.remove('hidden');}else el.classList.add('hidden');return;}
- el.innerHTML=monHTML(ED.mon);el.classList.remove('hidden');}
+ el.innerHTML=monHTML(ED.mon,ED.visit?plazaLabel(ED.gr,ED.cl):'')+(!ED.admin&&!ED.visit&&SAVE?'<button class="sbtn sm mvisit" data-act="pz-visit">🔭 다른 반 광장 구경</button>':'');el.classList.remove('hidden');}
 
 function openEditor(mode,opt){opt=opt||{};let gr=opt.gr||(SAVE&&SAVE.gr),cl=opt.cl||(SAVE&&SAVE.cl);
  if(mode==='plaza'){if(!SYNC){ttoast('광장은 반 랭킹 자동 연동이 켜져 있을 때 쓸 수 있어요');return;}if(!gr||!cl){openInfo();return;}}
+ else if(mode==='friend'){if(!opt.fv)return;}
  else if(!SAVE)return;
  if(ED)clearInterval(ED.timer);
  R=null;scr='edit';hideAll();inp.blur();
- ED={mode,admin:!!opt.admin,gr,cl,cam:null,sel:null,carry:null,paint:null,hover:null,drag:null,pending:null,cat:edCat[mode],pz:{items:[],loading:false,busy:false,last:0},pzObjs:[],timer:0};
+ ED={mode,admin:!!opt.admin,visit:!!opt.visit,fv:opt.fv||null,gr,cl,cam:null,sel:null,carry:null,paint:null,hover:null,drag:null,pending:null,cat:edCat[mode],pz:{items:[],loading:false,busy:false,last:0},pzObjs:[],timer:0};
  if(mode==='plaza'){ED.pzObjs=pzFixed();ED.timer=setInterval(plazaTick,4000);plazaPull();}
  ED.cam=camFit(edN(),edArea());
  show('decoUI',true);$('ttoast').classList.add('top');renderEdBar();renderPalette();renderAct();setHint();}
-function closeEditor(){if(!ED)return;const admin=ED.admin,mode=ED.mode;if(ED.carry&&ED.carry.obj)delete ED.carry.obj.hidden;clearInterval(ED.timer);ED=null;PTRS.clear();$('ttoast').classList.remove('top');saveGame();goHome();
- if(admin)openTeacher();else ttoast(mode==='plaza'?'광장 꾸미기를 마쳤어요':'마을을 저장했어요!');}
-function renderEdBar(){if(!ED)return;const pz=ED.mode==='plaza';let ex='';
- $('dTitle').textContent=pz?`🎪 ${plazaLabel(ED.gr,ED.cl)} 광장`:'🏡 내 마을 꾸미기';
- if(SAVE&&!ED.admin)ex+=`<span class="dcoin"><span class="coin"></span> ${SAVE.coins.toLocaleString()}</span>`;
- if(pz){ex+=ED.admin?'<span class="dchip">선생님 관리</span>':`<span class="dchip">내 장식 ${ED.pz.items.filter(it=>it.o===myTag()).length}/${PLAZA_MAX}</span>`;ex+=`<button class="sbtn sm" data-act="pz-refresh">${ED.pz.loading?'불러오는 중…':'↻ 새로고침'}</button>`;}
+function closeEditor(){if(!ED)return;const admin=ED.admin,mode=ED.mode,visit=ED.visit;if(ED.carry&&ED.carry.obj)delete ED.carry.obj.hidden;clearInterval(ED.timer);ED=null;PTRS.clear();$('ttoast').classList.remove('top');
+ if(visit){openEditor('plaza');return;}       // 다른 반 광장 구경 → 우리 반 광장으로
+ if(mode==='friend'){goHome();openRank('me');return;} // 친구 마을 구경 → 랭킹으로
+ saveGame();goHome();
+ if(admin)openTeacher();else ttoast(mode==='plaza'?'광장 꾸미기를 마쳤어요':'마을을 저장했어요!');
+ if(mode==='deco'&&SYNC&&SAVE&&hash(vgPack())!==SAVE.vgH)syncPush();} // 마을이 바뀌었으면 친구들도 볼 수 있게 올려요
+function renderEdBar(){if(!ED)return;const pz=ED.mode==='plaza',fr=ED.mode==='friend',ro=edRO();let ex='';
+ $('dTitle').innerHTML=fr?(ED.fv.me?'🏡 내 마을 구경':`<img class="skf" src="${skinFace(ED.fv.sk)}" alt="">${esc(ED.fv.name)}의 마을`):ED.visit?`🔭 ${plazaLabel(ED.gr,ED.cl)} 광장`:pz?`🎪 ${plazaLabel(ED.gr,ED.cl)} 광장`:'🏡 내 마을 꾸미기';
+ if(SAVE&&!ED.admin&&!ro)ex+=`<span class="dcoin"><span class="coin"></span> ${SAVE.coins.toLocaleString()}</span>`;
+ if(fr)ex+=`<span class="dchip">섬 ${ED.fv.n}×${ED.fv.n} · 구경만 해요</span>`;
+ else if(pz){ex+=ED.admin?'<span class="dchip">선생님 관리</span>':ED.visit?'<span class="dchip">구경만 해요</span>':`<span class="dchip">내 장식 ${ED.pz.items.filter(it=>it.o===myTag()).length}/${PLAZA_MAX}</span>`;ex+=`<button class="sbtn sm" data-act="pz-refresh">${ED.pz.loading?'불러오는 중…':'↻ 새로고침'}</button>`;}
  else{const n=SAVE.deco.n,nx=LAND[LAND.indexOf(n)+1];ex+=nx?`<button class="sbtn sm" data-act="ed-land" title="지금 ${n}×${n} → ${nx}×${nx}">🏝️ 넓히기 <span class="coin"></span>${LAND_COST[nx]}</button>`:`<span class="dchip">섬 ${n}×${n} (최고)</span>`;}
- $('dExtra').innerHTML=ex;$('dShop').classList.toggle('hidden',ED.admin);renderMonBar();}
+ $('dExtra').innerHTML=ex;$('dShop').classList.toggle('hidden',!!(ED.admin||ro));$('dDone').textContent=fr?'← 랭킹으로':ED.visit?'🎪 우리 반 광장으로':'다 했어요';renderMonBar();}
 function setHint(){if(!ED)return;const c=ED.carry;let h;
  if(c)h=ED.mode==='plaza'&&ED.pz.busy?'광장에 보내는 중이에요…':'초록색 자리에 놓을 수 있어요. 빨간색 자리에는 놓을 수 없어요.';
- else if(ED.mode==='plaza'){h=ED.pz.busy?'광장에 보내는 중이에요…':(ED.pz.loading&&!ED.pz.last)?'광장을 불러오는 중이에요…':ED.admin?'장식을 누르면 치울 수 있어요. 치운 장식은 그 학생의 창고로 돌아가요.':`친구들과 함께 꾸며요. 한 사람 ${PLAZA_MAX}개까지, 분홍 테두리가 내 장식이에요.`;}
+ else if(ED.mode==='friend')h=ED.fv.me?'친구들도 내 마을을 이렇게 구경해요. 끌어서 둘러보고, 휠로 크게·작게 볼 수 있어요.':'친구 마을을 구경해요. 끌어서 둘러보고, 휠로 크게·작게 볼 수 있어요. 장식을 누르면 이름이 보여요.';
+ else if(ED.mode==='plaza'){h=ED.pz.busy?'광장에 보내는 중이에요…':(ED.pz.loading&&!ED.pz.last)?'광장을 불러오는 중이에요…':ED.visit?'다른 반 광장을 구경해요. 구경만 할 수 있어요. 끌어서 둘러보세요.':ED.admin?'장식을 누르면 치울 수 있어요. 치운 장식은 그 학생의 창고로 돌아가요.':`친구들과 함께 꾸며요. 한 사람 ${PLAZA_MAX}개까지, 분홍 테두리가 내 장식이에요.`;}
  else if(ED.paint)h='칠할 땅을 누르거나 끌어요. 섬 밖을 끌면 화면이 움직여요.';
  else h='장식을 골라 놓아요. 놓인 장식을 누르면 옮기거나 뒤집어요. 빈 땅을 끌면 화면이 움직여요.';
  $('dHint').textContent=h;}
-function renderPalette(){if(!ED)return;const pz=ED.mode==='plaza',pal=$('dPal');pal.classList.toggle('hidden',ED.admin||!SAVE);if(ED.admin||!SAVE)return;
+function renderPalette(){if(!ED)return;const pz=ED.mode==='plaza',pal=$('dPal'),ro=ED.admin||!SAVE||edRO();pal.classList.toggle('hidden',ro);if(ro)return;
  const st=SAVE.deco.stock;let cats='',h='';
  if(pz)cats='<span class="dnote">📦 내 창고의 장식 · 놓으면 창고에서 빠지고, 가져오면 돌아와요</span>';
  else cats=DCATS.concat([['ground','🟫 땅 칠하기']]).map(([k,n])=>`<button class="chip sm2 ${ED.cat===k?'on':''}" data-act="ed-cat" data-c="${k}">${n}</button>`).join('')+`<span class="dnote">${ED.cat==='ground'?'잔디로 칠하면 원래대로 돌아가요':'숫자는 창고에 있는 개수, 동전은 놓을 때 쓰는 코인이에요'}</span>`;
@@ -1180,10 +1248,12 @@ function renderAct(){const el=$('dAct');if(!ED){el.classList.add('hidden');retur
  if(c){const nm=DECO[c.k].name,n=SAVE.deco.stock[c.k]||0;el.innerHTML=`<b>✋ ${esc(nm)}</b><span>${c.src==='move'?'옮기는 중':c.src==='buy'?`놓으면 <span class="coin"></span> ${DECO[c.k].price}`:`창고에 ${n}개`}</span><button class="sbtn sm" data-act="ed-flip">↔ 뒤집기 (F)</button><button class="sbtn sm" data-act="ed-cancel">그만두기 (Esc)</button>`;el.classList.remove('hidden');return;}
  if(ED.paint){const g=GTYPE[ED.paint];el.innerHTML=`<b>🖌️ ${g.name}</b><span>${g.price?`한 칸에 <span class="coin"></span> ${g.price}`:'무료'}</span><button class="sbtn sm" data-act="ed-cancel">그만두기 (Esc)</button>`;el.classList.remove('hidden');return;}
  if(!ED.sel){el.classList.add('hidden');return;}const o=ED.sel;
- if(o.k==='monument'){const m=ED.mon,lv=monStage(m),nx=MON_STEPS[lv];h=`<b>⭐ 우리 반 별 기념비 ${lv}단계</b><span>${m?(nx?`다음 단계까지 별가루 ${(nx-monTotal(m)).toLocaleString()}`:'가장 높은 단계예요!'):'우리 반 광장의 한가운데예요'}</span>`;}
+ if(o.k==='monument'){const m=ED.mon,lv=monStage(m),nx=MON_STEPS[lv],who=ED.visit?plazaLabel(ED.gr,ED.cl):'우리 반';h=`<b>⭐ ${who} 별 기념비 ${lv}단계</b><span>${m?(nx?`다음 단계까지 별가루 ${(nx-monTotal(m)).toLocaleString()}`:'가장 높은 단계예요!'):`${who} 광장의 한가운데예요`}</span>`;}
  else{h=`<b>${esc(DECO[o.k].name)}</b>`;
   if(ED.mode==='deco')h+=`<button class="sbtn sm" data-act="ed-move">✋ 옮기기</button><button class="sbtn sm" data-act="ed-flip">↔ 뒤집기</button><button class="sbtn sm" data-act="ed-store">📦 창고로</button>`;
-  else{const mine=!ED.admin&&o.o===myTag();h+=`<span>${mine?'내가 놓은 장식이에요':`${esc(o.n||'친구')} 친구가 놓았어요`}</span>`;
+  else if(ED.mode==='friend')h+=`<span>${ED.fv.me?'내 마을':esc(ED.fv.name)}의 장식이에요</span>`;
+  else if(ED.visit)h+=`<span>${ED.cl}반 친구가 놓았어요</span>`;
+  else{const mine=!ED.admin&&!!o.o&&o.o===myTag();h+=`<span>${mine?'내가 놓은 장식이에요':`${esc(o.n||'친구')} 친구가 놓았어요`}</span>`;
    if(ED.admin)h+=`<button class="sbtn sm" data-act="pz-admin">🧹 치우기</button>`;else if(mine)h+=`<button class="sbtn sm" data-act="pz-take">📦 내 창고로 가져오기</button>`;}}
  el.innerHTML=h+'<button class="sbtn sm" data-act="ed-desel">닫기</button>';el.classList.remove('hidden');}
 function edRefresh(){renderEdBar();renderPalette();renderAct();setHint();}
@@ -1250,7 +1320,7 @@ function edUp(e){PTRS.delete(e.pointerId);const d=ED.drag;if(!d)return;if(d.type
 async function pzReq(body){try{const r=await tmo(fetch(SYNC_URL,{method:'POST',body:JSON.stringify(body)}),20000);return await r.json();}catch(e){return null;}}
 function plazaTick(){if(ED&&ED.mode==='plaza'&&!ED.pz.busy&&!ED.pz.loading&&!document.hidden&&Date.now()-ED.pz.last>15000)plazaPull(true);}
 async function plazaFetch(ed){if(ed.admin&&TPIN){const j=await pzReq({type:'plaza_full',gr:ed.gr,cl:ed.cl,pin:TPIN});if(j&&j.ok&&Array.isArray(j.items))return j;}
- try{const r=await tmo(fetch(`${SYNC_URL}${SYNC_URL.includes('?')?'&':'?'}action=plaza&gr=${ed.gr}&cl=${ed.cl}&_=${Date.now()}`),20000);const j=await r.json();if(j&&j.ok&&Array.isArray(j.items))return j;}catch(e){}return null;}
+ try{const r=await tmo(fetch(`${SYNC_URL}${SYNC_URL.includes('?')?'&':'?'}action=plaza&gr=${ed.gr}&cl=${ed.cl}${ed.visit?'&visit=1':''}&_=${Date.now()}`),20000);const j=await r.json();if(j&&j.ok&&Array.isArray(j.items))return j;}catch(e){}return null;}
 async function plazaPull(quiet){const ed=ED;if(!ed||ed.mode!=='plaza'||ed.pz.loading)return;ed.pz.loading=true;renderEdBar();const res=await plazaFetch(ed),items=res&&res.items;
  if(ED!==ed)return;ed.pz.loading=false;ed.pz.last=Date.now();
  if(res&&res.mon)monSet(ed,res.mon);
@@ -1258,10 +1328,10 @@ async function plazaPull(quiet){const ed=ED;if(!ed||ed.mode!=='plaza'||ed.pz.loa
  else if(!quiet)ttoast('광장을 불러오지 못했어요. 인터넷 연결을 확인해 주세요');
  edRefresh();}
 function setPlaza(items){const ed=ED,sel=ed.sel;
- ed.pz.items=items.filter(it=>it&&DECO[it.k]&&Number.isFinite(+it.x)&&Number.isFinite(+it.y)).map(it=>({x:+it.x,y:+it.y,k:String(it.k),f:+it.f?1:0,o:String(it.o||''),n:String(it.n||'')}));
+ ed.pz.items=items.filter(it=>it&&DECO[it.k]&&Number.isFinite(+it.x)&&Number.isFinite(+it.y)).map(it=>({x:+it.x,y:+it.y,k:String(it.k),f:+it.f?1:0,o:ed.visit?'':String(it.o||''),n:ed.visit?'':String(it.n||'')}));
  ed.pzObjs=pzFixed().concat(ed.pz.items.map(it=>({k:it.k,i:it.x,j:it.y,f:it.f,o:it.o,n:it.n})));
  ed.sel=sel?ed.pzObjs.find(o=>o.i===sel.i&&o.j===sel.j&&o.k===sel.k)||null:null;
- return(!ed.admin&&SAVE&&ed.gr===SAVE.gr&&ed.cl===SAVE.cl)?plazaReconcile():0;}
+ return(!ed.admin&&!ed.visit&&SAVE&&ed.gr===SAVE.gr&&ed.cl===SAVE.cl)?plazaReconcile():0;}
 // 내 창고와 광장을 맞춰요: 광장에서 없어진 내 장식은 창고로 돌아오고, 새로 놓인 내 장식은 창고에서 빠져요.
 function plazaReconcile(){const lab=plazaLabel(SAVE.gr,SAVE.cl),me=myTag(),st=SAVE.deco.stock,mine=ED.pz.items.filter(it=>it.o===me),used=new Set(),keep=[];let back=0,changed=false;
  for(const r of SAVE.pz[lab]||[]){const q=mine.findIndex((it,ix)=>!used.has(ix)&&it.x===r.x&&it.y===r.y&&it.k===r.k);if(q>=0){used.add(q);keep.push(r);}else if(DECO[r.k]){st[r.k]=(st[r.k]||0)+1;back++;changed=true;}}
@@ -1294,7 +1364,7 @@ async function plazaAdmin(o){const ed=ED;if(ed.pz.busy)return;if(!TPIN){ttoast('
  edRefresh();}
 
 /* ---------- 랭킹 ---------- */
-function myEntry(){const g={};let cw=0;for(const gm of READY){const s=SAVE.games[gm.id];g[gm.id]={r:s.bestRound,w:s.bestWords,t:s.bestTasu};cw+=+s.words||0;}return{i:SAVE.id,gr:SAVE.gr||0,cl:SAVE.cl||0,n:SAVE.name,b:SAVE.no,lv:charLevel(),sk:SAVE.skin||'base',cw,g,ts:Date.now()};}
+function myEntry(){const g={};let cw=0;for(const gm of READY){const s=SAVE.games[gm.id];g[gm.id]={r:s.bestRound,w:s.bestWords,t:s.bestTasu};cw+=+s.words||0;}return{i:SAVE.id,gr:SAVE.gr||0,cl:SAVE.cl||0,n:SAVE.name,b:SAVE.no,lv:charLevel(),sk:SAVE.skin||'base',cw,ver:APP_VER,g,ts:Date.now()};}
 const validEntry=e=>e&&typeof e.i==='string'&&typeof e.n==='string'&&e.g&&typeof e.g==='object';
 // 시트에서 온 기록은 학생ID 대신 암호 꼬리표(8자리)를 써요. 코드로 모은 기록도 같은 꼬리표로 바꿔서 겹치지 않게 해요.
 const tagOf=id=>/^[0-9a-f]{8}$/.test(String(id))?String(id):hash(SALT+'tag'+id);
@@ -1310,7 +1380,8 @@ function ago(t){if(!t)return '';const s=(Date.now()-t)/1000;if(s<60)return '방�
 // pin: [이 크롬북 관리]에서 선생님이 고친 정보를 보낼 때만 (시트에 '선생님이 정한 이름·번호'로 남아요)
 let pushPin='';
 async function syncPush(pin){if(typeof pin==='string'&&pin)pushPin=pin;if(!SYNC||!SAVE)return false;if(pushing){pushAgain=true;return false;}pushing=true;
- const data=JSON.stringify(myEntry()),req={type:'record',data,sig:hash(SALT+'sync'+data)},usedPin=pushPin;if(usedPin)req.pin=usedPin;
+ const ent=myEntry(),vg=vgPack();if(hash(vg)!==SAVE.vgH||Date.now()-(+SAVE.vgAt||0)>21600000)ent.vg=vg; // 친구 마을 구경용: 마을이 바뀌었거나 6시간이 지났을 때만
+ const data=JSON.stringify(ent),req={type:'record',data,sig:hash(SALT+'sync'+data)},usedPin=pushPin;if(usedPin)req.pin=usedPin;
  const body=JSON.stringify(req);let ok=false,res=null,j=null;
  try{res=await tmo(fetch(SYNC_URL,{method:'POST',body}),20000);}catch(e){res=null;}
  if(res){try{j=await res.json();ok=!!(j&&j.ok);}catch(e){ok=false;}}
@@ -1319,7 +1390,7 @@ async function syncPush(pin){if(typeof pin==='string'&&pin)pushPin=pin;if(!SYNC|
  pushing=false;
  if(j)syncReply(j);
  if(!SAVE)return false;
- SAVE.syncPending=!ok&&!(j&&j.error==='deleted');if(ok)SAVE.syncAt=Date.now();saveGame();
+ SAVE.syncPending=!ok&&!(j&&j.error==='deleted');if(ok){SAVE.syncAt=Date.now();if(ent.vg&&j&&j.cls){SAVE.vgH=hash(ent.vg);SAVE.vgAt=Date.now();}}saveGame();
  if(pushAgain){pushAgain=false;syncPush();}
  else if(!ok&&pushRetry<3){pushRetry++;setTimeout(syncPush,15000+Math.random()*20000);}
  else if(ok)pushRetry=0;
@@ -1334,35 +1405,124 @@ function syncReply(j){if(!SAVE||!j)return;
  if([...n].length>=2&&n!==SAVE.name){SAVE.name=n;ch.push('이름');}
  if(b>=1&&b<=99&&b!==SAVE.no){SAVE.no=b;ch.push('번호');}
  if(ch.length){saveGame();renderProfile();ttoast(`선생님이 ${ch.join('·')}를 바꿨어요: ${SAVE.name} · ${SAVE.no}번`);}
- if(j.mon&&SAVE.gr&&SAVE.cl)monUpdate(plazaLabel(SAVE.gr,SAVE.cl),j.mon);}
+ if(j.mon&&SAVE.gr&&SAVE.cl)monUpdate(plazaLabel(SAVE.gr,SAVE.cl),j.mon);
+ if(j.cls&&SAVE.gr&&SAVE.cl)clsGot(j.cls);}
 // 우리 반 기념비 소식: 처음이면 기념 장식을 주고, 단계가 오르면 기념 장식이 새것으로 바뀌어요(하나만 있어요)
 function monUpdate(lab,m){if(!m||typeof m!=='object')return;MON[lab]={w:+m.w||0,s:+m.s||0,d:+m.d||0,m:+m.m||0};
  if(!SAVE||!SAVE.gr||!SAVE.cl||lab!==plazaLabel(SAVE.gr,SAVE.cl))return;const lv=monStage(MON[lab]);
  if(!SAVE.cmGot){SAVE.cmGot=1;SAVE.cm=lv;SAVE.deco.stock.cmemo=(SAVE.deco.stock.cmemo||0)+1;saveGame();SFX.level();ttoast('⭐ 우리 반 기념 장식을 받았어요! 내 마을 꾸미기에서 꺼내 놓아 보세요');if(ED&&ED.mode==='deco')renderPalette();return;}
  if(lv!==SAVE.cm){const upLv=lv>SAVE.cm;SAVE.cm=lv;saveGame();if(upLv){SFX.level();ttoast(`🎉 우리 반 기념비가 ${lv}단계가 됐어요! 내 기념 장식도 바뀌었어요`);}if(ED&&ED.mode==='deco')renderPalette();}}
-function accountDeleted(){try{localStorage.removeItem(SKEY);localStorage.removeItem('taja2_classview');localStorage.removeItem('taja2_live');}catch(e){}
+function accountDeleted(){try{localStorage.removeItem(SKEY);localStorage.removeItem('taja2_classview');localStorage.removeItem('taja2_live');localStorage.removeItem('taja2_cls');}catch(e){}CLS=null;
  liveMem=null;SAVE=null;PANELS.forEach(p=>show(p,false));goHome();
  const sub=$('pReg').querySelector('.sub');if(sub)sub.innerHTML='<b style="color:#d0263a">선생님이 이 크롬북의 계정을 지웠어요.</b><br>학년, 반, 번호, 이름을 다시 써서 처음부터 시작해요.';}
 function syncDelete(id){if(!SYNC||!id)return;const body=JSON.stringify({type:'delete',id,sig:hash(SALT+'del'+id)});fetch(SYNC_URL,{method:'POST',body}).catch(()=>fetch(SYNC_URL,{method:'POST',body,mode:'no-cors'}).catch(()=>{}));}
 function entryVal(e,game,m){if(game==='total'){if(m==='r')return READY.reduce((a,gm)=>a+(+((e.g[gm.id]||{}).r)||0),0);return READY.reduce((a,gm)=>a+(+((e.g[gm.id]||{}).t)||0),0);}const v=e.g[game]||{};return m==='r'?(+v.r||0):(+v.t||0);}
 function rankTabs(pre,game,m){return `<div class="tabs">${READY.map(g=>`<button class="chip ${game===g.id?'on':''}" data-act="${pre}-game" data-g="${g.id}">${esc(g.short||g.name)}</button>`).join('')}<button class="chip ${game==='total'?'on':''}" data-act="${pre}-game" data-g="total">합산</button>
  <span style="width:18px"></span><button class="chip sm2 ${m==='r'?'on':''}" data-act="${pre}-metric" data-m="r">최고 라운드</button><button class="chip sm2 ${m==='t'?'on':''}" data-act="${pre}-metric" data-m="t">분당 타수</button></div>`;}
-function rankHTML(list,game,m,meId,showCls){const rows=list.map(e=>({e,v:entryVal(e,game,m),w:game==='total'?0:(+((e.g[game]||{}).w)||0)})).sort((a,b)=>b.v-a.v||b.w-a.w||(+a.e.b||0)-(+b.e.b||0));
+function rankHTML(list,game,m,meId,showCls,vis){const rows=list.map(e=>({e,v:entryVal(e,game,m),w:game==='total'?0:(+((e.g[game]||{}).w)||0)})).sort((a,b)=>b.v-a.v||b.w-a.w||(+a.e.b||0)-(+b.e.b||0));
  if(!rows.length)return '<p class="empty">아직 기록이 없어요.</p>';
  const head=m==='r'?(game==='total'?'라운드 합계':'최고 라운드'):(game==='total'?'분당 타수 합계':'분당 타수'),unit=m==='r'?'라운드':'타';let rank=0,prev=null;
  return `<table class="rank"><thead><tr><th>순위</th>${showCls?'<th>반</th>':''}<th>번호</th><th>이름</th><th>${head}</th><th>별지기</th></tr></thead><tbody>${rows.map((r,i)=>{if(!prev||r.v!==prev.v||r.w!==prev.w)rank=i+1;prev=r;const md=rank<=3&&r.v>0?`<span class="medal m${rank}">${rank}</span>`:rank;
-  return `<tr class="${meId&&r.e.i===meId?'me':''}"><td>${md}</td>${showCls?`<td>${+r.e.gr&&+r.e.cl?`${+r.e.gr}-${+r.e.cl}`:'-'}</td>`:''}<td>${esc(r.e.b||'-')}</td><td>${esc(r.e.n)}</td><td>${r.v?r.v+unit:'-'}</td><td><img class="skf" src="${skinFace(r.e.sk)}" alt="">Lv.${esc(r.e.lv||1)}</td></tr>`;}).join('')}</tbody></table>`;}
-let rkG='meteor',rkM='r',rkLoading=false,rkErr=false;
-function openRank(){rkErr=false;rkLoading=SYNC;renderRank();show('pRank',true);
- if(SYNC)syncPull().then(d=>{rkLoading=false;rkErr=!d;if(!$('pRank').classList.contains('hidden'))renderRank();});}
-function renderRank(){const live=SYNC?liveCached():null,cvw=store.get('taja2_classview',null),base=live||cvw,me=tagOf(SAVE.id),hasCls=SAVE.gr&&SAVE.cl,ck=clsKey(SAVE);
+  return `<tr class="${meId&&r.e.i===meId?'me':''}"><td>${md}</td>${showCls?`<td>${+r.e.gr&&+r.e.cl?`${+r.e.gr}-${+r.e.cl}`:'-'}</td>`:''}<td>${esc(r.e.b||'-')}</td><td>${esc(r.e.n)}</td><td>${r.v?r.v+unit:'-'}</td><td>${vis?`<button class="skbtn" data-act="vg-open" data-t="${esc(r.e.i)}" title="마을 구경"><img class="skf" src="${skinFace(r.e.sk)}" alt="">Lv.${esc(r.e.lv||1)} 🏡</button>`:`<img class="skf" src="${skinFace(r.e.sk)}" alt="">Lv.${esc(r.e.lv||1)}`}</td></tr>`;}).join('')}</tbody></table>`;}
+let rkG='meteor',rkM='r',rkLoading=false,rkErr=false,rkV='me';
+const rankOpen=()=>!$('pRank').classList.contains('hidden');
+function openRank(v){if(v)rkV=v;if(!SYNC)rkV='me';rkErr=false;rkLoading=SYNC;show('pRank',true);
+ if(SYNC){syncPull().then(d=>{rkLoading=false;rkErr=!d;if(rankOpen()&&rkV==='me')renderRank();});clsPull().then(()=>{if(rankOpen()&&rkV==='cls')renderRank();});}
+ renderRank();}
+function renderRank(){if(rkV==='cls'){renderClsRank();return;}const live=SYNC?liveCached():null,cvw=store.get('taja2_classview',null),base=live||cvw,me=tagOf(SAVE.id),hasCls=SAVE.gr&&SAVE.cl,ck=clsKey(SAVE);
  // 같은 학년·반 친구들만 보여 줘요 (아직 반을 쓰지 않은 친구의 예전 기록도 함께 보여요)
  const list=mergeLists(base&&Array.isArray(base.list)?base.list:[]).filter(e=>e.i!==me&&(!hasCls||!(+e.gr&&+e.cl)||clsKey(e)===ck));list.push(Object.assign(myEntry(),{i:me}));
  let note;
  if(SYNC)note=rkLoading?'우리 반 랭킹을 불러오는 중이에요…':rkErr?`지금은 반 랭킹에 연결하지 못했어요.${base?` ${ago(base.t)}에 불러온 랭킹을 보여 줘요.`:''}`:`자동 연동 · ${ago(base&&base.t)} 불러왔어요. 내 기록은 지금 기록으로 보여요.`;
  else{const d=cvw?new Date(cvw.t):null;note=cvw?`선생님이 ${d.getMonth()+1}월 ${d.getDate()}일에 만든 반 랭킹이에요. 내 기록은 지금 기록으로 보여요.`:'아직 반 랭킹 코드를 넣지 않았어요. 선생님께 받은 코드를 [내 기록]에서 넣으면 우리 반 순위가 보여요.';}
- $('pRank').innerHTML=`<div class="panel wide"><h2>🏆 ${hasCls?plazaLabel(SAVE.gr,SAVE.cl):'우리 반'} 랭킹</h2>${rankTabs('rk',rkG,rkM)}<div class="rankbox">${rankHTML(list,rkG,rkM,me)}</div>
- <p class="note">${note}</p><div class="btnrow">${SYNC?'<button class="sbtn inline" data-act="rk-refresh">새로고침</button>':''}<button class="gbtn inline" data-act="close" data-p="pRank">닫기</button></div></div>`;}
+ const vis=SYNC&&!!hasCls;
+ $('pRank').innerHTML=`<div class="panel wide"><h2>🏆 ${hasCls?plazaLabel(SAVE.gr,SAVE.cl):'우리 반'} 랭킹</h2>${rkViewTabs()}${rankTabs('rk',rkG,rkM)}<div class="rankbox">${rankHTML(list,rkG,rkM,me,false,vis)}</div>
+ <p class="note">${note}${vis?'<br>🏡 별지기를 누르면 그 친구의 마을을 구경할 수 있어요.':''}</p><div class="btnrow">${SYNC?'<button class="sbtn inline" data-act="rk-refresh">새로고침</button>':''}<button class="gbtn inline" data-act="close" data-p="pRank">닫기</button></div></div>`;}
+
+/* ---------- 반별 랭킹: 이번 주(월요일부터), 같은 학년 반끼리, 반 점수 = 반 별가루 ÷ 반 친구 수 ---------- */
+// 한국 시간으로 이번 주 월요일을 20261102처럼 (Apps Script의 kstWeek_와 같아요)
+function kstWeek(back){const d=new Date(Date.now()+9*3600000),dow=(d.getUTCDay()+6)%7,m=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()-dow-7*(back||0)));return m.getUTCFullYear()*10000+(m.getUTCMonth()+1)*100+m.getUTCDate();}
+const wkLabel=wk=>`${Math.floor(wk/100)%100}월 ${wk%100}일(월)`;
+let CLS=store.get('taja2_cls',null),clsLoading=false,clsErr='';
+function clsParse(d){if(!d||!Array.isArray(d.list)||!(+d.wk>0))return null;
+ return{t:Date.now(),wk:+d.wk,min:+d.min>0?+d.min:5,day:+d.day>0?+d.day:200,list:d.list.filter(c=>c&&+c.gr>0&&+c.cl>0).map(c=>({gr:+c.gr,cl:+c.cl,m:+c.m||0,w:+c.w||0,p:+c.p||0,lw:+c.lw||0}))};}
+// 반 목록 받기 (gr이 0이면 모든 학년: 선생님 모드). 예전 Apps Script면 {old:true}
+async function clsFetch(gr){if(!SYNC)return null;try{const r=await tmo(fetch(`${SYNC_URL}${SYNC_URL.includes('?')?'&':'?'}action=classes&gr=${gr||0}&_=${Date.now()}`),20000);const j=await r.json();const d=j&&j.ok&&clsParse(j);if(d)return d;if(j&&j.ok)return{old:true};}catch(e){}return null;}
+function clsKeep(d){if(!d||!SAVE)return;CLS=Object.assign(d,{gr:SAVE.gr});store.set('taja2_cls',CLS);clsErr='';renderBadge();}
+async function clsPull(){if(!SYNC||!SAVE||!SAVE.gr||!SAVE.cl)return null;clsLoading=true;const d=await clsFetch(SAVE.gr);clsLoading=false;
+ if(d&&!d.old)clsKeep(d);else clsErr=d?'old':'net';return d;}
+// 게임 기록을 보낸 답에 같은 학년 반들의 이번 주 기록이 함께 와요
+function clsGot(x){const d=clsParse(x);if(!d)return;clsKeep(d);if(rankOpen()&&rkV==='cls')renderRank();}
+// 점수가 같으면 같은 등수. 이번 주에 아직 0점인 반은 등수 없이 '-'. 학생이 min명보다 적은 반은 순위 밖
+function clsRank(list,min){const L=list.map(c=>Object.assign({},c,{s:c.m?Math.round(c.w/c.m):0,ls:c.m?Math.round(c.lw/c.m):0,ok:c.m>=min}));
+ const rows=L.filter(c=>c.ok).sort((a,b)=>b.s-a.s||a.cl-b.cl);let rank=0,prev=-1;rows.forEach((c,i)=>{if(c.s!==prev)rank=i+1;prev=c.s;c.rank=c.s>0?rank:0;});
+ const lw=L.filter(c=>c.ok&&c.ls>0).sort((a,b)=>b.ls-a.ls);
+ return{rows,out:L.filter(c=>!c.ok).sort((a,b)=>a.cl-b.cl),lastTop:lw.filter(c=>c.ls===lw[0].ls)};}
+function myCls(){if(!SAVE||!SAVE.gr||!SAVE.cl||!CLS||CLS.wk!==kstWeek())return null;const list=CLS.list.filter(c=>c.gr===SAVE.gr);if(!list.length)return null;const r=clsRank(list,CLS.min);return{r,me:r.rows.find(c=>c.cl===SAVE.cl)||null};}
+// 홈 화면 🏆: 이번 주 우리 반이 1등이면 랭킹 버튼에 붙어요 (누르면 반별 랭킹)
+function renderBadge(){const el=$('rkBadge');if(!el)return;const x=SYNC?myCls():null,top=!!(x&&x.me&&x.me.rank===1);el.classList.toggle('hidden',!top);
+ if(top)el.textContent=x.r.rows.filter(c=>c.rank===1).length>1?'🏆 공동 1등!':'🏆 우리 반 1등!';}
+function clsMsg(R,list,myCl,min){const me=R.rows.find(c=>c.cl===myCl),mine=list.find(c=>c.cl===myCl),top=R.rows[0];
+ if(!me)return mine?`우리 반은 아직 ${mine.m}명이라 순위에 들어가지 않아요. ${min}명이 되면 들어가요.`:'우리 반 기록이 아직 없어요. 게임을 한 판 하면 들어가요!';
+ if(!top||top.s<=0)return '아직 이번 주 기록이 없어요. 먼저 별가루를 모아 1등을 차지해 봐요! 🚀';
+ if(me.rank===1){const next=R.rows.find(c=>c.rank>1);return R.rows.filter(c=>c.rank===1).length>1?'🎉 우리 반이 <b>공동 1등</b>이에요! 조금만 더 하면 혼자 1등!':`🎉 우리 반이 <b>1등</b>이에요!${next?` 2등 반과 <b>${me.s-next.s}점</b> 차이예요.`:''}`;}
+ const gap=top.s-me.s,above=R.rows.filter(c=>c.s>me.s).pop();
+ return `1등 반까지 <b>${gap}점</b>!${above&&above.s<top.s?` 바로 위 ${above.rank}등 반까지 <b>${above.s-me.s}점</b>.`:''}<br>반 친구 모두가 낱말을 ${gap+1}개씩 더 맞히면 1등이 될 수 있어요!`;}
+function clsBoard(x,gr,myCl){const list=x.list.filter(c=>c.gr===gr),R=clsRank(list,x.min),max=Math.max(1,...R.rows.map(c=>c.s));
+ const bar=c=>`<div class="cbar ${c.cl===myCl?'me':''}"><span>${c.rank?(c.rank<=3?`<span class="medal m${c.rank}">${c.rank}</span>`:c.rank):'-'}</span><b class="cn">${c.cl}반${c.cl===myCl?' ⭐':''}</b><div class="ctrack"><i style="width:${c.s?Math.max(3,Math.round(c.s/max*100)):0}%"></i></div><b class="cs">${c.s.toLocaleString()}점</b><small>참여 ${c.p}/${c.m}명</small></div>`;
+ return `<div class="clshead"><span>📅 ${wkLabel(x.wk)}부터 · 월요일마다 새로 시작해요</span>${R.lastTop.length?`<span class="lasttop">지난주 1등: ${R.lastTop.map(c=>c.cl+'반').join('·')} 🏆</span>`:''}</div>`
+  +(R.rows.length?`<div class="cbars">${R.rows.map(bar).join('')}</div>`:'<p class="empty">아직 순위에 들어간 반이 없어요.</p>')
+  +(R.out.length?`<p class="cout">순위 밖 (${x.min}명보다 적은 반): ${R.out.map(c=>`${c.cl}반 ${c.m}명`).join(', ')}</p>`:'')
+  +(myCl?`<p class="cmsg">${clsMsg(R,list,myCl,x.min)}</p>`:'');}
+function rkViewTabs(){return SYNC?`<div class="rkview"><button class="chip ${rkV==='me'?'on':''}" data-act="rk-view" data-v="me">👫 우리 반 친구</button><button class="chip ${rkV==='cls'?'on':''}" data-act="rk-view" data-v="cls">🏫 반별 랭킹 (이번 주)</button></div>`:'';}
+function renderClsRank(){const hasCls=SAVE.gr&&SAVE.cl,x=hasCls&&CLS&&CLS.list.some(c=>c.gr===SAVE.gr)?CLS:null;
+ const body=!hasCls?'<p class="empty">학년과 반을 먼저 알려 주세요.</p>':x?clsBoard(x,SAVE.gr,SAVE.cl)
+  :`<p class="empty">${clsLoading?'반별 랭킹을 불러오는 중이에요…':clsErr==='old'?'반별 랭킹은 선생님이 Apps Script를 새 버전으로 올리면 볼 수 있어요.':clsErr?'반별 랭킹에 연결하지 못했어요. 잠시 뒤에 [새로고침]을 눌러 주세요.':'아직 반별 기록이 없어요.'}</p>`;
+ const st=x&&clsLoading?'새로 불러오는 중…':x&&clsErr==='net'?`지금은 연결하지 못했어요. ${ago(x.t)}에 불러온 기록이에요.`:'';
+ $('pRank').innerHTML=`<div class="panel wide"><h2>🏆 ${hasCls?`${SAVE.gr}학년 `:''}반별 랭킹</h2>${rkViewTabs()}${body}
+ <p class="note">${st?`${st}<br>`:''}반 점수 = 이번 주에 맞힌 낱말 수 ÷ 반 친구 수 (한 사람 하루 ${x?x.day:200}개까지)<br>잘하는 것보다 모두가 꾸준히 하는 반이 올라가요. 선생님 별은 들어가지 않아요.</p>
+ <div class="btnrow"><button class="sbtn inline" data-act="rk-refresh">새로고침</button><button class="gbtn inline" data-act="close" data-p="pRank">닫기</button></div></div>`;}
+
+/* ---------- 친구 마을 구경 (우리 반 랭킹에서 별지기를 눌러요) ---------- */
+// 시트에 올리는 내 마을 모습: '1|섬 크기|땅(칸마다 한 글자, 잔디 0)|장식,i,j,뒤집기;…'
+function vgPack(){const d=SAVE.deco,n=d.n;let g='';for(let i=0;i<n;i++)for(let j=0;j<n;j++){const x=GT_IDS.indexOf(d.ground[i+','+j]);g+=(x>0?x:0).toString(36);}
+ return `1|${n}|${g.replace(/0+$/,'')}|${d.objs.filter(o=>DECO[o.k]).map(o=>`${o.k},${o.i},${o.j},${o.f?1:0}`).join(';')}`;}
+function vgParse(s){const p=String(s||'').split('|');if(p.length!==4||p[0]!=='1')return null;const n=+p[1];if(!LAND.includes(n))return null;
+ const ground={};for(let q=0;q<p[2].length&&q<n*n;q++){const g=GT_IDS[parseInt(p[2][q],36)];if(g&&g!=='grass')ground[Math.floor(q/n)+','+(q%n)]=g;}
+ const objs=[];for(const t of p[3].split(';')){const[k,i,j,f]=t.split(',');if(!DECO[k])continue;const o={k,i:+i|0,j:+j|0,f:+f?1:0};if(o.i>=0&&o.j>=0&&o.i+DECO[k].s<=n&&o.j+DECO[k].s<=n)objs.push(o);}
+ return{n,ground,objs};}
+let vgBusy=false;
+async function vgOpen(t){if(!SAVE||vgBusy||!t)return;
+ if(t===myTag()){const d=SAVE.deco;openEditor('friend',{fv:{me:true,name:SAVE.name,sk:SAVE.skin,n:d.n,ground:Object.assign({},d.ground),objs:d.objs.map(o=>Object.assign({},o))}});return;}
+ if(!SYNC||!SAVE.gr||!SAVE.cl)return;vgBusy=true;ttoast('친구 마을을 불러오는 중이에요…');let j=null;
+ try{const r=await tmo(fetch(`${SYNC_URL}${SYNC_URL.includes('?')?'&':'?'}action=village&t=${encodeURIComponent(t)}&gr=${SAVE.gr}&cl=${SAVE.cl}&_=${Date.now()}`),20000);j=await r.json();}catch(e){}
+ vgBusy=false;if(!rankOpen()||scr!=='home')return; // 기다리는 동안 랭킹을 닫았으면 그대로 둬요
+ if(!j){ttoast('연결하지 못했어요. 잠시 뒤에 다시 해 보세요');return;}
+ if(!j.ok||typeof j.vg!=='string'){ttoast(j.ok?'친구 마을은 선생님이 Apps Script를 새 버전으로 올리면 볼 수 있어요':j.error==='class'?'우리 반 친구의 마을만 구경할 수 있어요':'그 친구를 찾지 못했어요. [새로고침]을 눌러 보세요');return;}
+ const fv=vgParse(j.vg),nm=String(j.n||'친구').slice(0,10);
+ if(!fv){ttoast(`아직 ${nm}의 마을이 올라오지 않았어요. ${nm}${josa(nm,'이','가')} 게임을 한 번 하면 볼 수 있어요`);return;}
+ openEditor('friend',{fv:Object.assign(fv,{name:nm,sk:j.sk})});ttoast(`🏡 ${nm}의 마을에 놀러 왔어요!`);}
+
+/* ---------- 다른 반 광장 구경 (같은 학년, 구경만) ---------- */
+function visitHTML(){const L=CLS&&CLS.gr===SAVE.gr?CLS.list.filter(c=>c.gr===SAVE.gr&&c.cl!==SAVE.cl).sort((a,b)=>a.cl-b.cl):[];
+ const body=L.length?`<div class="vgrid">${L.map(c=>`<button class="sbtn" data-act="pz-go" data-c="${c.cl}">${c.cl}반</button>`).join('')}</div>`
+  :`<p class="empty">${clsLoading?'반 목록을 불러오는 중이에요…':clsErr==='old'?'선생님이 Apps Script를 새 버전으로 올리면 구경할 수 있어요.':clsErr?'연결하지 못했어요. 잠시 뒤에 다시 해 보세요.':'아직 다른 반이 없어요.'}</p>`;
+ return `<div class="panel"><h2>🔭 다른 반 광장</h2><p class="sub">${SAVE.gr}학년 다른 반의 광장과 기념비를 구경해요.<br>구경만 할 수 있고, 놓은 친구 이름은 보이지 않아요.</p>${body}<button class="gbtn" data-act="close" data-p="pVisit">닫기</button></div>`;}
+async function openVisit(){if(!SAVE||!SAVE.gr||!SAVE.cl)return;openPanel('pVisit',visitHTML());
+ if(SYNC&&!clsLoading&&(!CLS||CLS.gr!==SAVE.gr||Date.now()-CLS.t>60000)){const p=clsPull();$('pVisit').innerHTML=visitHTML();await p;if(!$('pVisit').classList.contains('hidden'))$('pVisit').innerHTML=visitHTML();}}
+
+/* ---------- 선생님 모드 [반 랭킹 모으기]: 반별 요약 ---------- */
+let tSum=false,TCLS=null,tClsLoading=false,tClsErr='';
+const tSumTabs=()=>SYNC?`<div class="tabs" style="margin:0 0 6px"><button class="chip sm2 ${tSum?'':'on'}" data-act="t-sum" data-v="0">👤 학생별 기록</button><button class="chip sm2 ${tSum?'on':''}" data-act="t-sum" data-v="1">🏫 반별 요약 (이번 주)</button></div>`:'';
+async function tClsPull(){if(!SYNC||tClsLoading)return;tClsLoading=true;tClsErr='';if(!$('pTeacher').classList.contains('hidden'))renderTeacher();
+ const d=await clsFetch(0);tClsLoading=false;if(d&&!d.old)TCLS=d;else tClsErr=d?'old':'net';if(!$('pTeacher').classList.contains('hidden'))renderTeacher();}
+function tClsHTML(){const st=`<p class="sub">🔗 ${tClsLoading?'불러오는 중…':TCLS?`${ago(TCLS.t)} 불러옴`:'아직 불러오지 못함'} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="t-refresh">새로고침</button></p>`;
+ if(!TCLS)return st+`<p class="empty">${tClsLoading?'반별 기록을 불러오는 중이에요…':tClsErr==='old'?'Apps Script를 새 버전으로 배포해 주세요. (반별 랭킹이 들어 있는 새 Code.gs)':tClsErr?'구글 시트에 연결하지 못했어요. [새로고침]을 눌러 주세요.':''}</p>`;
+ const grs=[...new Set(TCLS.list.map(c=>c.gr))].sort((a,b)=>a-b);
+ if(!grs.length)return st+'<p class="empty">아직 시트에 학년·반을 쓴 학생이 없어요.</p>';
+ return st+`<p class="note" style="margin:0 0 4px">📅 이번 주: ${wkLabel(TCLS.wk)}부터 · 반 점수 = 이번 주 반 별가루(한 사람 하루 ${TCLS.day}개까지) ÷ 반 친구 수 · 선생님 별은 빼고 세요 · ${TCLS.min}명보다 적은 반은 순위에서 빠져요</p>`
+  +grs.map(g=>{const R=clsRank(TCLS.list.filter(c=>c.gr===g),TCLS.min);
+   return `<h3>${g}학년${R.lastTop.length?` <span class="lasttop" style="font-size:18px">지난주 1등: ${R.lastTop.map(c=>c.cl+'반').join('·')} 🏆</span>`:''}</h3><div class="rankbox" style="max-height:250px"><table class="rank mg"><tr><th>순위</th><th>반</th><th>인원</th><th>이번 주 참여</th><th>이번 주 별가루</th><th>반 점수 (1인당)</th><th>지난주 점수</th></tr>${R.rows.concat(R.out).map(c=>`<tr><td>${c.ok?(c.rank?(c.rank<=3?`<span class="medal m${c.rank}">${c.rank}</span>`:c.rank):'-'):`<span class="vold">${TCLS.min}명 미만</span>`}</td><td>${c.cl}반</td><td>${c.m}명</td><td>${c.p}명</td><td>${c.w.toLocaleString()}</td><td>${c.s.toLocaleString()}점</td><td>${c.ls.toLocaleString()}점</td></tr>`).join('')}</table></div>`;}).join('');}
 
 /* ---------- 내 기록 ---------- */
 function openMe(){renderMe();show('pMe',true);}
@@ -1381,8 +1541,8 @@ function renderMe(code,msg){const rows=READY.map(g=>{const s=SAVE.games[g.id];re
 let tmEdit='',tmDel='',tmBusy=false,tMon=null;
 let TUNLOCK=false,TPIN='',tTab='class',tG='meteor',tM='r',tArm='',tLoading=false,tCls='all';
 const tList=()=>{const d=store.get('taja2_teacher',{list:[]});return Array.isArray(d.list)?d.list.filter(validEntry):[];};
-function openTeacher(){PANELS.forEach(p=>show(p,false));if(!TUNLOCK){openPanel('pTeacher',`<div class="panel"><h2>🔒 선생님 모드</h2><p class="sub">선생님 비밀번호를 영어로 입력해 주세요.</p><div class="form"><label>비밀번호<input id="tPin" type="password" maxlength="12" autocomplete="off" autocapitalize="off" spellcheck="false"></label></div><p class="msg" id="tPinMsg"></p><button class="gbtn" data-act="t-pin">확인</button><button class="sbtn" data-act="t-close">닫기</button></div>`);setTimeout(()=>{const e=$('tPin');if(e)e.focus();},60);return;}
- renderTeacher();show('pTeacher',true);if(tTab==='class')teacherPull();}
+function openTeacher(){PANELS.forEach(p=>show(p,false));if(!TUNLOCK){openPanel('pTeacher',`<div class="panel"><h2>🔒 선생님 모드</h2><p class="sub">선생님 비밀번호를 영어로 입력해 주세요.</p><div class="form"><label>비밀번호<input id="tPin" type="password" maxlength="12" autocomplete="off" autocapitalize="off" spellcheck="false"></label></div><p class="msg" id="tPinMsg"></p><button class="gbtn" data-act="t-pin">확인</button><button class="sbtn" data-act="t-close">닫기</button><p class="verline">이 기기의 게임 버전 ${APP_VER}</p></div>`);setTimeout(()=>{const e=$('tPin');if(e)e.focus();},60);return;}
+ renderTeacher();show('pTeacher',true);if(tTab==='class'){if(tSum)tClsPull();else teacherPull();}}
 // 선생님은 비밀번호로 전체 이름이 담긴 목록을 받아요. 이 목록은 기기에 저장하지 않아요(학생 크롬북에서 열어도 남지 않게).
 let tLive=null;
 async function teacherFetch(){if(!SYNC)return null;
@@ -1395,8 +1555,9 @@ function renderTeacher(out,msg){const live=SYNC?(tLive||liveCached()):null,ALL=m
  const keys=[...new Set(ALL.map(clsKey))].sort((a,b)=>{const[g1,c1]=a.split('-').map(Number),[g2,c2]=b.split('-').map(Number);return(g1||99)-(g2||99)||(c1||99)-(c2||99);});
  if(tCls!=='all'&&!keys.includes(tCls))tCls='all';
  const L=tCls==='all'?ALL:ALL.filter(e=>clsKey(e)===tCls);
- if(tTab==='class'){const chips=keys.length>1?`<div class="tabs" style="margin:0 0 4px"><button class="chip sm2 ${tCls==='all'?'on':''}" data-act="tr-cls" data-c="all">모든 반</button>${keys.map(k=>`<button class="chip sm2 ${tCls===k?'on':''}" data-act="tr-cls" data-c="${k}">${clsName(k)}</button>`).join('')}</div>`:'';
-  body=`${SYNC?`<p class="sub">🔗 자동 연동 켜짐 · ${tLoading?'불러오는 중…':live?`${ago(live.t)} 불러옴`:'아직 불러오지 못함'} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="t-refresh">새로고침</button></p>`:'<p class="sub">자동 연동이 꺼져 있어요. 학생들의 기록 코드(TJ1.로 시작)를 모아 아래에 붙여 넣으세요.</p>'}
+ if(tTab==='class'&&SYNC&&tSum)body=tSumTabs()+tClsHTML();
+ else if(tTab==='class'){const chips=keys.length>1?`<div class="tabs" style="margin:0 0 4px"><button class="chip sm2 ${tCls==='all'?'on':''}" data-act="tr-cls" data-c="all">모든 반</button>${keys.map(k=>`<button class="chip sm2 ${tCls===k?'on':''}" data-act="tr-cls" data-c="${k}">${clsName(k)}</button>`).join('')}</div>`:'';
+  body=`${tSumTabs()}${SYNC?`<p class="sub">🔗 자동 연동 켜짐 · ${tLoading?'불러오는 중…':live?`${ago(live.t)} 불러옴`:'아직 불러오지 못함'} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="t-refresh">새로고침</button></p>`:'<p class="sub">자동 연동이 꺼져 있어요. 학생들의 기록 코드(TJ1.로 시작)를 모아 아래에 붙여 넣으세요.</p>'}
   <p class="msg ${msg&&msg.ok?'ok':''}" id="tMsg">${msg?esc(msg.t):''}</p>${chips}
   <p class="sub" style="margin:4px 0">${tCls==='all'?'모인 학생':clsName(tCls)} ${L.length}명</p>${rankTabs('tr',tG,tM)}<div class="rankbox" style="max-height:220px">${rankHTML(L,tG,tM,null,tCls==='all'&&keys.length>1)}</div>
   ${SYNC?'<p class="note">학생 이름·번호를 바꾸거나 계정을 지우려면 [학생 관리] 탭을 쓰세요.</p>':''}
@@ -1414,7 +1575,7 @@ function renderTeacher(out,msg){const live=SYNC?(tLive||liveCached()):null,ALL=m
   <p class="sub">지금 코인 ${SAVE.coins.toLocaleString()} · 별지기 Lv.${charLevel()} · 반 랭킹 자동 연동 ${SYNC?`켜짐${SAVE.syncAt?` (마지막 전송 ${ago(SAVE.syncAt)})`:''}${SAVE.syncPending?' · 보내지 못한 기록 있음':''}`:'꺼짐'}</p>
   <button class="sbtn" data-act="t-reset">${tArm==='reset'?'정말 처음부터? 한 번 더 누르세요':'이 크롬북 기록 모두 지우기'}</button><p class="msg ${msg&&msg.ok?'ok':''}">${msg?esc(msg.t):''}</p>`:'<p class="empty">이 기기에는 학생 정보가 없어요.</p>';
  $('pTeacher').innerHTML=`<div class="panel xl"><h2>👩‍🏫 선생님 모드</h2><div class="tabs"><button class="chip ${tTab==='class'?'on':''}" data-act="t-tab" data-t="class">반 랭킹 모으기</button><button class="chip ${tTab==='manage'?'on':''}" data-act="t-tab" data-t="manage">학생 관리</button><button class="chip ${tTab==='plaza'?'on':''}" data-act="t-tab" data-t="plaza">우리 반 광장</button><button class="chip ${tTab==='device'?'on':''}" data-act="t-tab" data-t="device">이 크롬북 관리</button></div>${body}
- <div class="btnrow"><button class="gbtn inline" data-act="t-close">닫기</button></div></div>`;}
+ <div class="btnrow"><button class="gbtn inline" data-act="t-close">닫기</button></div><p class="verline">이 기기의 게임 버전 ${APP_VER}</p></div>`;}
 // ---------- 선생님 모드 [학생 관리]: 이름·번호 바꾸기, 계정 지우기 ----------
 const clsSort=(a,b)=>{const[g1,c1]=a.split('-').map(Number),[g2,c2]=b.split('-').map(Number);return(g1||99)-(g2||99)||(c1||99)-(c2||99);};
 // 같은 반에 번호나 이름이 겹치는 학생 (한 학생이 크롬북 두 대에 등록한 경우를 찾기 쉽게)
@@ -1423,6 +1584,9 @@ function dupInfo(L){const by={},out={};for(const e of L){const k=clsKey(e),nm=St
   if(nm)(by[k+'|n|'+nm]=by[k+'|n|'+nm]||[]).push(e.i);}
  for(const key in by)if(by[key].length>1)for(const i of by[key])(out[i]=out[i]||[]).push(key.includes('|b|')?'같은 번호':'같은 이름');
  return out;}
+// 게임 버전 칸: 이 기기와 같으면 ✓ 최신, 아니면 그 크롬북의 버전(비어 있으면 자동 반영이 생기기 전 버전 → 한 번 직접 새로고침)
+const fmtVer=v=>{const d=String(vnum(v));return d.length===10?`${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}-${d.slice(8)}`:d;};
+const verCell=v=>!vnum(v)?'<span class="vold">예전 (새로고침)</span>':vnum(v)===vnum(APP_VER)?'<span class="vok">✓ 최신</span>':`<span class="${vnum(v)>vnum(APP_VER)?'vok':'vold'}">${esc(fmtVer(v))}</span>`;
 function renderManage(msg){
  if(!SYNC)return '<p class="empty">학생 관리는 반 랭킹 자동 연동(구글 시트)이 켜져 있어야 쓸 수 있어요.</p>';
  const live=tLive&&tLive.full?tLive:null,ALL=live?live.list:[],keys=[...new Set(ALL.map(clsKey))].sort(clsSort);
@@ -1432,16 +1596,16 @@ function renderManage(msg){
  const chips=keys.length>1?`<div class="tabs" style="margin:0 0 4px"><button class="chip sm2 ${tCls==='all'?'on':''}" data-act="tr-cls" data-c="all">모든 반</button>${keys.map(k=>`<button class="chip sm2 ${tCls===k?'on':''}" data-act="tr-cls" data-c="${k}">${clsName(k)}</button>`).join('')}</div>`:'';
  let rows='',lastK=null;
  for(const e of L){const k=clsKey(e);
-  if(tCls==='all'&&k!==lastK){rows+=`<tr class="grp"><td colspan="6">${clsName(k)} · ${ALL.filter(x=>clsKey(x)===k).length}명</td></tr>`;lastK=k;}
+  if(tCls==='all'&&k!==lastK){rows+=`<tr class="grp"><td colspan="7">${clsName(k)} · ${ALL.filter(x=>clsKey(x)===k).length}명</td></tr>`;lastK=k;}
   const d=dup[e.i],dn=d?d.map(x=>`<span class="dupnote">${x}</span>`).join(''):'';
-  if(tmEdit===e.i){rows+=`<tr class="edit"><td><input id="tmNo" type="number" min="1" max="50" inputmode="numeric" value="${+e.b||''}" aria-label="번호"></td><td colspan="4" style="text-align:left"><input id="tmName" maxlength="10" autocomplete="off" spellcheck="false" value="${esc(e.n)}" aria-label="이름"> <span class="hint">별명도 괜찮지만 진짜 이름이 꼭 들어가야 해요</span></td><td class="mgbtns"><button class="gbtn" data-act="tm-save" ${dis}>저장</button><button class="sbtn" data-act="tm-cancel">취소</button></td></tr>`;continue;}
-  if(tmDel===e.i){rows+=`<tr class="del"><td colspan="6">정말 <b>${esc(e.n)}</b> (${+e.b||'-'}번) 계정을 지울까요? &nbsp;한글 ${rd(e,'meteor')} · 영어 ${rd(e,'meteor_en')} · 마지막 연결 ${ago(e.ts)||'-'}<br><small>그 크롬북의 코인·마을·기록은 다음에 게임을 열 때 모두 지워져요.</small> <span class="mgbtns"><button class="sbtn danger" data-act="tm-delok" ${dis}>정말 지우기</button><button class="sbtn" data-act="tm-cancel">취소</button></span></td></tr>`;continue;}
-  rows+=`<tr class="${d?'dup':''}"><td>${+e.b||'-'}</td><td style="text-align:left">${esc(e.n)}${e.tn?'<span class="tn">✏️ 선생님이 정함</span>':''}${dn}</td><td>${rd(e,'meteor')}</td><td>${rd(e,'meteor_en')}</td><td>${ago(e.ts)||'-'}</td><td class="mgbtns"><button class="sbtn" data-act="tm-edit" data-t="${e.i}" ${dis}>이름·번호</button><button class="sbtn danger" data-act="tm-del" data-t="${e.i}" ${dis}>지우기</button></td></tr>`;}
- const dupN=L.filter(e=>dup[e.i]).length;
+  if(tmEdit===e.i){rows+=`<tr class="edit"><td><input id="tmNo" type="number" min="1" max="50" inputmode="numeric" value="${+e.b||''}" aria-label="번호"></td><td colspan="5" style="text-align:left"><input id="tmName" maxlength="10" autocomplete="off" spellcheck="false" value="${esc(e.n)}" aria-label="이름"> <span class="hint">별명도 괜찮지만 진짜 이름이 꼭 들어가야 해요</span></td><td class="mgbtns"><button class="gbtn" data-act="tm-save" ${dis}>저장</button><button class="sbtn" data-act="tm-cancel">취소</button></td></tr>`;continue;}
+  if(tmDel===e.i){rows+=`<tr class="del"><td colspan="7">정말 <b>${esc(e.n)}</b> (${+e.b||'-'}번) 계정을 지울까요? &nbsp;한글 ${rd(e,'meteor')} · 영어 ${rd(e,'meteor_en')} · 마지막 연결 ${ago(e.ts)||'-'}<br><small>그 크롬북의 코인·마을·기록은 다음에 게임을 열 때 모두 지워져요.</small> <span class="mgbtns"><button class="sbtn danger" data-act="tm-delok" ${dis}>정말 지우기</button><button class="sbtn" data-act="tm-cancel">취소</button></span></td></tr>`;continue;}
+  rows+=`<tr class="${d?'dup':''}"><td>${+e.b||'-'}</td><td style="text-align:left">${esc(e.n)}${e.tn?'<span class="tn">✏️ 선생님이 정함</span>':''}${dn}</td><td>${rd(e,'meteor')}</td><td>${rd(e,'meteor_en')}</td><td>${ago(e.ts)||'-'}</td><td>${verCell(e.v)}</td><td class="mgbtns"><button class="sbtn" data-act="tm-edit" data-t="${e.i}" ${dis}>이름·번호</button><button class="sbtn danger" data-act="tm-del" data-t="${e.i}" ${dis}>지우기</button></td></tr>`;}
+ const dupN=L.filter(e=>dup[e.i]).length,newN=L.filter(e=>vnum(e.v)===vnum(APP_VER)).length,anyV=ALL.some(e=>vnum(e.v));
  return `<p class="sub">🔗 ${tLoading?'불러오는 중…':live?`${ago(live.t)} 불러옴`:'아직 불러오지 못함'} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="t-refresh">새로고침</button></p>
   <p class="msg ${msg&&msg.ok?'ok':''}" id="tMsg">${msg?esc(msg.t):''}</p>${chips}
-  <p class="sub" style="margin:4px 0">${tCls==='all'?'모든 반':clsName(tCls)} ${L.length}명${dupN?` · <span class="dupnote">노란 줄 ${dupN}명</span> 같은 반에 번호나 이름이 겹쳐요`:''}</p>
-  <div class="rankbox" style="max-height:330px">${L.length?`<table class="rank mg"><tr><th>번호</th><th>이름</th><th>한글</th><th>영어</th><th>마지막 연결</th><th></th></tr>${rows}</table>`:`<p class="empty">${live?'아직 시트에 학생이 없어요':tLoading?'목록을 불러오는 중이에요':'목록을 불러오지 못했어요. [새로고침]을 눌러 주세요'}</p>`}</div>
+  <p class="sub" style="margin:4px 0">${tCls==='all'?'모든 반':clsName(tCls)} ${L.length}명${dupN?` · <span class="dupnote">노란 줄 ${dupN}명</span> 같은 반에 번호나 이름이 겹쳐요`:''}${L.length?` · 최신 버전 ${newN}명 / ${L.length}명`:''}</p>${live&&ALL.length&&!anyV?'<p class="note" style="margin:0">게임 버전은 Apps Script를 새 버전으로 배포하고, 학생들이 새 게임을 한 번 열면 보여요.</p>':''}
+  <div class="rankbox" style="max-height:330px">${L.length?`<table class="rank mg"><tr><th>번호</th><th>이름</th><th>한글</th><th>영어</th><th>마지막 연결</th><th>게임 버전</th><th></th></tr>${rows}</table>`:`<p class="empty">${live?'아직 시트에 학생이 없어요':tLoading?'목록을 불러오는 중이에요':'목록을 불러오지 못했어요. [새로고침]을 눌러 주세요'}</p>`}</div>
   <p class="note">이름·번호를 바꾸면 그 학생이 다음에 게임을 열 때 크롬북에도 바뀌어요. 계정을 지우면 그 크롬북은 다음에 게임을 열 때 처음부터 시작해요.<br>그 크롬북이 게임을 열기 전이라면, 구글 시트의 [지운 학생] 탭에서 그 줄을 지워 되돌릴 수 있어요.</p>`;}
 function tmMsg(t){const m=$('tMsg');if(m){m.className='msg';m.textContent=t;}}
 async function tmSave(){if(tmBusy||!tmEdit)return;const no=parseInt((($('tmNo')||{}).value||''),10),name=(($('tmName')||{}).value||'').replace(/\s+/g,' ').trim().slice(0,10);
@@ -1518,6 +1682,11 @@ const ACT={
  'zoom-in'(){if(ED)edZoom(1.25);},'zoom-out'(){if(ED)edZoom(1/1.25);},'zoom-fit'(){if(ED)ED.cam=camFit(edN(),edArea());},
  'rank-open'(){openRank();},
  'rk-game'(el){rkG=el.dataset.g;renderRank();},'rk-metric'(el){rkM=el.dataset.m;renderRank();},
+ 'rank-cls'(){openRank('cls');},
+ 'rk-view'(el){rkV=el.dataset.v==='cls'?'cls':'me';renderRank();if(rkV==='cls'&&SYNC&&!clsLoading&&(!CLS||Date.now()-CLS.t>60000))clsPull().then(()=>{if(rankOpen()&&rkV==='cls')renderRank();});},
+ 'vg-open'(el){vgOpen(el.dataset.t);},
+ 'pz-visit'(){if(ED&&ED.mode==='plaza'&&!ED.admin&&!ED.visit)openVisit();},
+ 'pz-go'(el){const cl=+el.dataset.c;show('pVisit',false);if(SAVE&&SAVE.gr&&cl>0&&cl!==SAVE.cl)openEditor('plaza',{gr:SAVE.gr,cl,visit:true});},
  'me-open'(){openMe();},
  'me-code'(){renderMe(enc('TJ1',myEntry()));},
  'me-import'(){const txt=($('meImport')||{}).value||'';const m=txt.match(/TJR1\.[A-Za-z0-9_-]+\.[0-9a-f]{6}/);const r=m&&dec(m[0]);
@@ -1537,7 +1706,7 @@ const ACT={
  't-pin'(){const v=(($('tPin')||{}).value||'').trim();if(HANGUL.test(v)){$('tPinMsg').textContent='한글이 섞여 들어갔어요. 한/영 키를 눌러 영어로 바꾼 뒤 다시 입력해 주세요.';$('tPin').value='';$('tPin').focus();return;}
   if(hash('pin:'+v+SALT)===PIN_H){TUNLOCK=true;TPIN=v;tArm='';renderTeacher();teacherPull();}else{$('tPinMsg').textContent='비밀번호가 달라요'+(pinCaps?' (Caps Lock이 켜져 있어요)':'');$('tPin').value='';$('tPin').focus();}},
  't-close'(){show('pTeacher',false);tArm='';tmEdit='';tmDel='';if(!SAVE)openReg();else if(scr==='home')goHome();},
- 't-tab'(el){tTab=el.dataset.t;tArm='';tmEdit='';tmDel='';renderTeacher();if(SYNC&&((tTab==='class'&&!tLive)||(tTab==='manage'&&!tLoading&&(!(tLive&&tLive.full)||Date.now()-tLive.t>30000))))teacherPull();},
+ 't-tab'(el){tTab=el.dataset.t;tArm='';tmEdit='';tmDel='';renderTeacher();if(SYNC&&tTab==='class'&&tSum&&!TCLS)tClsPull();if(SYNC&&((tTab==='class'&&!tLive)||(tTab==='manage'&&!tLoading&&(!(tLive&&tLive.full)||Date.now()-tLive.t>30000))))teacherPull();},
  'tm-edit'(el){if(tmBusy)return;tmEdit=el.dataset.t;tmDel='';renderTeacher();setTimeout(()=>{const x=$('tmName');if(x){x.focus();x.select();}},30);},
  'tm-del'(el){if(tmBusy)return;tmDel=el.dataset.t;tmEdit='';renderTeacher();},
  'tm-cancel'(){tmEdit='';tmDel='';renderTeacher();},
@@ -1546,7 +1715,8 @@ const ACT={
  'tr-game'(el){tG=el.dataset.g;renderTeacher();},'tr-metric'(el){tM=el.dataset.m;renderTeacher();},
  'tr-cls'(el){tCls=el.dataset.c;renderTeacher();},
  't-add'(){teacherAdd();},
- 't-refresh'(){teacherPull();},
+ 't-refresh'(){if(tTab==='class'&&tSum)tClsPull();else teacherPull();},
+ 't-sum'(el){tSum=el.dataset.v==='1';renderTeacher();if(tSum){if(!TCLS||Date.now()-TCLS.t>30000)tClsPull();}else if(SYNC&&!tLive)teacherPull();},
  't-mon'(){const gr=parseInt(($('tpGr')||{}).value,10),cl=parseInt(($('tpCl')||{}).value,10);if(!(gr>=1&&gr<=6)||!(cl>=1&&cl<=20)){$('tPzMsg').textContent='학년과 반을 확인해 주세요';return;}store.set('taja2_tpz',{gr,cl});tMonLoad(gr,cl);},
  't-star'(el){tMonStar(+el.dataset.d);},
  't-plaza'(){const gr=parseInt(($('tpGr')||{}).value,10),cl=parseInt(($('tpCl')||{}).value,10);if(!(gr>=1&&gr<=6)||!(cl>=1&&cl<=20)){$('tPzMsg').textContent='학년과 반을 확인해 주세요';return;}
@@ -1557,7 +1727,7 @@ const ACT={
  't-clear'(){if(tArm!=='clear'){tArm='clear';renderTeacher();return;}store.set('taja2_teacher',{list:[]});tArm='';renderTeacher(null,{t:'목록을 비웠어요',ok:true});},
  't-saveprof'(){const v=readInfo('t');if(v.err){$('tDevMsg').textContent=v.err;return;}Object.assign(SAVE,{gr:v.gr,cl:v.cl,no:v.no,name:v.name});saveGame();syncPush(TPIN);renderTeacher(null,{t:'학생 정보를 저장했어요',ok:true});},
  't-give'(){const n=parseInt($('tGive').value,10);if(!n){renderTeacher(null,{t:'숫자를 써 주세요'});return;}SAVE.coins=Math.max(0,SAVE.coins+n);saveGame();renderTeacher(null,{t:`${n>0?'+':''}${n} 코인 → 지금 ${SAVE.coins} 코인`,ok:true});},
- 't-reset'(){if(tArm!=='reset'){tArm='reset';renderTeacher();return;}if(SAVE)syncDelete(SAVE.id);try{localStorage.removeItem(SKEY);localStorage.removeItem('taja2_classview');localStorage.removeItem('taja2_live');}catch(e){}liveMem=null;SAVE=null;tArm='';show('pTeacher',false);goHome();}};
+ 't-reset'(){if(tArm!=='reset'){tArm='reset';renderTeacher();return;}if(SAVE)syncDelete(SAVE.id);try{localStorage.removeItem(SKEY);localStorage.removeItem('taja2_classview');localStorage.removeItem('taja2_live');localStorage.removeItem('taja2_cls');}catch(e){}CLS=null;liveMem=null;SAVE=null;tArm='';show('pTeacher',false);goHome();}};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const f=ACT[b.dataset.act];if(f){f(b);}});
 $('slots').addEventListener('pointerdown',e=>{if(e.target.closest('.slot[data-i]'))e.preventDefault();});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){const id=(e.target&&e.target.id)||'';
@@ -1609,7 +1779,10 @@ window.addEventListener('pointerup',e=>{if(scr==='edit'&&ED)edUp(e);else if(hDra
 window.addEventListener('pointercancel',e=>{PTRS.delete(e.pointerId);HPTRS.delete(e.pointerId);if(!HPTRS.size)hDrag=null;if(ED&&ED.drag&&ED.drag.type!=='pinch'){if(ED.carry&&ED.carry.drag)edCancel();ED.drag=null;}});
 cv.addEventListener('wheel',e=>{const f=Math.exp(-e.deltaY*(e.ctrlKey?.01:.0015));if(scr==='edit'&&ED){e.preventDefault();edZoom(f,toStage(e));}else if(scr==='home'&&SAVE&&!panelOpen()){e.preventDefault();homeZoom(f,toStage(e));}},{passive:false});
 cv.addEventListener('contextmenu',e=>{if(scr==='edit')e.preventDefault();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&scr==='game'&&R&&!R.over&&!R.paused)ACT.pause();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&scr==='game'&&R&&!R.over&&!R.paused)ACT.pause();
+ if(!document.hidden){if(Date.now()-UPD.last>30000)updCheck(true);else updMaybe();}});
+setInterval(()=>{if(UPD.ready)updMaybe();else updCheck();},15000);
+setTimeout(()=>updCheck(true),20000+Math.random()*20000);
 window.addEventListener('resize',fit);
 
 /* ================= 시작 ================= */
@@ -1619,6 +1792,7 @@ function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;ANIM_T+=dt;ct
  requestAnimationFrame(loop);}
 fit();goHome();
 if(SYNC&&SAVE)setTimeout(syncPush,1500);
+if(UPD.done)setTimeout(()=>ttoast('✨ 새 버전으로 바뀌었어요!'),900);
 requestAnimationFrame(loop);
 })();
 </script>
