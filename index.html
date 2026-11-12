@@ -214,6 +214,27 @@ table.rank tr.me td{background:#fff3b8}
 table.rank.mg{font-size:21px}
 table.rank.mg td{vertical-align:middle}
 table.rank tr.dup td{background:#ffefc2}
+/* 선생님 모드 [학생 관리] 코인·아이템·장식 (2026-11-12) */
+table.rank.bag{font-size:20px}
+table.rank.bag th small{font-size:15px}
+table.rank.bag td.hi{background:#ffd6d6;color:#a3273a}
+table.rank.bag td.na{color:#8a8d96;font-size:17px}
+table.rank.bag td.neg{color:#c2410c}
+table.rank.bag td.pos{color:#2b8a3e}
+table.rank.bag.adj td,table.rank.bag.lg td{font-size:18px}
+.bagdet{text-align:left}
+.bagdet h3{margin:14px 0 6px}
+.bagdet .row{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:21px;margin:6px 0}
+.bagdet label{display:inline-flex;align-items:center;gap:8px}
+.bagdet input[type=number],.bagdet input[type=text],.bagdet select{height:44px;border:3px solid var(--steel);border-radius:12px;font-size:21px;font-family:inherit;padding:0 8px;outline:none;background:#fff}
+.bagdet input[type=number]{width:92px;text-align:center}
+.bagdet input.wide{width:460px}
+.bagdet input[type=checkbox]{width:24px;height:24px}
+.bagdet .itg{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:6px 0}
+.bagdet .itg label{flex-direction:column;gap:4px;background:#fff;border:3px solid var(--steel);border-radius:14px;padding:6px 0;font-size:19px}
+.bagdet .sum{background:#fff7e6;border:3px dashed #f59f00;border-radius:14px;padding:8px 14px;font-size:20px;margin:8px 0}
+.bagdet .sbtn,.bagdet .gbtn{display:inline-block;width:auto;font-size:22px;padding:4px 18px;margin:0}
+.bagdet .mgbtns .sbtn{font-size:18px;padding:2px 10px}
 table.rank tr.grp td{background:#eef1f6;font-size:19px;color:#4b4f5c;text-align:left;padding:3px 12px}
 table.rank tr.edit td,table.rank tr.del td{background:#fff7e6}
 table.rank tr.del td{text-align:left;padding:8px 12px;line-height:1.5}
@@ -396,7 +417,7 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 (()=>{
 'use strict';
 // 게임 버전: 새 파일을 만들 때마다 꼭 올려요(날짜-그날 몇 번째). 학생 크롬북이 이 번호로 새 버전을 알아채요.
-const APP_VER='2026-11-09-01';
+const APP_VER='2026-11-12-01';
 const vnum=v=>Number(String(v||'').replace(/\D/g,''))||0;
 const $=id=>document.getElementById(id);
 const W=1280,H=720,GROUND=650;
@@ -461,7 +482,7 @@ const ITEMS={
  shield:{name:'방패',en:'shield',icon:'🛡️',color:'#bac8ff',price:40,desc:'놓친 별똥별을 3번 막아 줘요'},
  heart:{name:'하트',en:'heart',icon:'❤️',color:'#ffc9c9',price:50,desc:'하트 1개를 채워요'},
  double:{name:'두배',en:'double',icon:'💰',color:'#fff3bf',price:40,desc:'10초 동안 받는 코인 2배'}};
-const ITEM_IDS=Object.keys(ITEMS);
+const ITEM_IDS=Object.keys(ITEMS),ITEM_MAX=10; // 아이템은 종류마다 ITEM_MAX개까지 가질 수 있어요 (2026-11-12)
 // 게임에서 치는 아이템 이름(영어판은 영어 이름)
 const itName=id=>R&&R.en?ITEMS[id].en:ITEMS[id].name;
 const UPS={
@@ -678,10 +699,60 @@ function fixSave(s){if(!s||typeof s!=='object'||!s.id)return null;const d=defaul
  if(s.pv!==2)priceInit(s);
  else if(s.ownN&&typeof s.ownN==='object'){for(const k in cnt)if(DECO[k]&&DECO[k].op!=null&&cnt[k]>(+s.ownN[k]||0))s.oldp[k]=(s.oldp[k]||0)+cnt[k]-(+s.ownN[k]||0);} // 예전 파일에서 예전 값으로 산 것
  for(const k of Object.keys(s.oldp)){const v=Math.min(+s.oldp[k]||0,cnt[k]||0);if(v>0)s.oldp[k]=v;else delete s.oldp[k];}
+ // 아이템 한도(2026-11-12): 처음 한 번, 종류마다 ITEM_MAX개를 넘는 아이템은 산 값으로 코인을 돌려줘요
+ if(!s.icap){let m=0,back=0;for(const id of ITEM_IDS){const over=(+s.inv[id]||0)-ITEM_MAX;if(over>0){m+=over;back+=over*ITEMS[id].price;s.inv[id]=ITEM_MAX;}}
+  if(back){s.coins=(+s.coins||0)+back;(s.clog=Array.isArray(s.clog)?s.clog:[]).push({t:Date.now(),k:'cap',x:'',n:m,c:back,b:s.coins});s.icapMsg=[m,back];}s.icap=1;}
  return s;}
 let SAVE=fixSave(store.get(SKEY,null));
 function saveGame(){if(!SAVE)return;try{SAVE.xb=xbMake();const cnt=ownCounts(),o={};for(const k in cnt)if(DECO[k]&&DECO[k].op!=null)o[k]=cnt[k];SAVE.ownN=o;}catch(e){}
  if(!store.set(SKEY,SAVE))ttoast('저장할 수 없는 화면이라 창을 닫으면 기록이 사라져요');}
+// ---------- 코인 기록 · 가방 올리기 · 선생님 조정 (2026-11-12) ----------
+// 코인 기록: 코인이 바뀔 때마다 남겨요(최근 60개). 학생 화면에는 보이지 않고 선생님 모드에서만 봐요.
+//  {t 때, k 종류, x 무엇, n 개수, c 코인 변화, b 그 뒤 코인} · 같은 것을 2분 안에 또 사고팔면 한 줄로 합쳐요
+function clog(k,x,n,c){if(!SAVE||!c)return;const L=Array.isArray(SAVE.clog)?SAVE.clog:(SAVE.clog=[]),t=Date.now(),z=L[L.length-1];x=String(x==null?'':x);
+ if(z&&z.k===k&&z.x===x&&k!=='g'&&k!=='adj'&&t-z.t<120000){z.n+=n;z.c+=c;z.t=t;z.b=SAVE.coins;}
+ else{L.push({t,k,x,n,c,b:SAVE.coins});if(L.length>60)L.splice(0,L.length-60);}}
+// 상점에서 사고팔면 몇 초 뒤 시트에 가방을 올려요(선생님 모드에서 보게)
+let bagT=0;
+function bagSync(ms){clearTimeout(bagT);bagT=setTimeout(()=>{if(SAVE)syncPush();},ms||4000);}
+// 시트에 올리는 가방: 코인·아이템·장식(창고·내 마을·광장)·강화·스킨·섬 크기·최근 코인 기록
+function bagSnap(){const D=SAVE.deco,d={},add=(k,i,n)=>{if(!DECO[k]||DECO[k].special||!(n>0))return;(d[k]=d[k]||[0,0,0])[i]+=n;};
+ for(const k in D.stock)add(k,0,+D.stock[k]||0);for(const o of D.objs)add(o.k,1,1);for(const lab in SAVE.pz||{})for(const r of SAVE.pz[lab]||[])add(r.k,2,1);
+ const it={};for(const id of ITEM_IDS)it[id]=+SAVE.inv[id]||0;
+ return{v:1,c:SAVE.coins,it,d,up:Object.assign({},SAVE.up),sk:Object.keys(SAVE.skins||{}).filter(k=>SAVE.skins[k]),n:D.n,lg:(SAVE.clog||[]).slice(-40)};}
+// 선생님 조정: 기록을 보낸 답(adj)으로 받아 한 번만 적용하고, 다음 기록 때 '적용했어요'(aa)를 보내요. 학생에게는 알리지 않아요.
+//  게임·꾸미기 중이거나 가방 챙기기 창이 열려 있으면 홈 화면으로 돌아온 뒤에 적용해요.
+let ADJQ=[];
+function adjGot(j){if(!SAVE)return;
+ if(Array.isArray(j.aok)&&j.aok.length&&Array.isArray(SAVE.adjAck)){const ok=new Set(j.aok.map(String)),n0=SAVE.adjAck.length;SAVE.adjAck=SAVE.adjAck.filter(a=>!ok.has(a.r));if(SAVE.adjAck.length!==n0)saveGame();}
+ if(!Array.isArray(j.adj))return;
+ for(const a of j.adj)if(a&&typeof a==='object'&&typeof a.r==='string'&&!ADJQ.some(q=>q.r===a.r))ADJQ.push(a);
+ adjRun();}
+const adjSafe=()=>!!SAVE&&scr==='home'&&!R&&!ED&&$('pLoad').classList.contains('hidden');
+function adjRun(){if(!ADJQ.length||!adjSafe())return;const done=Array.isArray(SAVE.adjDone)?SAVE.adjDone:(SAVE.adjDone=[]),ack=Array.isArray(SAVE.adjAck)?SAVE.adjAck:(SAVE.adjAck=[]);let n=0;
+ for(const a of ADJQ.splice(0)){const old=done.find(x=>x.r===a.r);
+  if(old){if(!ack.some(x=>x.r===a.r))ack.push({r:a.r,res:old.res});continue;}
+  let res;try{res=adjApply(a);}catch(e){res={err:1};}
+  done.push({r:a.r,at:Date.now(),res});ack.push({r:a.r,res});n++;}
+ if(done.length>80)done.splice(0,done.length-80);if(ack.length>40)ack.splice(0,ack.length-40);
+ saveGame();
+ if(n){renderProfile();if(!$('pShop').classList.contains('hidden'))renderShop();}
+ bagSync(800);}
+// 조정 하나 적용: c 코인 더하기·빼기, it 아이템 개수 바꾸기, d 장식 주기(+)·빼기(−), rf 뺀 것을 산 값으로 돌려주기
+function adjApply(a){const res={c:0,rf:0,it:{},d:{}},it=a.it&&typeof a.it==='object'?a.it:{},dd=a.d&&typeof a.d==='object'?a.d:{},rf=!!a.rf;
+ for(const id in it){if(!ITEMS[id])continue;const want=Math.max(0,Math.min(99,Math.round(+it[id]||0))),had=+SAVE.inv[id]||0;if(want===had)continue;
+  SAVE.inv[id]=want;res.it[id]=[had,want];if(rf&&want<had)res.rf+=(had-want)*ITEMS[id].price;}
+ for(const k in dd){const d=DECO[k];if(!d||d.special)continue;let n=Math.max(-99,Math.min(99,Math.round(+dd[k]||0)));if(!n)continue;
+  if(n>0){SAVE.deco.stock[k]=(SAVE.deco.stock[k]||0)+n;res.d[k]=n;continue;}
+  let got=0;for(;n<0;n++){const v=adjTake(k);if(v<0)break;got++;if(rf)res.rf+=v;}if(got)res.d[k]=-got;}
+ const b0=SAVE.coins;SAVE.coins=Math.max(0,b0+Math.round(+a.c||0)+res.rf);res.c=SAVE.coins-b0;
+ clog('adj','',1,res.c);return res;}
+// 장식 하나 빼기: 창고에서 먼저, 없으면 내 마을에서(광장에 놓인 것은 [우리 반 광장]에서 치워요). 돌려줄 값은 산 값(값이 오르기 전에 산 것은 예전 값)
+function adjTake(k){const D=SAVE.deco,d=DECO[k],old=sellUsesOld(k),v=old?d.op:d.price;
+ if(D.stock[k]>0){if(!--D.stock[k])delete D.stock[k];}
+ else{let ix=-1;for(let q=D.objs.length-1;q>=0;q--)if(D.objs[q].k===k){ix=q;break;}if(ix<0)return -1;D.objs.splice(ix,1);}
+ if(old){SAVE.oldp[k]=Math.max(0,(SAVE.oldp[k]||0)-1);if(!SAVE.oldp[k])delete SAVE.oldp[k];}
+ return v;}
 // 내가 가진 장식 수(창고 + 내 마을 + 광장에 놓은 것)
 function ownCounts(s){s=s||SAVE;const n={},D=s.deco;for(const k in D.stock)n[k]=(n[k]||0)+(+D.stock[k]||0);for(const o of D.objs)n[o.k]=(n[o.k]||0)+1;for(const lab in s.pz||{})for(const r of s.pz[lab]||[])n[r.k]=(n[r.k]||0)+1;return n;}
 // 되팔기: 값이 오르기 전(2026-11-09)에 가진 장식은 예전 값(op)의 반, 그 뒤에 산 것은 지금 값의 반. 올라간 값으로 산 것부터 팔려요.
@@ -691,7 +762,7 @@ function sellVal(k){const d=DECO[k];if(!d||d.special)return 0;return Math.floor(
 function sellOne(k,obj){const d=DECO[k],D=SAVE.deco;if(!d||d.special)return 0;const v=sellVal(k),old=sellUsesOld(k);
  if(obj){const ix=D.objs.indexOf(obj);if(ix<0)return 0;D.objs.splice(ix,1);}else{if(!(D.stock[k]>0))return 0;if(!--D.stock[k])delete D.stock[k];}
  if(old){SAVE.oldp[k]=Math.max(0,(SAVE.oldp[k]||0)-1);if(!SAVE.oldp[k])delete SAVE.oldp[k];}
- SAVE.coins+=v;saveGame();SFX.coin();ttoast(`${d.name}${josa(d.name,'을','를')} 팔고 ${v.toLocaleString()}코인을 받았어요`);return v;}
+ SAVE.coins+=v;clog('sd',k,1,v);saveGame();bagSync();SFX.coin();ttoast(`${d.name}${josa(d.name,'을','를')} 팔고 ${v.toLocaleString()}코인을 받았어요`);return v;}
 // 예전 파일(2026-11-07-01)은 새 장식·땅을 몰라서 지워 버려요. 새 장식은 SAVE.xb에 따로 적어 두었다가, 지워졌으면 되살려요.
 function xbMake(){const d=SAVE.deco,x={n:d.n,o:[],s:{},g:{},p:{}};for(const o of d.objs)if(NEW_KEYS.has(o.k))x.o.push({k:o.k,i:o.i,j:o.j,f:o.f?1:0});
  for(const k in d.stock)if(NEW_KEYS.has(k))x.s[k]=d.stock[k];for(const key in d.ground)if(!OLD_GT.has(d.ground[key]))x.g[key]=d.ground[key];
@@ -1409,9 +1480,11 @@ function popGift(e){e.state='dead';burst(e.x,e.y,['#ff6b9a','#ffd84a','#7ad7ff',
  if(e.item)giveItem(e.item,e.x,e.y);else{const c=(10+2*R.round)*(R.doubleT>0?2:1);R.coinsGift+=c;coinText(e.x,e.y-50,c);toast(`코인 주머니! +${c}`);SFX.coin();}}
 
 /* ---------- 아이템 ---------- */
+const itemLim=id=>Math.max(ITEM_MAX,(R&&R.inv0&&+R.inv0[id])||0); // 창고 한도: 게임 시작 때 더 많았으면(선생님이 준 것) 그만큼
 function giveItem(id,x,y){const it=ITEMS[id];SFX.item();
  if(R.bag.length<R.bagSize){R.bag.push(id);const i=R.bag.length-1,sw=R.bagSize>=4?76:94;R.parts.push({kind:'fly',x,y,x0:x,y0:y,x1:(R.bagSize>=4?12:24)+i*sw+40,y1:668,vx:0,vy:0,g:0,life:.7,max:.7,text:it.icon});renderSlots(i);toast(R.en?`${it.icon} ${it.en}! '${it.en}' 치고 Enter로 써요`:`${it.icon} ${it.name}! '${it.name}'${josa(it.name,'을','를')} 치면 써요`);}
- else{SAVE.inv[id]++;saveGame();toast(R.en?`가방이 가득 차서 창고에 넣었어요: ${it.en}`:`가방이 가득 차서 ${it.name}${josa(it.name,'은','는')} 창고에 넣었어요`);}}
+ else if((+SAVE.inv[id]||0)+R.bag.filter(x=>x===id).length<itemLim(id)){SAVE.inv[id]++;saveGame();toast(R.en?`가방이 가득 차서 창고에 넣었어요: ${it.en}`:`가방이 가득 차서 ${it.name}${josa(it.name,'은','는')} 창고에 넣었어요`);}
+ else{R.coinsGift+=it.price;coinText(x,y-50,it.price);toast(R.en?`가방도 창고도 가득 차서 ${it.price}코인으로 바꿨어요: ${it.en}`:`가방도 창고도 가득 차서 ${it.name}${josa(it.name,'을','를')} ${it.price}코인으로 바꿨어요`);}}
 function useItem(i){if(!R||R.paused||R.over||R.phase==='count')return;const id=R.bag[i];if(!id)return;if(applyItem(id)===false)return;R.bag.splice(i,1);renderSlots();}
 function boltTo(x,y){const pts=[],sx=x+rand(-60,60);for(let i=0;i<=8;i++){const k=i/8;pts.push([sx+(x-sx)*k+(i&&i<8?rand(-22,22):0),-10+(y+10)*k]);}R.bolts.push({pts,t:.45,max:.45});}
 function applyItem(id){const it=ITEMS[id],mg=SAVE.up.magic;
@@ -1430,14 +1503,15 @@ function applyItem(id){const it=ITEMS[id],mg=SAVE.up.magic;
 
 /* ---------- 끝과 보상 ---------- */
 function finishRun(reason){if(R.over)return;R.over=true;R.phase='over';R.overT=reason==='quit'?1.3:0;R.reason=reason;SFX.end();inp.blur();inp.value='';
+ // 안 쓴 아이템은 창고로 돌아가요. 창고가 가득 차면(종류마다 ITEM_MAX개, 시작할 때 더 많았으면 그만큼) 산 값만큼 코인이 돼요
+ for(const id of R.bag){if((+SAVE.inv[id]||0)<itemLim(id))SAVE.inv[id]++;else R.coinsGift+=ITEMS[id].price;}R.bag=[];
  const tot=R.hits+R.misses,acc=tot?Math.round(R.hits/tot*100):0,tasu=Math.round(R.strokes/(Math.max(R.active,1)/60));
  const base=R.coinsHit+R.coinsRound+R.coinsBoss+R.coinsGift,accB=(acc>=90&&R.hits>=10)?Math.round(base*.2):0,luckB=Math.round((base+accB)*.1*SAVE.up.luck);
  const g=SAVE.games[R.game],reached=Math.max(1,R.round),newRound=reached>g.bestRound,validT=R.active>=60&&acc>=80&&R.hits>=10,newTasu=validT&&tasu>g.bestTasu;
  const bestB=newRound&&g.plays>0?30:0,total=base+accB+luckB+bestB;
- SAVE.coins+=total;SAVE.stats.coins+=total;SAVE.stats.plays++;g.plays++;g.words+=R.hits;
+ SAVE.coins+=total;SAVE.stats.coins+=total;clog('g',R.game,1,total);SAVE.stats.plays++;g.plays++;g.words+=R.hits;
  if(newRound){g.bestRound=reached;g.bestWords=R.hits;}else if(reached===g.bestRound&&R.hits>g.bestWords)g.bestWords=R.hits;
  if(newTasu)g.bestTasu=tasu;
- for(const id of R.bag)SAVE.inv[id]++;R.bag=[];
  saveGame();
  R.result={reached,acc,tasu,validT,newRound,newTasu,base,accB,luckB,bestB,total};
  setTimeout(syncPush,300);}
@@ -1546,7 +1620,7 @@ let ttTO=0;function ttoast(m){const el=$('ttoast');el.textContent=m;el.classList
 const PANELS=['pReg','pGames','pLoad','pPause','pResult','pShop','pRank','pMe','pTeacher','pVisit','pGive'];
 const show=(id,on)=>$(id).classList.toggle('hidden',!on);
 function hideAll(){PANELS.forEach(p=>show(p,false));['home','hud','decoUI'].forEach(p=>show(p,false));}
-function goHome(){if(ED){clearInterval(ED.timer);ED=null;$('ttoast').classList.remove('top');}R=null;scr='home';hideAll();inp.blur();if(!SAVE){openReg();return;}show('home',true);renderProfile();
+function goHome(){setTimeout(adjRun,400);if(ED){clearInterval(ED.timer);ED=null;$('ttoast').classList.remove('top');}R=null;scr='home';hideAll();inp.blur();if(!SAVE){openReg();return;}show('home',true);renderProfile();
  if(UPD.ready)setTimeout(updMaybe,800);
  if(!SAVE.gr||!SAVE.cl)openInfo();else if(SAVE.decoNew){delete SAVE.decoNew;saveGame();setTimeout(()=>ttoast('마을이 넓은 섬으로 바뀌었어요! [내 마을 꾸미기]에서 새 장식을 만나 보세요'),500);}}
 function renderProfile(){$('pName').textContent=SAVE.name;$('pMeta').textContent=`${SAVE.gr&&SAVE.cl?`${SAVE.gr}학년 ${SAVE.cl}반 `:''}${SAVE.no}번\n별지기 Lv.${charLevel()}`;$('pCoins').textContent=SAVE.coins.toLocaleString();$('pSkin').src=skinFace(SAVE.skin);homeResetBtn();renderBadge();
@@ -1608,7 +1682,7 @@ const DECO_CATS=DCATS.map(c=>c[0]);
 function renderShop(){const tabs=[['item','아이템'],['up','별지기 강화'],['skin','별지기 꾸미기'],['deco','마을 장식']].map(([k,n])=>`<button class="chip ${shopTab===k?'on':''}" data-act="shop-tab" data-t="${k}">${n}</button>`).join('');
  const buy=(k,id,price,label)=>`<button class="buy" data-act="buy" data-k="${k}" data-id="${id}" ${SAVE.coins<price?'disabled':''}><span class="coin"></span> ${label||price}</button>`;
  let cards='',sub='';
- if(shopTab==='item')cards=ITEM_IDS.map(id=>{const it=ITEMS[id];return `<div class="scard"><span class="ic" style="background:${it.color}">${it.icon}</span><b>${it.name}</b><span class="d">${it.desc}</span><span class="own">창고에 ${SAVE.inv[id]}개</span>${buy('item',id,it.price)}</div>`;}).join('');
+ if(shopTab==='item')cards=ITEM_IDS.map(id=>{const it=ITEMS[id];return `<div class="scard"><span class="ic" style="background:${it.color}">${it.icon}</span><b>${it.name}</b><span class="d">${it.desc}</span><span class="own">창고에 ${SAVE.inv[id]}개 / ${ITEM_MAX}개</span>${SAVE.inv[id]>=ITEM_MAX?'<button class="buy max" disabled>가득 찼어요</button>':buy('item',id,it.price)}</div>`;}).join('');
  else if(shopTab==='up')cards=Object.keys(UPS).map(id=>{const u=UPS[id],l=SAVE.up[id],mx=l>=u.max;return `<div class="scard"><span class="ic" style="background:${u.color}">${u.icon}</span><b>${u.name}</b><span class="d">${u.eff(l)}${mx?'':`<br>→ ${u.eff(l+1)}`}</span><span class="own">Lv.${l} / ${u.max}</span>${mx?'<button class="buy max" disabled>최고 레벨!</button>':buy('up',id,u.cost[l])}</div>`;}).join('');
  else if(shopTab==='skin')cards=SKIN_IDS.map(id=>{const k=SKINS[id],own=!!SAVE.skins[id],on=SAVE.skin===id;return `<div class="scard ${on?'on':''}"><img class="skimg" src="${skinFace(id)}" alt=""><b>${k.name}</b><span class="d">${k.desc}</span><span class="own">${on?'지금 쓰는 중':own?'가지고 있어요':''}</span>${on?'<button class="buy max" disabled>쓰는 중</button>':own?`<button class="buy" data-act="skin-use" data-id="${id}">쓰기</button>`:buy('skin',id,k.price)}</div>`;}).join('');
  else{sub=`<div class="tabs" style="margin:2px 0 8px">${DCATS.concat([['land','🏝️ 섬 넓히기']]).map(([k,n])=>`<button class="chip sm2 ${shopCat===k?'on':''}" data-act="shop-cat" data-c="${k}">${n}</button>`).join('')}</div>`;
@@ -1616,10 +1690,10 @@ function renderShop(){const tabs=[['item','아이템'],['up','별지기 강화']
   else cards=Object.keys(DECO).filter(k=>DECO[k].cat===shopCat&&!DECO[k].special).sort((a,b)=>DECO[a].price-DECO[b].price).map(id=>{const d=DECO[id],pl=SAVE.deco.objs.filter(o=>o.k===id).length,st=SAVE.deco.stock[id]||0,v=st?sellVal(id):0;
    return `<div class="scard">${isNew(id)?'<span class="nwb">NEW</span>':''}<canvas data-thumb="${id}" data-sz="72"></canvas><b>${d.name}</b><span class="own">${d.s===2?'2×2 · ':''}${d.wo?'물 위 · ':''}마을 ${pl} · 창고 ${st}</span>${buy('deco',id,d.price,d.price.toLocaleString())}${st?`<button class="sell ${sellArm===id?'arm':''}" data-act="sell" data-id="${id}">${sellArm===id?`한 번 더 누르면 팔아요 (${v.toLocaleString()})`:`💰 1개 팔기 ${v.toLocaleString()}`}</button>`:''}</div>`;}).join('');}
  $('pShop').innerHTML=`<div class="panel xl"><div class="shophead"><h2>🛒 상점</h2><div class="tabs">${tabs}</div><div style="display:flex;gap:10px;align-items:center"><div class="wallet"><span class="coin"></span>${SAVE.coins.toLocaleString()}</div><button class="gbtn sm" style="width:auto;margin:0;font-size:26px;padding:6px 22px" data-act="shop-close">닫기</button></div></div>
- ${sub}<div class="grid ${shopTab==='deco'||shopTab==='skin'?'g5':''}">${cards}</div><p class="note">${shopTab==='skin'?'별지기 모습만 바뀌어요. 게임 실력에는 영향이 없어요. 내 별지기는 친구 랭킹에도 보여요.':shopTab==='up'?'별지기를 강하게 만들면 라운드를 더 오래 버틸 수 있어요. 분당 타수 랭킹에는 영향이 없어요.':shopTab==='deco'?'산 장식은 창고에 들어가요. [내 마을 꾸미기]나 [우리 반 광장]에서 놓아 보세요.<br>창고의 장식은 반값에 되팔 수 있어요. (11월 9일 값이 오르기 전에 산 장식은 예전 값의 반)':'산 아이템은 게임 시작 전 [가방 챙기기]에서 가방에 넣어요.'}</p>
+ ${sub}<div class="grid ${shopTab==='deco'||shopTab==='skin'?'g5':''}">${cards}</div><p class="note">${shopTab==='skin'?'별지기 모습만 바뀌어요. 게임 실력에는 영향이 없어요. 내 별지기는 친구 랭킹에도 보여요.':shopTab==='up'?'별지기를 강하게 만들면 라운드를 더 오래 버틸 수 있어요. 분당 타수 랭킹에는 영향이 없어요.':shopTab==='deco'?'산 장식은 창고에 들어가요. [내 마을 꾸미기]나 [우리 반 광장]에서 놓아 보세요.<br>창고의 장식은 반값에 되팔 수 있어요. (11월 9일 값이 오르기 전에 산 장식은 예전 값의 반)':`산 아이템은 게임 시작 전 [가방 챙기기]에서 가방에 넣어요. 아이템은 종류마다 ${ITEM_MAX}개까지 가질 수 있어요.`}</p>
  </div>`;
  fillThumbs($('pShop'));}
-function doBuy(k,id){let price=0;
+function doBuy(k,id){let price=0;if(k==='item'&&ITEMS[id]&&(+SAVE.inv[id]||0)>=ITEM_MAX){ttoast(`아이템은 종류마다 ${ITEM_MAX}개까지 가질 수 있어요`);renderShop();return;}
  if(k==='item')price=ITEMS[id].price;
  else if(k==='up'){if(SAVE.up[id]>=UPS[id].max)return;price=UPS[id].cost[SAVE.up[id]];}
  else if(k==='land'){const nx=LAND[LAND.indexOf(SAVE.deco.n)+1];if(!nx)return;price=LAND_COST[nx];}
@@ -1627,9 +1701,9 @@ function doBuy(k,id){let price=0;
  else{if(!DECO[id]||DECO[id].special)return;price=DECO[id].price;}
  if(SAVE.coins<price){ttoast('코인이 부족해요');return;}
  if(k==='land'){if(landUp()){renderShop();renderProfile();}return;}
- SAVE.coins-=price;
+ SAVE.coins-=price;clog(k==='item'?'bi':k==='up'?'bu':k==='skin'?'bs':'bd',id,1,-price);
  if(k==='item')SAVE.inv[id]++;else if(k==='up')SAVE.up[id]++;else if(k==='skin'){SAVE.skins[id]=1;SAVE.skin=id;}else SAVE.deco.stock[id]=(SAVE.deco.stock[id]||0)+1;
- saveGame();if(k==='up'||k==='skin')syncPush();SFX.buy();ttoast(k==='skin'?`${SKINS[id].name}${josa(SKINS[id].name,'을','를')} 샀어요! 바로 쓸게요`:k==='up'?`${UPS[id].name} Lv.${SAVE.up[id]}!`:k==='item'?`${ITEMS[id].name} 1개를 샀어요`:`${DECO[id].name}${josa(DECO[id].name,'을','를')} 샀어요! 창고에 넣어 뒀어요`);renderShop();renderProfile();}
+ saveGame();if(k==='up'||k==='skin')syncPush();else bagSync();SFX.buy();ttoast(k==='skin'?`${SKINS[id].name}${josa(SKINS[id].name,'을','를')} 샀어요! 바로 쓸게요`:k==='up'?`${UPS[id].name} Lv.${SAVE.up[id]}!`:k==='item'?`${ITEMS[id].name} 1개를 샀어요`:`${DECO[id].name}${josa(DECO[id].name,'을','를')} 샀어요! 창고에 넣어 뒀어요`);renderShop();renderProfile();}
 
 /* ---------- 마을 꾸미기 · 우리 반 광장 ---------- */
 let ED=null;const edCat={deco:'nature',plaza:'all'},PTRS=new Map();
@@ -1688,7 +1762,7 @@ function pzSetInfo(ed,p){if(!ed||!p||typeof p!=='object'||!(+p.n>0))return;const
  if(!ed.visit&&!ed.admin&&SAVE&&ed.gr===SAVE.gr&&ed.cl===SAVE.cl){const lab=plazaLabel(ed.gr,ed.cl);SAVE.pzSeen=SAVE.pzSeen||{};const seen=SAVE.pzSeen[lab];
   if(seen!=null&&lv>seen)pzCelebrate(ed,lv);if(seen!==lv){SAVE.pzSeen[lab]=lv;saveGame();}}
  if(ED===ed){renderEdBar();if(GV&&!$('pGive').classList.contains('hidden'))renderGive();}}
-function pzCelebrate(ed,lv){const n=PLAZA_N+2*lv;let cnt=0;for(const x of String(ed.pzI&&ed.pzI.h||'').matchAll(/(\d+):(\d+)/g))if(+x[1]===lv)cnt=+x[2];
+function pzCelebrate(ed,lv){const n=PLAZA_N+2*lv;let cnt=0;for(const x of String(ed.pzI&&ed.pzI.h||'').matchAll(/(\d+)(?:단계)?:(\d+)/g))if(+x[1]===lv)cnt=+x[2];
  MON_FX_T=ANIM_T;SFX.level();ttoast(`🎉 우리 반 광장이 ${n}×${n}으로 넓어졌어요!${cnt?` 친구 ${cnt}명이 함께 모았어요`:''}`);}
 
 function openEditor(mode,opt){opt=opt||{};let gr=opt.gr||(SAVE&&SAVE.gr),cl=opt.cl||(SAVE&&SAVE.cl);
@@ -1761,7 +1835,7 @@ function edPlace(){const c=ED.carry,h=ED.hover;if(!c||!h)return false;const why=
  const d=SAVE.deco,nm=DECO[c.k].name;
  if(c.src==='move'){Object.assign(c.obj,{i:h.oi,j:h.oj,f:c.f||0});delete c.obj.hidden;ED.carry=null;ED.sel=c.obj;SFX.pop();saveGame();edRefresh();return true;}
  if(c.src==='stock'&&(d.stock[c.k]||0)>0){if(!--d.stock[c.k])delete d.stock[c.k];}
- else{const p=DECO[c.k].price;if(SAVE.coins<p){ttoast(`코인이 부족해요 (${nm} ${p}코인)`);SFX.miss();return false;}SAVE.coins-=p;}
+ else{const p=DECO[c.k].price;if(SAVE.coins<p){ttoast(`코인이 부족해요 (${nm} ${p}코인)`);SFX.miss();return false;}SAVE.coins-=p;clog('bd',c.k,1,-p);}
  d.objs.push({k:c.k,i:h.oi,j:h.oj,f:c.f||0});SFX.pop();saveGame();
  if(c.src==='stock'&&!d.stock[c.k]){ED.carry=null;ttoast(`창고의 ${nm}${josa(nm,'을','를')} 다 놓았어요`);}
  edRefresh();return true;}
@@ -1771,10 +1845,10 @@ function paintAt(i,j){const g=ED.paint,d=SAVE.deco;if(!g||i<0||j<0||i>=d.n||j>=d
  if(g==='water'&&on&&!(DECO[on.k].wo||DECO[on.k].wb)){warn('장식이 있는 땅은 물로 바꿀 수 없어요');return;}
  if(g!=='water'&&on&&DECO[on.k].wo&&d.ground[key]==='water'){warn('물 위 장식이 있는 곳은 땅으로 바꿀 수 없어요');return;}
  const p=GTYPE[g].price;if(SAVE.coins<p){if(!ED.warned){ED.warned=true;ttoast('코인이 부족해요');}return;}
- SAVE.coins-=p;if(g==='grass')delete d.ground[key];else d.ground[key]=g;ED.dirty=true;}
+ SAVE.coins-=p;clog('bg',g,1,-p);if(g==='grass')delete d.ground[key];else d.ground[key]=g;ED.dirty=true;}
 function landUp(){const d=SAVE.deco,nx=LAND[LAND.indexOf(d.n)+1];if(!nx)return false;const c=LAND_COST[nx];if(SAVE.coins<c){ttoast('코인이 부족해요');return false;}
- SAVE.coins-=c;const ng={};for(const k in d.ground){const[a,b]=k.split(',').map(Number);ng[(a+1)+','+(b+1)]=d.ground[k];}d.ground=ng;for(const o of d.objs){o.i++;o.j++;}d.n=nx;
- saveGame();SFX.level();ttoast(`섬이 ${nx}×${nx}로 넓어졌어요!`);if(ED&&ED.mode==='deco'){ED.cam=camFit(nx,EDIT_AREA);edRefresh();}return true;}
+ SAVE.coins-=c;clog('bl',nx,1,-c);const ng={};for(const k in d.ground){const[a,b]=k.split(',').map(Number);ng[(a+1)+','+(b+1)]=d.ground[k];}d.ground=ng;for(const o of d.objs){o.i++;o.j++;}d.n=nx;
+ saveGame();bagSync();SFX.level();ttoast(`섬이 ${nx}×${nx}로 넓어졌어요!`);if(ED&&ED.mode==='deco'){ED.cam=camFit(nx,EDIT_AREA);edRefresh();}return true;}
 
 /* 화면 보기 (끌기·확대) */
 function clampCam(){const n=edN(),z=ED.cam.z,L=ED.cam.x-n*IW*z,Rr=ED.cam.x+n*IW*z,T=ED.cam.y-130*z,B=ED.cam.y+(n*TLH+22)*z;
@@ -1893,7 +1967,7 @@ async function giveSend(){const ed=ED;if(!ed||!GV||GV.busy||!ed.pzI||!SAVE)retur
   if(res.error==='deleted')syncPush();}
  else if(GV)GV.msg='연결이 불안정해요. 다음에 들어갔는지 다시 확인할게요. (코인은 들어간 게 확인될 때만 빠져요)';
  if(ED===ed){renderGive();renderEdBar();}}
-function giveDone(ed,res,want){const got=Math.max(0,+res.a||0),lab=plazaLabel(SAVE.gr,SAVE.cl);SAVE.coins=Math.max(0,SAVE.coins-got);delete SAVE.pzTry;if(res.my)giveMy(lab,res.my);saveGame();SFX.coin();
+function giveDone(ed,res,want){const got=Math.max(0,+res.a||0),lab=plazaLabel(SAVE.gr,SAVE.cl);SAVE.coins=Math.max(0,SAVE.coins-got);clog('pz','',1,-got);delete SAVE.pzTry;if(res.my)giveMy(lab,res.my);saveGame();bagSync();SFX.coin();
  if(ed&&ED===ed&&res.pz)pzSetInfo(ed,res.pz);
  if(GV){GV.ok=true;GV.amt=0;GV.msg=res.dup?`지난번에 보낸 ${got.toLocaleString()}코인이 모금함에 들어가 있었어요. 고마워요!`:`💛 ${got.toLocaleString()}코인을 보탰어요! 고마워요${want&&got<want?` (보낼 수 있는 만큼만 보냈어요)`:''}`;}
  if(ED){renderEdBar();renderMonBar();}}
@@ -1922,7 +1996,7 @@ function ago(t){if(!t)return '';const s=(Date.now()-t)/1000;if(s<60)return '방�
 // pin: [이 크롬북 관리]에서 선생님이 고친 정보를 보낼 때만 (시트에 '선생님이 정한 이름·번호'로 남아요)
 let pushPin='';
 async function syncPush(pin){if(typeof pin==='string'&&pin)pushPin=pin;if(!SYNC||!SAVE)return false;if(pushing){pushAgain=true;return false;}pushing=true;
- const ent=myEntry(),vg=vgPack();if(hash(vg)!==SAVE.vgH||Date.now()-(+SAVE.vgAt||0)>21600000)ent.vg=vg; // 친구 마을 구경용: 마을이 바뀌었거나 6시간이 지났을 때만
+ const ent=myEntry(),vg=vgPack();ent.bag=bagSnap();if(Array.isArray(SAVE.adjAck)&&SAVE.adjAck.length)ent.aa=SAVE.adjAck.slice(0,20);if(hash(vg)!==SAVE.vgH||Date.now()-(+SAVE.vgAt||0)>21600000)ent.vg=vg; // 친구 마을 구경용: 마을이 바뀌었거나 6시간이 지났을 때만
  const data=JSON.stringify(ent),req={type:'record',data,sig:hash(SALT+'sync'+data)},usedPin=pushPin;if(usedPin)req.pin=usedPin;
  const body=JSON.stringify(req);let ok=false,res=null,j=null;
  try{res=await tmo(fetch(SYNC_URL,{method:'POST',body}),20000);}catch(e){res=null;}
@@ -1943,6 +2017,7 @@ async function syncPull(){if(!SYNC)return null;try{const r=await tmo(fetch(SYNC_
 function syncReply(j){if(!SAVE||!j)return;
  if(j.error==='deleted'){if(R&&!R.over)return;accountDeleted();return;}
  if(!j.ok)return;
+ adjGot(j);
  const n=typeof j.n==='string'?j.n.replace(/\s+/g,' ').trim().slice(0,10):'',b=+j.b||0,ch=[];
  if([...n].length>=2&&n!==SAVE.name){SAVE.name=n;ch.push('이름');}
  if(b>=1&&b<=99&&b!==SAVE.no){SAVE.no=b;ch.push('번호');}
@@ -2086,6 +2161,7 @@ function renderMe(code,msg){const rows=READY.map(g=>{const s=SAVE.games[g.id];re
 
 /* ---------- 선생님 모드 ---------- */
 let tmEdit='',tmDel='',tmBusy=false,tMon=null;
+let tmView='list',tBag=null,tBagSel='',tBagMsg=null,tBagFresh=false,tBagArm='';
 let TUNLOCK=false,TPIN='',tTab='class',tG='meteor',tM='r',tArm='',tLoading=false,tCls='all';
 const tList=()=>{const d=store.get('taja2_teacher',{list:[]});return Array.isArray(d.list)?d.list.filter(validEntry):[];};
 function openTeacher(){PANELS.forEach(p=>show(p,false));if(!TUNLOCK){openPanel('pTeacher',`<div class="panel"><h2>🔒 선생님 모드</h2><p class="sub">선생님 비밀번호를 영어로 입력해 주세요.</p><div class="form"><label>비밀번호<input id="tPin" type="password" maxlength="12" autocomplete="off" autocapitalize="off" spellcheck="false"></label></div><p class="msg" id="tPinMsg"></p><button class="gbtn" data-act="t-pin">확인</button><button class="sbtn" data-act="t-close">닫기</button><p class="verline">이 기기의 게임 버전 ${APP_VER}</p></div>`);setTimeout(()=>{const e=$('tPin');if(e)e.focus();},60);return;}
@@ -2121,8 +2197,8 @@ function renderTeacher(out,msg){const live=SYNC?(tLive||liveCached()):null,ALL=m
   <div class="form" style="align-items:flex-end"><label>코인 주기 (빼려면 -숫자)<input id="tGive" type="number" value="100"></label><button class="gbtn inline" data-act="t-give" style="margin-bottom:4px">코인 주기</button></div>
   <p class="sub">지금 코인 ${SAVE.coins.toLocaleString()} · 별지기 Lv.${charLevel()} · 반 랭킹 자동 연동 ${SYNC?`켜짐${SAVE.syncAt?` (마지막 전송 ${ago(SAVE.syncAt)})`:''}${SAVE.syncPending?' · 보내지 못한 기록 있음':''}`:'꺼짐'}</p>
   <button class="sbtn" data-act="t-reset">${tArm==='reset'?'정말 처음부터? 한 번 더 누르세요':'이 크롬북 기록 모두 지우기'}</button><p class="msg ${msg&&msg.ok?'ok':''}">${msg?esc(msg.t):''}</p>`:'<p class="empty">이 기기에는 학생 정보가 없어요.</p>';
- $('pTeacher').innerHTML=`<div class="panel xl"><h2>👩‍🏫 선생님 모드</h2><div class="tabs"><button class="chip ${tTab==='class'?'on':''}" data-act="t-tab" data-t="class">반 랭킹 모으기</button><button class="chip ${tTab==='manage'?'on':''}" data-act="t-tab" data-t="manage">학생 관리</button><button class="chip ${tTab==='plaza'?'on':''}" data-act="t-tab" data-t="plaza">우리 반 광장</button><button class="chip ${tTab==='device'?'on':''}" data-act="t-tab" data-t="device">이 크롬북 관리</button></div>${body}
- <div class="btnrow"><button class="gbtn inline" data-act="t-close">닫기</button></div><p class="verline">이 기기의 게임 버전 ${APP_VER}</p></div>`;}
+ const keepV=tKeep();$('pTeacher').innerHTML=`<div class="panel xl"><h2>👩‍🏫 선생님 모드</h2><div class="tabs"><button class="chip ${tTab==='class'?'on':''}" data-act="t-tab" data-t="class">반 랭킹 모으기</button><button class="chip ${tTab==='manage'?'on':''}" data-act="t-tab" data-t="manage">학생 관리</button><button class="chip ${tTab==='plaza'?'on':''}" data-act="t-tab" data-t="plaza">우리 반 광장</button><button class="chip ${tTab==='device'?'on':''}" data-act="t-tab" data-t="device">이 크롬북 관리</button></div>${body}
+ <div class="btnrow"><button class="gbtn inline" data-act="t-close">닫기</button></div><p class="verline">이 기기의 게임 버전 ${APP_VER}</p></div>`;tRestore(keepV);}
 // ---------- 선생님 모드 [학생 관리]: 이름·번호 바꾸기, 계정 지우기 ----------
 const clsSort=(a,b)=>{const[g1,c1]=a.split('-').map(Number),[g2,c2]=b.split('-').map(Number);return(g1||99)-(g2||99)||(c1||99)-(c2||99);};
 // 같은 반에 번호나 이름이 겹치는 학생 (한 학생이 크롬북 두 대에 등록한 경우를 찾기 쉽게)
@@ -2134,8 +2210,94 @@ function dupInfo(L){const by={},out={};for(const e of L){const k=clsKey(e),nm=St
 // 게임 버전 칸: 이 기기와 같으면 ✓ 최신, 아니면 그 크롬북의 버전(비어 있으면 자동 반영이 생기기 전 버전 → 한 번 직접 새로고침)
 const fmtVer=v=>{const d=String(vnum(v));return d.length===10?`${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}-${d.slice(8)}`:d;};
 const verCell=v=>!vnum(v)?'<span class="vold">예전 (새로고침)</span>':vnum(v)===vnum(APP_VER)?'<span class="vok">✓ 최신</span>':`<span class="${vnum(v)>vnum(APP_VER)?'vok':'vold'}">${esc(fmtVer(v))}</span>`;
+// ---------- 선생님 모드 [학생 관리] 코인·아이템·장식 (2026-11-12) ----------
+// 학생 크롬북이 올린 가방([학생 가방] 탭)을 반마다 보고, 고친 것은 [선생님 조정] 탭에 쌓였다가 그 크롬북이 다음에 연결할 때 조용히 적용돼요.
+const tmViews=()=>`<div class="tabs" style="margin:0 0 6px"><button class="chip sm2 ${tmView==='list'?'on':''}" data-act="tm-view" data-v="list">👤 이름·번호·계정</button><button class="chip sm2 ${tmView==='bag'?'on':''}" data-act="tm-view" data-v="bag">🎒 코인·아이템·장식</button></div>`;
+const tfmt=t=>{if(!t)return '-';const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;};
+const CLOG_K={g:'게임 보상',bi:'아이템 샀어요',bd:'장식 샀어요',bu:'강화했어요',bs:'스킨 샀어요',bl:'섬을 넓혔어요',sd:'장식을 팔았어요',pz:'광장 모금',cap:'아이템 한도 정리(돌려받음)',adj:'선생님 조정',tg:'선생님이 이 크롬북에서 줌',bg:'땅을 칠했어요'};
+function clogText(x){const k=x.k,id=x.x,nm=k==='bi'?(ITEMS[id]||{}).name:k==='bd'||k==='sd'?(DECO[id]||{}).name:k==='bu'?(UPS[id]||{}).name:k==='bs'?(SKINS[id]||{}).name:k==='g'?(id==='meteor_en'?'별똥별 영어':'별똥별 한글'):k==='bl'?`${id}칸`:k==='bg'?(GTYPE[id]||{}).name:'';
+ return `${CLOG_K[k]||k}${nm?` · ${nm}`:''}${(+x.n||0)>1&&k!=='g'?` ×${x.n}`:''}`;}
+function tBagLoad(key){const[gr,cl]=key.split('-').map(Number),prev=tBag&&tBag.key===key?tBag:null;
+ tBag={key,gr,cl,t:prev?prev.t:0,list:prev?prev.list:[],adj:prev?prev.adj:[],loading:true,err:'',busy:false};
+ pzReq({type:'bag_full',pin:TPIN,gr,cl}).then(j=>{if(!tBag||tBag.key!==key)return;tBag.loading=false;
+  if(j&&j.ok&&Array.isArray(j.list)){tBag.list=j.list;tBag.adj=Array.isArray(j.adj)?j.adj:[];tBag.t=Date.now();tBag.err='';}
+  else tBag.err=j&&j.error==='pin'?'선생님 비밀번호를 다시 확인해 주세요':j&&j.error==='bad'?'코인·아이템·장식은 선생님이 Apps Script를 새 버전으로 올리면 볼 수 있어요':'시트에서 불러오지 못했어요. [새로고침]을 눌러 주세요';
+  if(!$('pTeacher').classList.contains('hidden')&&tTab==='manage'&&tmView==='bag')renderTeacher();});}
+function tBagHTML(msg){const live=tLive&&tLive.full?tLive:null,ALL=live?live.list:[],keys=[...new Set(ALL.map(clsKey))].filter(k=>!/^0-|-0$/.test(k)).sort(clsSort);
+ if(!keys.length)return `<p class="empty">${tLoading?'학생 목록을 불러오는 중이에요':'시트에 반이 정해진 학생이 아직 없어요'}</p>`;
+ if(!keys.includes(tCls))tCls=keys[0];
+ if(!tBag||tBag.key!==tCls){const k=tCls;tBag={key:k,loading:true,list:[],adj:[],err:''};setTimeout(()=>tBagLoad(k),0);}
+ const chips=keys.length>1?`<div class="tabs" style="margin:0 0 4px">${keys.map(k=>`<button class="chip sm2 ${tCls===k?'on':''}" data-act="tr-cls" data-c="${k}">${clsName(k)}</button>`).join('')}</div>`:'';
+ const head=`<p class="sub" style="margin:0 0 4px">${tBag.loading?'불러오는 중…':tBag.t?`${ago(tBag.t)} 불러옴`:''} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="tb-refresh">새로고침</button></p>`;
+ const m=tBagMsg||msg,msgH=`<p class="msg ${m&&m.ok?'ok':''}" id="tMsg">${m?esc(m.t):''}</p>`;
+ if(tBag.err)return chips+head+`<p class="msg">${esc(tBag.err)}</p>`;
+ const sel=tBagSel&&tBag.list.find(e=>e.t===tBagSel);
+ if(sel&&sel.has)return head+msgH+tBagDetail(sel);
+ return chips+head+msgH+tBagTable();}
+function tBagTable(){const L=tBag.list.slice().sort((a,b)=>(+a.b||99)-(+b.b||99)||String(a.n).localeCompare(String(b.n),'ko'));
+ if(!L.length)return `<p class="empty">${tBag.loading?'불러오는 중이에요':'이 반에는 아직 학생이 없어요'}</p>`;
+ const pend={};for(const a of tBag.adj)if(a.st==='대기')pend[a.t]=(pend[a.t]||0)+1;
+ const rows=L.map(e=>{const p=pend[e.t]?`<span class="dupnote">대기 ${pend[e.t]}</span>`:'';
+  if(!e.has)return `<tr><td>${+e.b||'-'}</td><td style="text-align:left">${esc(e.n)}</td><td colspan="10" class="na">아직 새 버전 게임을 열지 않았어요</td></tr>`;
+  let dn=0;for(const k in e.d||{}){const v=e.d[k];if(Array.isArray(v))dn+=(+v[0]||0)+(+v[1]||0)+(+v[2]||0);}
+  return `<tr><td>${+e.b||'-'}</td><td style="text-align:left">${esc(e.n)}${p}</td><td>${(+e.c||0).toLocaleString()}</td>${ITEM_IDS.map(id=>{const v=+(e.it||{})[id]||0;return `<td class="${v>ITEM_MAX?'hi':''}">${v}</td>`;}).join('')}<td>${dn}</td><td>${ago(e.at)||'-'}</td><td class="mgbtns"><button class="sbtn" data-act="tb-open" data-t="${e.t}">보기·고치기</button></td></tr>`;}).join('');
+ return `<div class="rankbox" style="max-height:380px"><table class="rank mg bag"><tr><th>번호</th><th>이름</th><th>코인</th>${ITEM_IDS.map(id=>`<th>${ITEMS[id].icon}<br><small>${ITEMS[id].name}</small></th>`).join('')}<th>장식</th><th>올린 때</th><th></th></tr>${rows}</table></div>
+  <p class="note">학생 크롬북이 게임을 열거나, 한 판을 마치거나, 상점에서 사고팔 때 시트에 올라와요.<br>선생님이 고친 것은 학생에게 알리지 않고, 그 크롬북이 다음에 연결할 때 적용돼요.</p>`;}
+function tBagDetail(e){tBagArm='';const it=e.it||{},d=e.d||{},dis=tBag.busy?'disabled':'';
+ const keys=Object.keys(d).filter(k=>DECO[k]&&!DECO[k].special).sort((a,b)=>DECO[b].price-DECO[a].price);
+ const items=ITEM_IDS.map(id=>`<label>${ITEMS[id].icon} ${ITEMS[id].name}<input id="tbI_${id}" type="number" min="0" max="99" value="${+it[id]||0}"></label>`).join('');
+ const deco=keys.length?`<table class="rank mg bag"><tr><th style="text-align:left">장식</th><th>값</th><th>창고</th><th>내 마을</th><th>광장</th><th>빼기</th></tr>${keys.map(k=>{const v=d[k]||[0,0,0],can=(+v[0]||0)+(+v[1]||0);return `<tr><td style="text-align:left">${esc(DECO[k].name)}</td><td>${DECO[k].price.toLocaleString()}</td><td>${+v[0]||0}</td><td>${+v[1]||0}</td><td>${+v[2]||0}</td><td>${can?`<input id="tbD_${k}" type="number" min="0" max="${can}" placeholder="0">`:'-'}</td></tr>`;}).join('')}</table>`:'<p class="empty" style="margin:4px 0">장식이 없어요</p>';
+ const opts=DCATS.map(([c,nm])=>`<optgroup label="${nm}">${Object.keys(DECO).filter(k=>DECO[k].cat===c&&!DECO[k].special).sort((a,b)=>DECO[a].price-DECO[b].price).map(k=>`<option value="${k}">${DECO[k].name} (${DECO[k].price.toLocaleString()})</option>`).join('')}</optgroup>`).join('');
+ const up=Object.keys(UPS).map(k=>`${UPS[k].name} Lv.${+(e.up||{})[k]||0}`).join(' · '),sk=(e.sk||[]).map(k=>SKINS[k]?SKINS[k].name:k).join(', ');
+ const adj=tBag.adj.filter(a=>a.t===e.t).sort((x,y)=>(y.ct||0)-(x.ct||0)).slice(0,12);
+ const resT=r=>!r?'':r.err?' (적용하지 못했어요)':` (코인 ${(+r.c||0)>=0?'+':''}${(+r.c||0).toLocaleString()}${r.rf?`, 돌려준 ${(+r.rf).toLocaleString()} 포함`:''})`;
+ const adjH=adj.length?`<table class="rank mg bag adj"><tr><th>만든 때</th><th style="text-align:left">고친 것</th><th>상태</th></tr>${adj.map(a=>`<tr><td>${tfmt(a.ct)}</td><td style="text-align:left">${esc(a.s||'')}${a.m?` <span class="hint">· ${esc(a.m)}</span>`:''}</td><td class="mgbtns">${a.st==='대기'?`적용 대기 <button class="sbtn" data-act="tb-cancel" data-r="${esc(a.r)}" ${dis}>취소</button>`:a.st==='적용'?`적용됨 ${tfmt(a.at)}${resT(a.res)}`:'취소함'}</td></tr>`).join('')}</table>`:'<p class="empty" style="margin:4px 0">아직 고친 적이 없어요</p>';
+ const lg=(e.lg||[]).slice().reverse();
+ const lgH=lg.length?`<div class="rankbox" style="max-height:260px"><table class="rank mg bag lg"><tr><th>때</th><th style="text-align:left">내용</th><th>코인</th><th>그 뒤 코인</th></tr>${lg.map(x=>`<tr><td>${tfmt(x.t)}</td><td style="text-align:left">${esc(clogText(x))}</td><td class="${(+x.c||0)<0?'neg':'pos'}">${(+x.c||0)>0?'+':''}${(+x.c||0).toLocaleString()}</td><td>${(+x.b||0).toLocaleString()}</td></tr>`).join('')}</table></div>`:'<p class="empty" style="margin:4px 0">아직 기록이 없어요</p>';
+ return `<div class="bagdet"><div class="row" style="justify-content:space-between"><b style="font-size:28px">${esc(clsName(tBag.key))} ${+e.b||'-'}번 ${esc(e.n)}</b><button class="sbtn" data-act="tb-back">← 반 목록으로</button></div>
+  <p class="sub" style="margin:0">가방 올린 때 ${tfmt(e.at)} · 섬 ${+e.sz||'-'}칸 · 지금 코인 <b>${(+e.c||0).toLocaleString()}</b></p>
+  <h3>코인·아이템 고치기</h3>
+  <div class="row"><label>코인 더하기·빼기 <input id="tbC" type="number" step="10" placeholder="예: 500, -500" style="width:220px"></label></div>
+  <div class="itg">${items}</div>
+  <h3>장식</h3>${deco}
+  <div class="row"><label>장식 주기 <select id="tbGk"><option value="">고르세요</option>${opts}</select></label><label>개수 <input id="tbGn" type="number" min="0" max="20" placeholder="0"></label></div>
+  <div class="row"><label><input id="tbRf" type="checkbox"> 줄인 아이템·뺀 장식은 산 값으로 코인 돌려주기</label></div>
+  <div class="row"><label>메모 (선생님만 봐요) <input id="tbM" type="text" maxlength="100" class="wide"></label></div>
+  <div class="sum" id="tbSum">바꿀 것만 고치고 [보내기]를 누르세요. 학생에게는 알리지 않아요.</div>
+  <div class="row"><button class="gbtn" id="tbGo" data-act="tb-send" ${dis}>보내기</button></div>
+  <h3>고친 기록</h3>${adjH}
+  <h3>강화·스킨 (보기만)</h3><p class="sub" style="margin:0">${esc(up)}<br>스킨: ${esc(sk||'기본')}</p>
+  <h3>최근 코인 기록</h3>${lgH}
+  <p class="note">고친 것은 그 크롬북이 다음에 게임을 열거나 한 판을 마칠 때 적용돼요. 광장에 놓인 장식은 [우리 반 광장]에서 치워 주세요.</p></div>`;}
+function tBagForm(e){const a={c:0,it:{},d:{},rf:0},sum=[],v=id=>($(id)||{}).value;
+ const c=Math.round(+v('tbC')||0);if(c){a.c=c;sum.push(`코인 ${c>0?'+':''}${c.toLocaleString()}`);}
+ for(const id of ITEM_IDS){const s=v('tbI_'+id);if(s==null||s==='')continue;const n=Math.max(0,Math.min(99,Math.round(+s||0))),had=+(e.it||{})[id]||0;if(n!==had){a.it[id]=n;sum.push(`${ITEMS[id].name} ${had}→${n}개`);}}
+ for(const k in e.d||{}){const n=Math.max(0,Math.round(+v('tbD_'+k)||0));if(n>0&&DECO[k]){a.d[k]=-n;sum.push(`${DECO[k].name} −${n}`);}}
+ const gk=v('tbGk'),gn=Math.max(0,Math.min(20,Math.round(+v('tbGn')||0)));if(gk&&DECO[gk]&&gn>0){a.d[gk]=(a.d[gk]||0)+gn;sum.push(`${DECO[gk].name} +${gn}`);}
+ if(($('tbRf')||{}).checked&&(Object.keys(a.it).length||Object.values(a.d).some(x=>x<0))){a.rf=1;sum.push('줄인 것은 산 값으로 돌려주기');}
+ return{a,sum,m:String(v('tbM')||'').trim().slice(0,100)};}
+async function tBagSend(){if(!tBag||tBag.busy)return;const e=tBag.list.find(x=>x.t===tBagSel);if(!e)return;const f=tBagForm(e),sumEl=$('tbSum'),go=$('tbGo');
+ if(!f.sum.length){tBagArm='';if(sumEl)sumEl.textContent='바꾼 것이 없어요. 코인·아이템·장식 칸을 고친 뒤 눌러 주세요.';if(go)go.textContent='보내기';return;}
+ const sig=JSON.stringify(f);
+ if(tBagArm!==sig){tBagArm=sig;if(sumEl)sumEl.textContent=`${f.sum.join(' · ')} — 맞으면 한 번 더 누르세요`;if(go)go.textContent='정말 보내기';return;}
+ tBagArm='';tBag.busy=true;if(go){go.disabled=true;go.textContent='보내는 중…';}
+ const r=(rid()+rid()).replace(/[^a-z0-9]/g,'').slice(0,24);
+ const j=await pzReq({type:'adj_add',pin:TPIN,t:e.t,r,a:f.a,s:f.sum.join(' · '),m:f.m});
+ if(!tBag)return;tBag.busy=false;
+ if(j&&j.ok){if(Array.isArray(j.adj))tBag.adj=j.adj;tBagMsg={t:'보냈어요. 그 크롬북이 다음에 연결할 때 적용돼요.',ok:true};tBagFresh=true;}
+ else tBagMsg={t:j&&j.error==='none'?'시트에서 이 학생을 찾지 못했어요':j&&j.error==='bad'?'Apps Script를 새 버전으로 올려 주세요':'보내지 못했어요. 잠시 뒤에 다시 눌러 주세요'};
+ renderTeacher();}
+async function tBagCancel(r){if(!tBag||tBag.busy||!r)return;tBag.busy=true;renderTeacher();const j=await pzReq({type:'adj_cancel',pin:TPIN,r});if(!tBag)return;tBag.busy=false;
+ if(j&&Array.isArray(j.adj))tBag.adj=j.adj;
+ tBagMsg=j&&j.ok?{t:'취소했어요',ok:true}:{t:j&&j.error==='done'?'이미 적용돼서 취소할 수 없어요':'취소하지 못했어요. [새로고침]을 눌러 확인해 주세요'};renderTeacher();}
+// 선생님 창을 다시 그려도 [코인·아이템·장식]에서 쓰던 칸과 스크롤은 그대로 둬요
+function tKeep(){const p=$('pTeacher').querySelector('.panel');if(tBagFresh){tBagFresh=false;return{sc:0,v:[]};}
+ const typed=el=>el.type==='checkbox'?el.checked!==el.defaultChecked:el.tagName==='SELECT'?el.value!=='':el.value!==el.defaultValue; // 선생님이 고친 칸만(안 고친 칸은 새 숫자로)
+ return{sc:p?p.scrollTop:0,v:[...$('pTeacher').querySelectorAll('input[id^="tb"],select[id^="tb"]')].filter(typed).map(el=>[el.id,el.type==='checkbox'?el.checked:el.value])};}
+function tRestore(k){if(!k||tTab!=='manage'||tmView!=='bag')return;for(const[id,v]of k.v){const el=$(id);if(!el)continue;if(el.type==='checkbox')el.checked=v;else el.value=v;}const p=$('pTeacher').querySelector('.panel');if(p&&k.sc)p.scrollTop=k.sc;}
 function renderManage(msg){
  if(!SYNC)return '<p class="empty">학생 관리는 반 랭킹 자동 연동(구글 시트)이 켜져 있어야 쓸 수 있어요.</p>';
+ if(tmView==='bag')return tmViews()+tBagHTML(msg);
  const live=tLive&&tLive.full?tLive:null,ALL=live?live.list:[],keys=[...new Set(ALL.map(clsKey))].sort(clsSort);
  if(tCls!=='all'&&!keys.includes(tCls))tCls='all';
  const L=(tCls==='all'?ALL:ALL.filter(e=>clsKey(e)===tCls)).slice().sort((a,b)=>clsSort(clsKey(a),clsKey(b))||(+a.b||99)-(+b.b||99)||String(a.n).localeCompare(String(b.n),'ko'));
@@ -2149,7 +2311,7 @@ function renderManage(msg){
   if(tmDel===e.i){rows+=`<tr class="del"><td colspan="7">정말 <b>${esc(e.n)}</b> (${+e.b||'-'}번) 계정을 지울까요? &nbsp;한글 ${rd(e,'meteor')} · 영어 ${rd(e,'meteor_en')} · 마지막 연결 ${ago(e.ts)||'-'}<br><small>그 크롬북의 코인·마을·기록은 다음에 게임을 열 때 모두 지워져요.</small> <span class="mgbtns"><button class="sbtn danger" data-act="tm-delok" ${dis}>정말 지우기</button><button class="sbtn" data-act="tm-cancel">취소</button></span></td></tr>`;continue;}
   rows+=`<tr class="${d?'dup':''}"><td>${+e.b||'-'}</td><td style="text-align:left">${esc(e.n)}${e.tn?'<span class="tn">✏️ 선생님이 정함</span>':''}${dn}</td><td>${rd(e,'meteor')}</td><td>${rd(e,'meteor_en')}</td><td>${ago(e.ts)||'-'}</td><td>${verCell(e.v)}</td><td class="mgbtns"><button class="sbtn" data-act="tm-edit" data-t="${e.i}" ${dis}>이름·번호</button><button class="sbtn danger" data-act="tm-del" data-t="${e.i}" ${dis}>지우기</button></td></tr>`;}
  const dupN=L.filter(e=>dup[e.i]).length,newN=L.filter(e=>vnum(e.v)===vnum(APP_VER)).length,anyV=ALL.some(e=>vnum(e.v));
- return `<p class="sub">🔗 ${tLoading?'불러오는 중…':live?`${ago(live.t)} 불러옴`:'아직 불러오지 못함'} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="t-refresh">새로고침</button></p>
+ return tmViews()+`<p class="sub">🔗 ${tLoading?'불러오는 중…':live?`${ago(live.t)} 불러옴`:'아직 불러오지 못함'} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="t-refresh">새로고침</button></p>
   <p class="msg ${msg&&msg.ok?'ok':''}" id="tMsg">${msg?esc(msg.t):''}</p>${chips}
   <p class="sub" style="margin:4px 0">${tCls==='all'?'모든 반':clsName(tCls)} ${L.length}명${dupN?` · <span class="dupnote">노란 줄 ${dupN}명</span> 같은 반에 번호나 이름이 겹쳐요`:''}${L.length?` · 최신 버전 ${newN}명 / ${L.length}명`:''}</p>${live&&ALL.length&&!anyV?'<p class="note" style="margin:0">게임 버전은 Apps Script를 새 버전으로 배포하고, 학생들이 새 게임을 한 번 열면 보여요.</p>':''}
   <div class="rankbox" style="max-height:330px">${L.length?`<table class="rank mg"><tr><th>번호</th><th>이름</th><th>한글</th><th>영어</th><th>마지막 연결</th><th>게임 버전</th><th></th></tr>${rows}</table>`:`<p class="empty">${live?'아직 시트에 학생이 없어요':tLoading?'목록을 불러오는 중이에요':'목록을 불러오지 못했어요. [새로고침]을 눌러 주세요'}</p>`}</div>
@@ -2216,7 +2378,7 @@ const ACT={
  'load-add'(el){const id=el.dataset.it;if(!LOAD.inv[id]){ttoast('상점에서 살 수 있어요');return;}if(LOAD.bag.length>=2+SAVE.up.bag){ttoast('가방이 가득 찼어요');return;}LOAD.bag.push(id);LOAD.inv[id]--;SFX.tick();renderLoad();},
  'load-rm'(el){const i=+el.dataset.i,id=LOAD.bag[i];if(!id)return;LOAD.bag.splice(i,1);LOAD.inv[id]++;renderLoad();},
  'load-back'(){show('pLoad',false);openGames();},
- 'load-go'(){for(const id of LOAD.bag)SAVE.inv[id]--;saveGame();startRun(LOAD.bag,LOAD.game);},
+ 'load-go'(){const inv0=Object.assign({},SAVE.inv);for(const id of LOAD.bag)SAVE.inv[id]--;saveGame();startRun(LOAD.bag,LOAD.game);if(R)R.inv0=inv0;},
  'shop-open'(){if(scr==='game'){R=null;scr='home';hideAll();show('home',true);renderProfile();}openShop();},
  'shop-deco'(){openShop('deco');},
  'shop-tab'(el){shopTab=el.dataset.t;renderShop();},
@@ -2267,7 +2429,7 @@ const ACT={
  copy(el){copyFrom(el.dataset.t);},
  close(el){show(el.dataset.p,false);if(scr==='home'&&SAVE){show('home',true);renderProfile();}},
  home(){goHome();},
- 'res-again'(){const g=R.game;R=null;scr='home';hideAll();openLoad(g);},
+ 'res-again'(){const g=R.game;R=null;scr='home';hideAll();adjRun();openLoad(g);},
  pause(){if(!R||R.over||R.paused)return;R.paused=true;openPanel('pPause',`<div class="panel"><h2>잠깐 멈춤</h2><p class="sub">${R.round}라운드 · 지금까지 코인 ${runCoins()}</p><button class="gbtn" data-act="resume">계속하기</button><button class="sbtn" data-act="quit">그만하고 코인 받기</button></div>`);inp.blur();},
  resume(){if(!R)return;R.paused=false;show('pPause',false);inp.focus();},
  quit(){show('pPause',false);R.paused=false;finishRun('quit');},
@@ -2283,10 +2445,16 @@ const ACT={
  'tm-edit'(el){if(tmBusy)return;tmEdit=el.dataset.t;tmDel='';renderTeacher();setTimeout(()=>{const x=$('tmName');if(x){x.focus();x.select();}},30);},
  'tm-del'(el){if(tmBusy)return;tmDel=el.dataset.t;tmEdit='';renderTeacher();},
  'tm-cancel'(){tmEdit='';tmDel='';renderTeacher();},
+ 'tm-view'(el){tmView=el.dataset.v==='bag'?'bag':'list';tBagSel='';tBagMsg=null;tBagFresh=true;tmEdit='';tmDel='';renderTeacher();if(tmView==='bag'&&SYNC&&!tLoading&&!(tLive&&tLive.full))teacherPull();},
+ 'tb-open'(el){tBagSel=el.dataset.t;tBagMsg=null;tBagFresh=true;renderTeacher();},
+ 'tb-back'(){tBagSel='';tBagMsg=null;tBagFresh=true;renderTeacher();},
+ 'tb-refresh'(){if(tBag&&tBag.key)tBagLoad(tBag.key);renderTeacher();},
+ 'tb-send'(){tBagSend();},
+ 'tb-cancel'(el){tBagCancel(el.dataset.r);},
  'tm-save'(){tmSave();},
  'tm-delok'(){tmDelete();},
  'tr-game'(el){tG=el.dataset.g;renderTeacher();},'tr-metric'(el){tM=el.dataset.m;renderTeacher();},
- 'tr-cls'(el){tCls=el.dataset.c;renderTeacher();},
+ 'tr-cls'(el){tCls=el.dataset.c;tBagSel='';tBagMsg=null;tBagFresh=true;renderTeacher();},
  't-add'(){teacherAdd();},
  't-refresh'(){if(tTab==='class'&&tSum)tClsPull();else teacherPull();},
  't-sum'(el){tSum=el.dataset.v==='1';renderTeacher();if(tSum){if(!TCLS||Date.now()-TCLS.t>30000)tClsPull();}else if(SYNC&&!tLive)teacherPull();},
@@ -2300,7 +2468,7 @@ const ACT={
  't-classcode'(){const L=tList().filter(e=>tCls==='all'||clsKey(e)===tCls);if(!L.length){renderTeacher(null,{t:'먼저 학생 코드를 추가해 주세요'});return;}renderTeacher(enc('TJR1',{t:Date.now(),list:L.map(e=>({i:e.i,gr:e.gr,cl:e.cl,n:e.n,b:e.b,lv:e.lv,g:e.g,ts:e.ts}))}));},
  't-clear'(){if(tArm!=='clear'){tArm='clear';renderTeacher();return;}store.set('taja2_teacher',{list:[]});tArm='';renderTeacher(null,{t:'목록을 비웠어요',ok:true});},
  't-saveprof'(){const v=readInfo('t');if(v.err){$('tDevMsg').textContent=v.err;return;}Object.assign(SAVE,{gr:v.gr,cl:v.cl,no:v.no,name:v.name});saveGame();syncPush(TPIN);renderTeacher(null,{t:'학생 정보를 저장했어요',ok:true});},
- 't-give'(){const n=parseInt($('tGive').value,10);if(!n){renderTeacher(null,{t:'숫자를 써 주세요'});return;}SAVE.coins=Math.max(0,SAVE.coins+n);saveGame();renderTeacher(null,{t:`${n>0?'+':''}${n} 코인 → 지금 ${SAVE.coins} 코인`,ok:true});},
+ 't-give'(){const n=parseInt($('tGive').value,10);if(!n){renderTeacher(null,{t:'숫자를 써 주세요'});return;}{const b0=SAVE.coins;SAVE.coins=Math.max(0,SAVE.coins+n);clog('tg','',1,SAVE.coins-b0);}saveGame();bagSync(1500);renderTeacher(null,{t:`${n>0?'+':''}${n} 코인 → 지금 ${SAVE.coins} 코인`,ok:true});},
  't-reset'(){if(tArm!=='reset'){tArm='reset';renderTeacher();return;}if(SAVE)syncDelete(SAVE.id);try{localStorage.removeItem(SKEY);localStorage.removeItem('taja2_classview');localStorage.removeItem('taja2_live');localStorage.removeItem('taja2_cls');}catch(e){}CLS=null;liveMem=null;SAVE=null;tArm='';show('pTeacher',false);goHome();}};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const f=ACT[b.dataset.act];if(f){f(b);}});
 $('slots').addEventListener('pointerdown',e=>{if(e.target.closest('.slot[data-i]'))e.preventDefault();});
@@ -2370,7 +2538,8 @@ function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;ANIM_T+=dt;ct
 fit();goHome();
 if(SYNC&&SAVE)setTimeout(syncPush,1500);
 if(UPD.done)setTimeout(()=>ttoast('✨ 새 버전으로 바뀌었어요!'),900);
-if(SAVE&&SAVE.xbBack){delete SAVE.xbBack;saveGame();setTimeout(()=>ttoast('🧺 예전 화면에서 안 보이던 새 장식을 다시 꺼내 놓았어요'),3200);}
+let bootT=3200;if(SAVE&&SAVE.xbBack){delete SAVE.xbBack;saveGame();setTimeout(()=>ttoast('🧺 예전 화면에서 안 보이던 새 장식을 다시 꺼내 놓았어요'),bootT);bootT+=3600;}
+if(SAVE&&SAVE.icapMsg){const[m,b]=SAVE.icapMsg;delete SAVE.icapMsg;saveGame();setTimeout(()=>ttoast(`🎒 아이템은 종류마다 ${ITEM_MAX}개까지 가질 수 있어요. 넘는 아이템 ${m}개는 ${(+b).toLocaleString()}코인으로 돌려받았어요`),bootT);}
 requestAnimationFrame(loop);
 })();
 </script>
