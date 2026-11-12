@@ -123,7 +123,7 @@ table.rank .vold{color:#c2410c;font-size:17px}
 
 /* ---------- HUD ---------- */
 #hud{pointer-events:none}
-#hud .inbar,#hud .pbtn,#hud .slots{pointer-events:auto}
+#hud .inbar,#hud .pbtn,#hud .qbtn,#hud .slots{pointer-events:auto}
 .hearts{position:absolute;left:84px;top:30px;height:46px;padding:0 36px 0 30px;background:linear-gradient(90deg,rgba(18,18,24,.88) 75%,rgba(18,18,24,0));display:flex;gap:3px;align-items:center;border-radius:0 24px 24px 0}
 .hearts i{display:block;width:27px;height:25px}
 .hearts svg{width:100%;height:100%;fill:#ff3d55;stroke:#7a0f1c;stroke-width:1.5}
@@ -149,6 +149,19 @@ table.rank .vold{color:#c2410c;font-size:17px}
 @keyframes shake{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
 .pbtn{position:absolute;left:986px;top:640px;width:62px;height:62px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#c3c9d0 55%,#7d858e);border:4px solid var(--steel);box-shadow:0 4px 0 var(--steel);display:flex;align-items:center;justify-content:center}
 .pbtn svg{width:26px;height:26px;fill:#26262c}
+/* 멈춤 (2026-11-12): 남은 횟수 · 다 쓰면 꺼짐 · 멈춘 동안 낱말이 보이지 않게 */
+.pbtn .pleft{position:absolute;right:-9px;top:-9px;min-width:28px;height:28px;padding:0 5px;border-radius:14px;background:#ffe066;border:3px solid var(--steel);font-size:17px;line-height:22px;color:#2a2a30;font-weight:normal;text-align:center}
+.pbtn.off{opacity:.45}
+.pbtn.off .pleft{background:#dee2e6}
+/* 그만하기 (2026-11-12-03): 멈춤을 다 쓰면 멈춤 단추 대신 나와요. 누르면 묻지 않고 바로 끝나요 */
+.pbtn.gone{display:none}
+.qbtn{position:absolute;left:984px;top:641px;height:62px;padding:0 26px 0 20px;border-radius:31px;background:linear-gradient(#ff8787,#e03131);border:4px solid var(--steel);box-shadow:0 4px 0 var(--steel);color:#fff;font-size:27px;text-shadow:0 2px 0 rgba(90,10,10,.35);display:none;align-items:center;gap:9px;white-space:nowrap}
+.qbtn.on{display:flex}
+.qbtn svg{width:22px;height:22px;fill:#fff;filter:drop-shadow(0 2px 0 rgba(90,10,10,.35))}
+.qbtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--steel)}
+#pPause{background:#141a33}
+.pzleft{font-size:22px;color:#4b4f5c;margin:0 0 10px;line-height:1.45}
+.pzleft.zero{color:#c2410c}
 .toast{position:absolute;left:50%;top:552px;transform:translateX(-50%);background:rgba(30,20,40,.93);color:#fff;font-size:26px;padding:10px 26px;border-radius:999px;opacity:0;transition:opacity .2s;white-space:nowrap}
 .toast.show{opacity:1}
 #count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:210px;color:#fff;-webkit-text-stroke:20px var(--ink);paint-order:stroke fill;pointer-events:none;opacity:0}
@@ -395,7 +408,7 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
     <div class="slots" id="slots"></div>
     <div class="inbar"><input id="inp" aria-label="낱말 입력" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="60" placeholder="낱말을 치고 Enter!"></div>
     <div class="capsnote" id="capsNote">⇪ Caps Lock이 켜져 있어요</div>
-    <button class="pbtn" data-act="pause" aria-label="멈춤"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1.5"/><rect x="14" y="4" width="5" height="16" rx="1.5"/></svg></button>
+    <button class="pbtn" data-act="pause" aria-label="멈춤" tabindex="-1"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1.5"/><rect x="14" y="4" width="5" height="16" rx="1.5"/></svg><b class="pleft" id="pLeft">3</b></button><button class="qbtn" id="qBtn" data-act="quit" aria-label="그만하기" tabindex="-1"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>그만하기</button>
     <div id="count"></div>
   </div>
 
@@ -417,7 +430,7 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 (()=>{
 'use strict';
 // 게임 버전: 새 파일을 만들 때마다 꼭 올려요(날짜-그날 몇 번째). 학생 크롬북이 이 번호로 새 버전을 알아채요.
-const APP_VER='2026-11-12-01';
+const APP_VER='2026-11-12-03';
 const vnum=v=>Number(String(v||'').replace(/\D/g,''))||0;
 const $=id=>document.getElementById(id);
 const W=1280,H=720,GROUND=650;
@@ -1402,7 +1415,7 @@ function startRun(bag,game){const u=SAVE.up;game=READY.some(g=>g.id===game)?game
   coinsHit:0,coinsRound:0,coinsBoss:0,coinsGift:0,
   freezeT:0,slowT:0,doubleT:0,flash:0,flashW:0,shake:0,aim:-Math.PI/2,t:0,
   toSpawn:0,spawned:0,resolved:0,spawnT:0,giftAt:-1,roundT:0,banner:null,paused:false,over:false,overT:0,_eff:null,_hot:null,_prog:null};
- scr='game';hideAll();show('hud',true);inp.value='';inp.placeholder=en?'영어로 치고 Enter!':'낱말을 치고 Enter!';inp.lang=en?'en':'ko';inp.setAttribute('aria-label',en?'영어 낱말 입력':'낱말 입력');updHUD();renderSlots();renderEffects();inp.focus();ac();if(en)setTimeout(()=>{if(R&&R.phase==='count')toast('영어로 쳐요! 한/영 키를 확인하세요 ⌨️');},250);}
+ scr='game';hideAll();show('hud',true);inp.value='';inp.placeholder=en?'영어로 치고 Enter!':'낱말을 치고 Enter!';inp.lang=en?'en':'ko';inp.setAttribute('aria-label',en?'영어 낱말 입력':'낱말 입력');updHUD();renderSlots();renderEffects();updPauseBtn();inp.readOnly=false;inp.focus();ac();if(en)setTimeout(()=>{if(R&&R.phase==='count')toast('영어로 쳐요! 한/영 키를 확인하세요 ⌨️');},250);}
 function nextRound(){R.round++;R.toSpawn=wordsFor(R.round);R.spawned=0;R.resolved=0;R.spawnT=.6;R.roundT=0;R.phase='banner';R.phaseT=1.8;
  R.banner={t:`${R.round}라운드`,s:roundHint(R.round),t0:R.t};
  R.giftAt=Math.random()<.55+.05*SAVE.up.luck?rand(3,9):-1;
@@ -1417,7 +1430,9 @@ function spawnBoss(){const n=R.round/5,lv=Math.max(1,Math.min(4,Math.round(n))),
 function pickItem(){const pool=ITEM_IDS.filter(id=>!(id==='heart'&&R.hearts>=R.maxHearts));return pool[Math.floor(Math.random()*pool.length)];}
 function spawnGift(){const word=pickWord(),dir=Math.random()<.5?1:-1,y=rand(200,320);R.ents.push({kind:'gift',word,item:Math.random()<.55?pickItem():null,x:dir>0?-40:W+40,y,base:y,vx:dir*rand(80,105),phase:0,state:'alive',spd:0});}
 
-function update(dt){if(R.paused)return;R.t+=dt;
+function update(dt){if(R.paused)return;
+ if(R.rz>0){R.rz-=dt;const n=Math.ceil(R.rz);if(n!==R.rzN){R.rzN=n;if(n>0){showCount(String(n));SFX.tick();}}if(R.rz<=0){R.rz=0;inp.readOnly=false;inp.focus();}return;}
+ R.t+=dt;
  R.shake=Math.max(0,R.shake-dt);R.flash=Math.max(0,R.flash-dt);R.flashW=Math.max(0,R.flashW-dt);
  updParts(dt);
  switch(R.phase){
@@ -1442,7 +1457,7 @@ function updEnt(e,dt){const k=e.kind==='gift'?1:(R.freezeT>0?0:(R.slowT>0?.45:1)
  if(e.kind==='boss'){e.phase+=dt*k;e.x=e.bx+Math.sin(e.phase*.6)*60;e.y+=e.spd*dt*k;e.rot+=e.rs*dt*k;if(e.y>=560&&!R.over)bossLand(e);return;}
  e.x+=e.vx*dt*k;if(e.x<70||e.x>1210){e.vx*=-1;e.x=Math.max(70,Math.min(1210,e.x));}e.y+=e.spd*dt*k;e.rot+=e.rs*dt*k;if(e.y>=604&&!R.over)leak(e);}
 
-function submit(raw){if(!R||R.paused||R.over||R.phase==='count')return;const v=nkey(raw);inp.value='';if(!v)return;
+function submit(raw){if(!R||R.paused||R.over||R.phase==='count'||R.rz>0)return;const v=nkey(raw);inp.value='';if(!v)return;
  if(R.en&&HANGUL.test(v)){toast('한/영 키를 눌러 영어로 바꿔요! ⌨️');return;}
  let best=null;for(const e of R.ents){if(e.state!=='alive')continue;if(nkey(e.word)===v){if(!best||e.y>best.y)best=e;}}
  if(best){hit(best);return;}
@@ -1485,7 +1500,7 @@ function giveItem(id,x,y){const it=ITEMS[id];SFX.item();
  if(R.bag.length<R.bagSize){R.bag.push(id);const i=R.bag.length-1,sw=R.bagSize>=4?76:94;R.parts.push({kind:'fly',x,y,x0:x,y0:y,x1:(R.bagSize>=4?12:24)+i*sw+40,y1:668,vx:0,vy:0,g:0,life:.7,max:.7,text:it.icon});renderSlots(i);toast(R.en?`${it.icon} ${it.en}! '${it.en}' 치고 Enter로 써요`:`${it.icon} ${it.name}! '${it.name}'${josa(it.name,'을','를')} 치면 써요`);}
  else if((+SAVE.inv[id]||0)+R.bag.filter(x=>x===id).length<itemLim(id)){SAVE.inv[id]++;saveGame();toast(R.en?`가방이 가득 차서 창고에 넣었어요: ${it.en}`:`가방이 가득 차서 ${it.name}${josa(it.name,'은','는')} 창고에 넣었어요`);}
  else{R.coinsGift+=it.price;coinText(x,y-50,it.price);toast(R.en?`가방도 창고도 가득 차서 ${it.price}코인으로 바꿨어요: ${it.en}`:`가방도 창고도 가득 차서 ${it.name}${josa(it.name,'을','를')} ${it.price}코인으로 바꿨어요`);}}
-function useItem(i){if(!R||R.paused||R.over||R.phase==='count')return;const id=R.bag[i];if(!id)return;if(applyItem(id)===false)return;R.bag.splice(i,1);renderSlots();}
+function useItem(i){if(!R||R.paused||R.over||R.phase==='count'||R.rz>0)return;const id=R.bag[i];if(!id)return;if(applyItem(id)===false)return;R.bag.splice(i,1);renderSlots();}
 function boltTo(x,y){const pts=[],sx=x+rand(-60,60);for(let i=0;i<=8;i++){const k=i/8;pts.push([sx+(x-sx)*k+(i&&i<8?rand(-22,22):0),-10+(y+10)*k]);}R.bolts.push({pts,t:.45,max:.45});}
 function applyItem(id){const it=ITEMS[id],mg=SAVE.up.magic;
  if(id==='heart'&&R.hearts>=R.maxHearts){toast('하트가 이미 가득해요');return false;}
@@ -1502,7 +1517,7 @@ function applyItem(id){const it=ITEMS[id],mg=SAVE.up.magic;
  updHUD();renderEffects();return true;}
 
 /* ---------- 끝과 보상 ---------- */
-function finishRun(reason){if(R.over)return;R.over=true;R.phase='over';R.overT=reason==='quit'?1.3:0;R.reason=reason;SFX.end();inp.blur();inp.value='';
+function finishRun(reason){if(R.over)return;R.over=true;R.phase='over';R.overT=reason==='quit'||reason==='away'?1.3:0;R.reason=reason;SFX.end();R.rz=0;inp.readOnly=false;inp.blur();inp.value='';
  // 안 쓴 아이템은 창고로 돌아가요. 창고가 가득 차면(종류마다 ITEM_MAX개, 시작할 때 더 많았으면 그만큼) 산 값만큼 코인이 돼요
  for(const id of R.bag){if((+SAVE.inv[id]||0)<itemLim(id))SAVE.inv[id]++;else R.coinsGift+=ITEMS[id].price;}R.bag=[];
  const tot=R.hits+R.misses,acc=tot?Math.round(R.hits/tot*100):0,tasu=Math.round(R.strokes/(Math.max(R.active,1)/60));
@@ -1597,7 +1612,8 @@ function drawGame(){ctx.fillStyle='#1a1840';ctx.fillRect(0,0,W,H);
  if(R.banner&&(R.phase==='banner'||R.phase==='clear')){const b=R.banner,age=R.t-b.t0,s=age<.25?.5+age/.25*.6:1.1-Math.min(.1,(age-.25)*.4);ctx.save();ctx.translate(640,300);ctx.scale(s,s);ctx.globalAlpha=Math.min(1,age*5);ctx.font=`96px ${FONT}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineJoin='round';ctx.lineWidth=16;ctx.strokeStyle='#3a1a25';ctx.strokeText(b.t,0,0);ctx.fillStyle=R.phase==='clear'?'#ffe14d':'#ffffff';ctx.fillText(b.t,0,0);if(b.s){ctx.font=`34px ${FONT}`;ctx.lineWidth=8;ctx.strokeText(b.s,0,78);ctx.fillStyle='#fff';ctx.fillText(b.s,0,78);}ctx.restore();}
  ctx.restore();
  if(R.flash>0){ctx.fillStyle=`rgba(255,40,40,${R.flash})`;ctx.fillRect(0,0,W,H);}
- if(R.flashW>0){ctx.fillStyle=`rgba(255,255,255,${R.flashW*1.6})`;ctx.fillRect(0,0,W,H);}}
+ if(R.flashW>0){ctx.fillStyle=`rgba(255,255,255,${R.flashW*1.6})`;ctx.fillRect(0,0,W,H);}
+ if(R.paused||R.rz>0){ctx.fillStyle='#141a33';ctx.fillRect(-60,-60,W+120,H+120);ctx.fillStyle='rgba(255,255,255,.8)';ctx.font=`36px ${FONT}`;ctx.textAlign='center';ctx.fillText(R.paused?'잠깐 멈춤':'곧 다시 시작해요',640,170);}}
 
 /* ================= HUD ================= */
 const HEART='<svg viewBox="0 0 24 22"><path d="M12 20.5s-9-5.6-9-11.6a4.9 4.9 0 0 1 9-2.8 4.9 4.9 0 0 1 9 2.8c0 6-9 11.6-9 11.6z"/></svg>';
@@ -1612,6 +1628,18 @@ function renderSlots(newIdx){const el=$('slots');el.classList.toggle('s4',R.bagS
 function renderEffects(){const a=[],en=R.en;if(R.freezeT>0)a.push(`❄️ ${en?'ice':'얼음'} ${Math.ceil(R.freezeT)}`);if(R.slowT>0)a.push(`🐢 ${en?'slow':'느림보'} ${Math.ceil(R.slowT)}`);if(R.doubleT>0)a.push(`💰 ${en?'double':'2배'} ${Math.ceil(R.doubleT)}`);if(R.shield>0)a.push(`🛡️ ${en?'shield':'방패'} ${R.shield}`);
  const sig=a.join('|');if(sig!==R._eff){R._eff=sig;$('effects').innerHTML=a.map(x=>`<span class="eff">${x}</span>`).join('');}
  const typed=nkey(inp.value),hot=typed?R.bag.findIndex(id=>itName(id).startsWith(typed)):-1;if(hot!==R._hot){R._hot=hot;$('slots').querySelectorAll('.slot').forEach((el,i)=>el.classList.toggle('hot',i===hot));}}
+// 멈춤 (2026-11-12): 한 판에 PAUSE_MAX번까지(다른 화면에 다녀와도 1번으로 세요). 멈춘 동안에는 낱말을 가리고, 풀면 3초 뒤에 이어져요.
+//  다 쓴 뒤에 다른 화면으로 가면 그 판이 끝나요(그때까지 모은 코인은 받아요).
+const PAUSE_MAX=3;
+function pauseGame(src){if(!R||R.over||R.paused)return;
+ if((R.pauses|0)>=PAUSE_MAX){toast(`멈춤은 한 판에 ${PAUSE_MAX}번까지예요`);return;}
+ R.pauses=(R.pauses|0)+1;R.paused=true;R.rz=0;inp.value='';inp.readOnly=true;const left=PAUSE_MAX-R.pauses;
+ openPanel('pPause',`<div class="panel"><h2>잠깐 멈춤</h2><p class="sub">${R.round}라운드 · 지금까지 코인 ${runCoins()}</p><p class="pzleft ${left?'':'zero'}">${src==='away'?'다른 화면에 다녀와서 멈췄어요<br>':''}${left?`멈춤은 한 판에 ${PAUSE_MAX}번까지예요 · 남은 멈춤 <b>${left}번</b>`:'이제 멈출 수 없어요<br>계속한 뒤 Esc나 그만하기를 누르면 끝나요<br>다른 화면으로 가도 이 판이 끝나요'}</p><button class="gbtn" data-act="resume">계속하기<small>3초 뒤에 이어져요</small></button><button class="sbtn" data-act="quit">그만하고 코인 받기</button></div>`);
+ inp.blur();updPauseBtn();}
+function updPauseBtn(){const b=document.querySelector('#hud .pbtn'),l=$('pLeft'),q=$('qBtn');if(!b||!R)return;const left=Math.max(0,PAUSE_MAX-(R.pauses|0));
+ if(l)l.textContent=left;b.classList.toggle('off',left<=0);b.disabled=left<=0;b.setAttribute('aria-label',left?`멈춤 (남은 ${left}번)`:'멈춤 (다 썼어요)');
+ // 멈춤을 다 쓰면 멈춤 단추 대신 [그만하기] (2026-11-12-03)
+ b.classList.toggle('gone',left<=0);if(q)q.classList.toggle('on',left<=0);}
 function showCount(t){const el=$('count');el.textContent=t;el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}
 let toastTO=0;function toast(m){const el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(toastTO);toastTO=setTimeout(()=>el.classList.remove('show'),2000);}
 let ttTO=0;function ttoast(m){const el=$('ttoast');el.textContent=m;el.classList.add('show');clearTimeout(ttTO);ttTO=setTimeout(()=>el.classList.remove('show'),2400);}
@@ -1665,7 +1693,7 @@ function renderLoad(){const size=2+SAVE.up.bag,u=SAVE.up,en=gameLang(LOAD.game)=
 
 /* ---------- 결과 ---------- */
 function showResult(){const r=R.result,g=SAVE.games[R.game];
- const title=R.reason==='quit'?'여기까지!':'마을에 별똥별이 떨어졌어요!';
+ const title=R.reason==='quit'?'여기까지!':R.reason==='away'?'다른 화면으로 가서 판이 끝났어요':'마을에 별똥별이 떨어졌어요!';
  const badges=[r.newRound?'🏅 최고 라운드 갱신!':'',r.newTasu?'⚡ 최고 타수 갱신!':''].filter(Boolean).map(b=>`<span class="badge">${b}</span>`).join('');
  const st=[['도달 라운드',r.reached+'라운드'],['맞힌 낱말',R.hits+'개'],['정확도',r.acc+'%'],['분당 타수',r.tasu+'타'],['최고 콤보',R.maxCombo],['내 최고',g.bestRound+'라운드']];
  const line=(k,v)=>v?`<div><span>${k}</span><span>+${v}</span></div>`:'';
@@ -2430,9 +2458,12 @@ const ACT={
  close(el){show(el.dataset.p,false);if(scr==='home'&&SAVE){show('home',true);renderProfile();}},
  home(){goHome();},
  'res-again'(){const g=R.game;R=null;scr='home';hideAll();adjRun();openLoad(g);},
- pause(){if(!R||R.over||R.paused)return;R.paused=true;openPanel('pPause',`<div class="panel"><h2>잠깐 멈춤</h2><p class="sub">${R.round}라운드 · 지금까지 코인 ${runCoins()}</p><button class="gbtn" data-act="resume">계속하기</button><button class="sbtn" data-act="quit">그만하고 코인 받기</button></div>`);inp.blur();},
- resume(){if(!R)return;R.paused=false;show('pPause',false);inp.focus();},
- quit(){show('pPause',false);R.paused=false;finishRun('quit');},
+ pause(){pauseGame('btn');},
+ resume(){if(!R||!R.paused)return;R.paused=false;show('pPause',false);inp.value='';
+  // 처음 3·2·1 중이면 아직 낱말이 없으니 남은 숫자부터 이어서 세요. 그 밖에는 3초를 세고 이어져요(그동안 낱말은 가리고 입력 칸은 잠가요)
+  if(R.phase==='count'){R.lastCount=0;inp.readOnly=false;inp.focus();return;}
+  R.rz=3;R.rzN=4;inp.readOnly=true;inp.blur();},
+ quit(){if(!R||R.over)return;show('pPause',false);R.paused=false;finishRun('quit');},
  'slot-tip'(el){if(!R)return;const id=R.bag[+el.dataset.i];if(id){const nm=itName(id);toast(R.en?`'${nm}' 치고 Enter를 눌러야 써요`:`'${nm}'${josa(nm,'을','를')} 치고 Enter를 눌러야 써요`);}inp.focus();},
  sound(){OPT.sound=!OPT.sound;saveOpt();renderProfile();if(OPT.sound)SFX.tick();},
  season(){OPT.season=OPT.season===false;saveOpt();renderProfile();SFX.tick();const se=seasonNow();ttoast(OPT.season?`${SEA_ICON[se]} ${SEA_NAME[se]} 모습으로 바꿨어요`:'계절 모습을 껐어요. 언제나 여름 모습이에요');},
@@ -2471,6 +2502,7 @@ const ACT={
  't-give'(){const n=parseInt($('tGive').value,10);if(!n){renderTeacher(null,{t:'숫자를 써 주세요'});return;}{const b0=SAVE.coins;SAVE.coins=Math.max(0,SAVE.coins+n);clog('tg','',1,SAVE.coins-b0);}saveGame();bagSync(1500);renderTeacher(null,{t:`${n>0?'+':''}${n} 코인 → 지금 ${SAVE.coins} 코인`,ok:true});},
  't-reset'(){if(tArm!=='reset'){tArm='reset';renderTeacher();return;}if(SAVE)syncDelete(SAVE.id);try{localStorage.removeItem(SKEY);localStorage.removeItem('taja2_classview');localStorage.removeItem('taja2_live');localStorage.removeItem('taja2_cls');}catch(e){}CLS=null;liveMem=null;SAVE=null;tArm='';show('pTeacher',false);goHome();}};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const f=ACT[b.dataset.act];if(f){f(b);}});
+document.querySelectorAll('#hud .pbtn,#hud .qbtn').forEach(b=>b.addEventListener('pointerdown',e=>e.preventDefault()));
 $('slots').addEventListener('pointerdown',e=>{if(e.target.closest('.slot[data-i]'))e.preventDefault();});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){const id=(e.target&&e.target.id)||'';
  if(/^r(Gr|Cl|No|Name)$/.test(id)){e.preventDefault();ACT[$('pReg').querySelector('[data-act=info-save]')?'info-save':'reg-save']();}
@@ -2493,6 +2525,10 @@ function pinCheck(e){const el=$('tPin'),m=$('tPinMsg');if(!el||!m)return;
  m.textContent=pinKo?'⌨️ 한글로 입력되고 있어요. 한/영 키를 눌러 영어로 바꿔 주세요.':hasKo?'⌨️ 한글이 섞여 있어요. 칸을 지우고 영어로 다시 입력해 주세요.':pinCaps?'⇪ Caps Lock이 켜져 있어요. 끄고 입력해 주세요.':'';}
 ['keydown','input','compositionstart','compositionupdate'].forEach(t=>document.addEventListener(t,e=>{if(e.target&&e.target.id==='tPin')pinCheck(e);},true));
 
+/* 붙여넣기 막기 (2026-11-12): 게임 낱말은 직접 쳐야 해요 (Ctrl+V, 오른쪽 클릭, 클립보드 기록, 끌어다 놓기) */
+const noPaste=e=>{e.preventDefault();if(R&&!R.over)toast('붙여넣기는 쓸 수 없어요. 직접 쳐야 해요');};
+inp.addEventListener('paste',noPaste);inp.addEventListener('drop',noPaste);inp.addEventListener('dragover',e=>{e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect='none';});
+inp.addEventListener('beforeinput',e=>{if(/^insertFrom(Paste|Drop|Yank)/.test(e.inputType||''))noPaste(e);});
 /* 한글 입력(IME): 조합 중 Enter는 조합이 끝난 뒤 처리 */
 let pendingEnter=false;
 inp.addEventListener('compositionend',()=>{if(pendingEnter){pendingEnter=false;setTimeout(()=>submit(inp.value),0);}});
@@ -2508,7 +2544,7 @@ inp.addEventListener('input',()=>{const v=inp.value;if(!R)return;
 function capsCheck(e){if(!e.getModifierState)return;const on=!!e.getModifierState('CapsLock');$('capsNote').classList.toggle('show',on);inp.classList.toggle('caps',on);}
 inp.addEventListener('keydown',capsCheck);inp.addEventListener('keyup',capsCheck);
 inp.addEventListener('animationend',()=>inp.classList.remove('bad'));
-document.addEventListener('keydown',e=>{if(scr!=='game'||!R)return;if(e.key==='Escape'){e.preventDefault();if(R.over)return;R.paused?ACT.resume():ACT.pause();return;}if(!R.paused&&!R.over&&document.activeElement!==inp)inp.focus();});
+document.addEventListener('keydown',e=>{if(scr!=='game'||!R)return;if(e.key==='Escape'){e.preventDefault();if(R.over||e.repeat)return;if(R.paused)ACT.resume();else if((R.pauses|0)>=PAUSE_MAX)ACT.quit();else ACT.pause();return;}if(!R.paused&&!R.over&&document.activeElement!==inp)inp.focus();});
 // 마을 꾸미기 단축키
 document.addEventListener('keydown',e=>{if(scr!=='edit'||!ED||panelOpen())return;const tg=e.target;if(tg&&/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName))return;const k=e.key;
  if(k==='Escape'){e.preventDefault();edCancel();}
@@ -2523,7 +2559,7 @@ window.addEventListener('pointerup',e=>{if(scr==='edit'&&ED)edUp(e);else if(hDra
 window.addEventListener('pointercancel',e=>{PTRS.delete(e.pointerId);HPTRS.delete(e.pointerId);if(!HPTRS.size)hDrag=null;if(ED&&ED.drag&&ED.drag.type!=='pinch'){if(ED.carry&&ED.carry.drag)edCancel();ED.drag=null;}});
 cv.addEventListener('wheel',e=>{const f=Math.exp(-e.deltaY*(e.ctrlKey?.01:.0015));if(scr==='edit'&&ED){e.preventDefault();edZoom(f,toStage(e));}else if(scr==='home'&&SAVE&&!panelOpen()){e.preventDefault();homeZoom(f,toStage(e));}},{passive:false});
 cv.addEventListener('contextmenu',e=>{if(scr==='edit')e.preventDefault();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&scr==='game'&&R&&!R.over&&!R.paused)ACT.pause();
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&scr==='game'&&R&&!R.over&&!R.paused){if((R.pauses|0)>=PAUSE_MAX)finishRun('away');else pauseGame('away');}
  if(!document.hidden){if(Date.now()-UPD.last>30000)updCheck(true);else updMaybe();}});
 setInterval(()=>{if(UPD.ready)updMaybe();else updCheck();},15000);
 setTimeout(()=>updCheck(true),20000+Math.random()*20000);
