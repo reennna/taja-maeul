@@ -90,6 +90,7 @@ table.rank .vold{color:#c2410c;font-size:17px}
 .dpal{position:absolute;left:12px;right:12px;bottom:10px;height:182px;background:rgba(255,255,255,.94);border:4px solid var(--ink);border-radius:22px;padding:6px 10px 8px;display:flex;flex-direction:column;gap:6px}
 .dcats{display:flex;gap:6px;align-items:center;flex-wrap:nowrap;min-height:36px}
 .dnote{font-size:17px;color:#7b4b58;margin-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dnote.wt{color:#1c7ed6;margin-left:14px}
 .dstore{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;flex:1;align-items:center;padding:2px 2px 4px}
 .dstore::-webkit-scrollbar{height:9px}.dstore::-webkit-scrollbar-thumb{background:#c9ccd3;border-radius:9px}.dstore::-webkit-scrollbar-track{background:transparent}
 .dcard{flex:0 0 auto;width:102px;height:108px;border:3px solid var(--steel);border-radius:16px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;line-height:1.1}
@@ -280,6 +281,7 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 .scard b{font-size:22px;font-weight:normal;color:#2a2a30}
 .scard .d{font-size:16px;color:#666;min-height:40px;line-height:1.25}
 .scard .own{font-size:17px;color:#7b4b58}
+.own.wt{color:#1c7ed6;margin-top:-2px;line-height:1.25}
 .buy{margin-top:4px;background:linear-gradient(#ffe36b,#f7b500);border:3px solid var(--ink);border-radius:999px;padding:3px 18px;font-size:23px;box-shadow:0 3px 0 var(--ink)}
 .buy:disabled{filter:grayscale(1);opacity:.55;cursor:default}
 .buy.max{background:#e9ecef}
@@ -430,7 +432,7 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 (()=>{
 'use strict';
 // 게임 버전: 새 파일을 만들 때마다 꼭 올려요(날짜-그날 몇 번째). 학생 크롬북이 이 번호로 새 버전을 알아채요.
-const APP_VER='2026-11-12-03';
+const APP_VER='2026-11-13-01';
 const vnum=v=>Number(String(v||'').replace(/\D/g,''))||0;
 const $=id=>document.getElementById(id);
 const W=1280,H=720,GROUND=650;
@@ -508,7 +510,7 @@ const UPS={
 const DCATS=[['nature','🌳 자연'],['deco','🪑 꾸미기'],['play','🎠 놀이'],['build','🏠 건물'],['animal','🐾 동물'],['farm','🌾 농장'],['korea','🏯 우리 문화']];
 // s: 차지하는 칸(1이면 1×1, 2면 2×2) · h: 대략의 높이(썸네일 크기 맞춤용)
 // op: 2026-11-09에 값을 올리기 전 값. 되팔기: 그 전에 산 것은 op의 반, 올라간 값으로 산 것은 price의 반이에요.
-// wo: 물 위에만 놓아요 · wb: 땅과 물 위 모두 놓아요
+// wo: 물 위에만 놓아요 · wb: 땅과 물 위 모두 놓아요 · tw: 상점·창고 그림은 물 위 모습(거북선, 광장 창고에서는 땅 위 모습)
 const DECO={
  tree_round:{name:'둥근 나무',cat:'nature',price:250,op:30,s:1,h:68},
  tree_pine:{name:'소나무',cat:'nature',price:300,op:35,s:1,h:76},
@@ -598,7 +600,7 @@ const DECO={
  jeongja:{name:'정자',cat:'korea',price:4000,s:1,h:70},
  pagoda:{name:'석탑',cat:'korea',price:5500,s:1,h:96},
  cheomseong:{name:'첨성대',cat:'korea',price:8000,s:1,h:96},
- turtleship:{name:'거북선',cat:'korea',price:10000,s:2,h:78,wo:1}};
+ turtleship:{name:'거북선',cat:'korea',price:10000,s:2,h:78,wb:1,tw:1}};
 // 우리 반 기념 장식: 상점에서는 팔지 않아요. 우리 반 기념비 단계가 오르면 모습이 바뀌어요(하나만, 새것으로 바뀜).
 DECO.cmemo={name:'우리 반 기념 장식',cat:'deco',price:0,s:1,h:70,special:true};
 // 2026-11-09에 새로 생긴 장식(예전 파일은 이 장식을 몰라요) · NEW 표시는 NEW_UNTIL(한국 날짜)까지
@@ -1274,10 +1276,16 @@ Object.assign(DRAW,{
   const wy=by-H*.52;c.fillStyle='#3b2f1e';c.fillRect(x-5,wy-5,10,10);c.strokeStyle=INK2;c.strokeRect(x-5,wy-5,10,10);
   const f1=isoBox(c,i+.29,j+.29,.42,.42,4,'#cbb990',0,11+H),f2=isoBox(c,i+.27,j+.27,.46,.46,4,'#d8c49a',0,15+H);
   const tc=lerp2(f2.top[0],f2.top[2],.5),inn=f2.top.map(p=>[tc[0]+(p[0]-tc[0])*.55,tc[1]+(p[1]-tc[1])*.55]);poly(c,inn,SEA==='winter'?'#ffffff':'#5c4a2e');},
- turtleship(c,i,j,s,t){t=t||0;const bob=Math.sin(t*1.3+i)*1.4,wf=u=>u<.12?.3+.1*u/.12:u<.7?.4:.4*Math.pow(Math.max(0,1-(u-.7)/.3),.8),
-   S=(u,v,h)=>up(IP(i+.18+u*1.66,j+1+v*wf(u)),(h||0)+3+bob),N=24,R=a=>{const o=[];for(let k=0;k<=N;k++)o.push(a(k/N));return o;};
-  c.strokeStyle='rgba(255,255,255,.55)';c.lineWidth=1.6;const[cx,cy]=IP(i+1,j+1);c.beginPath();c.ellipse(cx,cy+4,62,24,0,0,7);c.stroke();c.lineWidth=2;
-  for(let k=0;k<6;k++){const u=.2+k*.11,a=S(u,1.05,9),sw=Math.sin(t*2.2+k*.6)*.04;const b=up(IP(i+.18+(u+sw)*1.66,j+1.95),-2);c.lineWidth=2;c.strokeStyle='#6b4a2b';c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();}
+ turtleship(c,i,j,s,t){t=t||0;
+  // 네 칸이 모두 물이면 물 위에 떠서 노를 젓고, 아니면(땅·광장) 돌 받침과 나무 받침대에 올린 전시용 거북선이에요 (2026-11-13)
+  const wet=!!(GAT&&GAT(i,j)==='water'&&GAT(i+1,j)==='water'&&GAT(i,j+1)==='water'&&GAT(i+1,j+1)==='water'),lift=wet?3:17;
+  const bob=wet?Math.sin(t*1.3+i)*1.4:0,wf=u=>u<.12?.3+.1*u/.12:u<.7?.4:.4*Math.pow(Math.max(0,1-(u-.7)/.3),.8),
+   S=(u,v,h)=>up(IP(i+.18+u*1.66,j+1+v*wf(u)),(h||0)+lift+bob),N=24,R=a=>{const o=[];for(let k=0;k<=N;k++)o.push(a(k/N));return o;};
+  if(wet){c.strokeStyle='rgba(255,255,255,.55)';c.lineWidth=1.6;const[cx,cy]=IP(i+1,j+1);c.beginPath();c.ellipse(cx,cy+4,62,24,0,0,7);c.stroke();c.lineWidth=2;
+   for(let k=0;k<6;k++){const u=.2+k*.11,a=S(u,1.05,9),sw=Math.sin(t*2.2+k*.6)*.04;const b=up(IP(i+.18+(u+sw)*1.66,j+1.95),-2);c.lineWidth=2;c.strokeStyle='#6b4a2b';c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();}}
+  else{const[sx,sy]=IP(i+1,j+1);shadowE(c,sx,sy+5,56);isoBox(c,i+.08,j+.5,1.84,1,8,SEA==='winter'?'#e3e7ec':'#bfc4cb');
+   c.lineWidth=1;c.strokeStyle='rgba(0,0,0,.2)';[.7,1.32].forEach(a=>{const p=IP(i+a,j+1.5),q=up(p,8);c.beginPath();c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.stroke();});c.lineWidth=2;
+   [.22,.5,.78].forEach(u=>isoBox(c,i+.18+u*1.66-.07,j+.64,.14,.72,10,'#8a5a32',0,8));}
   poly(c,R(u=>S(u,1,14)).concat(R(u=>S(1-u,.82,0))),'#7a4a2b');
   c.lineWidth=1;c.strokeStyle='rgba(0,0,0,.25)';[5,9].forEach(h=>{c.beginPath();R(u=>S(u,.9+.1*h/14,h)).forEach((p,k)=>k?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.stroke();});c.lineWidth=2;
   [.25,.38,.51,.64].forEach(u=>{const p=S(u,1,8);circ(c,p[0],p[1],2.2,'#2b1a10');});
@@ -1340,7 +1348,7 @@ function drawVillageStrip(c){if(!SAVE)return;SEA='';const objs=SAVE.deco.objs.fi
  const placed=[];let x=222;for(const o of objs){const s=DECO[o.k].s,sc=s===2?.6:.86,w=s*TLW*sc*.78;let cx=x+w/2;if(cx+w/2>552&&cx-w/2<728){x=732;cx=x+w/2;}if(cx+w/2>1270)continue;placed.push({o,cx,sc});x+=w+3;}
  NIGHT=true;for(const p of placed)drawObjAt(c,p.o.k,p.cx,GROUND-6,p.sc,p.o.f);NIGHT=false;}
 function fillThumbs(root){const s0=SEA;SEA='';root.querySelectorAll('canvas[data-thumb]').forEach(el=>{const k=el.dataset.thumb,d=DECO[k];if(!d)return;const w=+el.dataset.sz||84,S=2;el.width=w*S;el.height=w*S;const x=el.getContext('2d');x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,w,w);
- const s=d.s,sc=Math.min((w-6)/(s*TLW),(w-6)/(s*IH+d.h+6));x.save();x.translate(w/2,w-3-s*TLH*sc);x.scale(sc,sc);for(let a=0;a<s;a++)for(let b=0;b<s;b++)drawTile(x,a,b,d.wo?'water':'grass',0);drawObj(x,{k,i:0,j:0},ANIM_T);x.restore();});SEA=s0;}
+ const s=d.s,sc=Math.min((w-6)/(s*TLW),(w-6)/(s*IH+d.h+6));x.save();x.translate(w/2,w-3-s*TLH*sc);x.scale(sc,sc);const wet=!!(d.wo||(d.tw&&el.dataset.land!=='1')),g0=GAT;GAT=wet?()=>'water':null;for(let a=0;a<s;a++)for(let b=0;b<s;b++)drawTile(x,a,b,wet?'water':'grass',0);try{drawObj(x,{k,i:0,j:0},ANIM_T);}finally{GAT=g0;}x.restore();});SEA=s0;}
 function camFit(n,area){const minX=-n*IW,maxX=n*IW,minY=-150,maxY=n*TLH+30,z=Math.max(.3,Math.min(2.4,Math.min((area[2]-area[0])/(maxX-minX),(area[3]-area[1])/(maxY-minY))));return{z,x:(area[0]+area[2])/2-(minX+maxX)/2*z,y:(area[1]+area[3])/2-(minY+maxY)/2*z};}
 /* ================= 별지기·별똥별 그리기 ================= */
 function drawGuardian(c,x,y,aim,t,sk){const S=skinOf(sk),A=S.acc;c.save();c.translate(x,y);c.lineWidth=3;c.strokeStyle=INK2;c.lineJoin='round';
@@ -1716,7 +1724,7 @@ function renderShop(){const tabs=[['item','아이템'],['up','별지기 강화']
  else{sub=`<div class="tabs" style="margin:2px 0 8px">${DCATS.concat([['land','🏝️ 섬 넓히기']]).map(([k,n])=>`<button class="chip sm2 ${shopCat===k?'on':''}" data-act="shop-cat" data-c="${k}">${n}</button>`).join('')}</div>`;
   if(shopCat==='land'){const n=SAVE.deco.n,nx=LAND[LAND.indexOf(n)+1];cards=`<div class="scard"><span class="ic" style="background:#d3f9d8">🏝️</span><b>섬 넓히기</b><span class="d">지금 ${n}×${n}${nx?` → ${nx}×${nx}`:''}<br>넓어진 땅에 장식을 더 놓을 수 있어요</span><span class="own">${nx?`${LAND.indexOf(n)+1} / ${LAND.length-1}단계`:'가장 넓은 섬이에요!'}</span>${nx?buy('land','land',LAND_COST[nx]):'<button class="buy max" disabled>최고 크기!</button>'}</div>`;}
   else cards=Object.keys(DECO).filter(k=>DECO[k].cat===shopCat&&!DECO[k].special).sort((a,b)=>DECO[a].price-DECO[b].price).map(id=>{const d=DECO[id],pl=SAVE.deco.objs.filter(o=>o.k===id).length,st=SAVE.deco.stock[id]||0,v=st?sellVal(id):0;
-   return `<div class="scard">${isNew(id)?'<span class="nwb">NEW</span>':''}<canvas data-thumb="${id}" data-sz="72"></canvas><b>${d.name}</b><span class="own">${d.s===2?'2×2 · ':''}${d.wo?'물 위 · ':''}마을 ${pl} · 창고 ${st}</span>${buy('deco',id,d.price,d.price.toLocaleString())}${st?`<button class="sell ${sellArm===id?'arm':''}" data-act="sell" data-id="${id}">${sellArm===id?`한 번 더 누르면 팔아요 (${v.toLocaleString()})`:`💰 1개 팔기 ${v.toLocaleString()}`}</button>`:''}</div>`;}).join('');}
+   return `<div class="scard">${isNew(id)?'<span class="nwb">NEW</span>':''}<canvas data-thumb="${id}" data-sz="72"></canvas><b>${d.name}</b><span class="own">${d.s===2?'2×2 · ':''}마을 ${pl} · 창고 ${st}</span>${d.wo?'<span class="own wt">🌊 물 위에만 놓아요<br>광장에는 못 놓아요</span>':d.wb?'<span class="own wt">🏝️ 땅·물 모두 놓아요</span>':''}${buy('deco',id,d.price,d.price.toLocaleString())}${st?`<button class="sell ${sellArm===id?'arm':''}" data-act="sell" data-id="${id}">${sellArm===id?`한 번 더 누르면 팔아요 (${v.toLocaleString()})`:`💰 1개 팔기 ${v.toLocaleString()}`}</button>`:''}</div>`;}).join('');}
  $('pShop').innerHTML=`<div class="panel xl"><div class="shophead"><h2>🛒 상점</h2><div class="tabs">${tabs}</div><div style="display:flex;gap:10px;align-items:center"><div class="wallet"><span class="coin"></span>${SAVE.coins.toLocaleString()}</div><button class="gbtn sm" style="width:auto;margin:0;font-size:26px;padding:6px 22px" data-act="shop-close">닫기</button></div></div>
  ${sub}<div class="grid ${shopTab==='deco'||shopTab==='skin'?'g5':''}">${cards}</div><p class="note">${shopTab==='skin'?'별지기 모습만 바뀌어요. 게임 실력에는 영향이 없어요. 내 별지기는 친구 랭킹에도 보여요.':shopTab==='up'?'별지기를 강하게 만들면 라운드를 더 오래 버틸 수 있어요. 분당 타수 랭킹에는 영향이 없어요.':shopTab==='deco'?'산 장식은 창고에 들어가요. [내 마을 꾸미기]나 [우리 반 광장]에서 놓아 보세요.<br>창고의 장식은 반값에 되팔 수 있어요. (11월 9일 값이 오르기 전에 산 장식은 예전 값의 반)':`산 아이템은 게임 시작 전 [가방 챙기기]에서 가방에 넣어요. 아이템은 종류마다 ${ITEM_MAX}개까지 가질 수 있어요.`}</p>
  </div>`;
@@ -1825,14 +1833,16 @@ function setHint(){if(!ED)return;const c=ED.carry;let h;
  $('dHint').textContent=h;}
 function renderPalette(){if(!ED)return;const pz=ED.mode==='plaza',pal=$('dPal'),ro=ED.admin||!SAVE||edRO();pal.classList.toggle('hidden',ro);if(ro)return;
  const st=SAVE.deco.stock;let cats='',h='';
- if(pz)cats='<span class="dnote">📦 내 창고의 장식 · 놓으면 창고에서 빠지고, 가져오면 돌아와요</span>';
+ // 물 위에만 놓는 장식(연꽃·나무 다리)은 광장에 물이 없어서 광장 창고에 나오지 않아요. 창고에 있으면 까닭을 알려 줘요 (2026-11-13)
+ const wn=pz?Object.keys(DECO).filter(k=>DECO[k].wo&&st[k]>0).map(k=>DECO[k].name):[];
+ if(pz)cats=`<span class="dnote">📦 내 창고의 장식 · 놓으면 창고에서 빠지고, 가져오면 돌아와요</span>${wn.length?`<span class="dnote wt">🌊 물 위 장식(${wn.join('·')})은 광장에 못 놓아요</span>`:''}`;
  else cats=DCATS.concat([['ground','🟫 땅 칠하기']]).map(([k,n])=>`<button class="chip sm2 ${ED.cat===k?'on':''}" data-act="ed-cat" data-c="${k}">${n}</button>`).join('')+`<span class="dnote">${ED.cat==='ground'?'잔디로 칠하면 원래대로 돌아가요':'숫자는 창고에 있는 개수, 동전은 놓을 때 쓰는 코인이에요'}</span>`;
  if(!pz&&ED.cat==='ground')h=GT_IDS.map(g=>`<button class="dcard tile ${ED.paint===g?'on':''}" data-act="ed-paint" data-g="${g}"><span class="sw" style="background:${GTYPE[g].col}"></span><span>${GTYPE[g].name}</span><i class="pr">${GTYPE[g].price?`<span class="coin"></span>${GTYPE[g].price}`:'무료'}</i>${!OLD_GT.has(g)&&kstDay()<=NEW_UNTIL?'<b class="nw">NEW</b>':''}</button>`).join('');
  else{const order=DCATS.map(c=>c[0]);let ks=Object.keys(DECO);
   if(pz)ks=ks.filter(k=>st[k]>0&&!DECO[k].special&&!DECO[k].wo).sort((a,b)=>order.indexOf(DECO[a].cat)-order.indexOf(DECO[b].cat)||DECO[a].price-DECO[b].price);
   else ks=ks.filter(k=>DECO[k].cat===ED.cat&&(!DECO[k].special||st[k]>0)).sort((a,b)=>((st[b]>0)-(st[a]>0))||DECO[a].price-DECO[b].price);
-  h=ks.map(k=>{const n=st[k]||0,on=ED.carry&&ED.carry.k===k&&ED.carry.src!=='move';return `<button class="dcard ${on?'on':''} ${n?'':'buy'}" data-act="ed-pick" data-k="${k}"><canvas data-thumb="${k}" data-sz="74"></canvas><span>${DECO[k].name}</span>${n?`<i>${n}</i>`:`<i class="pr"><span class="coin"></span>${DECO[k].price.toLocaleString()}</i>`}${DECO[k].s===2?'<em>2×2</em>':DECO[k].wo?'<em class="wt">물 위</em>':''}${isNew(k)?'<b class="nw">NEW</b>':''}${k==='cmemo'?`<em>⭐${Math.max(1,SAVE.cm||1)}단계</em>`:''}</button>`;}).join('');
-  if(!h)h=`<div class="dempty">창고가 비었어요. 위의 [상점]에서 장식을 사거나, 내 마을에서 장식을 창고로 옮겨 오세요.</div>`;}
+  h=ks.map(k=>{const n=st[k]||0,on=ED.carry&&ED.carry.k===k&&ED.carry.src!=='move';return `<button class="dcard ${on?'on':''} ${n?'':'buy'}" data-act="ed-pick" data-k="${k}"><canvas data-thumb="${k}" data-sz="74"${pz?' data-land="1"':''}></canvas><span>${DECO[k].name}</span>${n?`<i>${n}</i>`:`<i class="pr"><span class="coin"></span>${DECO[k].price.toLocaleString()}</i>`}${DECO[k].s===2?'<em>2×2</em>':DECO[k].wo?'<em class="wt">물 위</em>':''}${isNew(k)?'<b class="nw">NEW</b>':''}${k==='cmemo'?`<em>⭐${Math.max(1,SAVE.cm||1)}단계</em>`:''}</button>`;}).join('');
+  if(!h)h=wn.length?`<div class="dempty">광장에 놓을 수 있는 장식이 창고에 없어요. 물 위 장식(${wn.join('·')})은 내 마을의 물 위에 놓아요.</div>`:`<div class="dempty">창고가 비었어요. 위의 [상점]에서 장식을 사거나, 내 마을에서 장식을 창고로 옮겨 오세요.</div>`;}
  $('dCats').innerHTML=cats;const el=$('dStore'),key=ED.mode+ED.cat,sl=ED.palKey===key?el.scrollLeft:0;ED.palKey=key;el.innerHTML=h;el.scrollLeft=sl;fillThumbs(el);}
 function renderAct(){const el=$('dAct');if(!ED){el.classList.add('hidden');return;}const c=ED.carry;let h;
  if(c){const nm=DECO[c.k].name,n=SAVE.deco.stock[c.k]||0;el.innerHTML=`<b>✋ ${esc(nm)}</b><span>${c.src==='move'?'옮기는 중':c.src==='buy'?`놓으면 <span class="coin"></span> ${DECO[c.k].price}`:`창고에 ${n}개`}</span><button class="sbtn sm" data-act="ed-flip">↔ 뒤집기 (F)</button><button class="sbtn sm" data-act="ed-cancel">그만두기 (Esc)</button>`;el.classList.remove('hidden');return;}
