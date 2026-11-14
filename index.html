@@ -360,6 +360,120 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 .gfoot .note{margin:0;text-align:left}
 .gfoot .gbtn{width:auto;margin:0;padding:4px 28px;font-size:24px}
 #dTitle .skf{width:44px;height:38px;margin:-6px 4px 0 0}
+/* ---------- 자리 연습 (2026-11-15) ---------- */
+#jr{background:linear-gradient(#a9dcf7,#e6f6ff)}
+#jrKb{position:absolute;left:0;top:286px;width:1280px;height:434px}
+.jrbar{position:absolute;left:14px;right:14px;top:12px;height:68px;background:rgba(255,255,255,.95);border:4px solid var(--ink);border-radius:22px;box-shadow:0 5px 0 var(--ink);display:flex;align-items:center;gap:14px;padding:0 12px}
+.jrtag{font-size:21px;background:linear-gradient(#fff8d6,#ffd84a);border:3px solid var(--ink);border-radius:999px;padding:3px 14px;white-space:nowrap}
+.jrtag.en{background:linear-gradient(#e7f2ff,#8ec5ff)}
+.jrbar>b{font-size:28px;font-weight:normal;white-space:nowrap}
+.jrbar .grow{flex:1}
+.jrprog{display:flex;align-items:center;gap:10px;font-size:24px;white-space:nowrap}
+.jrprog .bar{width:200px;height:20px;border-radius:999px;background:#e9ecef;border:3px solid var(--ink);overflow:hidden}
+.jrprog .bar i{display:block;height:100%;width:0;background:linear-gradient(#8be9a4,#2fbf5b)}
+.jchip{font-size:20px;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:3px 12px;white-space:nowrap}
+.jrq{font-size:22px;background:linear-gradient(#fff,#e9e9ee);border:3px solid var(--ink);border-radius:999px;box-shadow:0 3px 0 var(--ink);padding:4px 16px;white-space:nowrap}
+.jrq:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.jrready{position:absolute;left:0;right:0;top:98px;display:flex;justify-content:center}
+.jrready>div{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 34px 16px;background:rgba(255,255,255,.94);border:4px solid var(--ink);border-radius:26px;box-shadow:0 5px 0 var(--ink);text-align:center}
+.jrready .l1{display:flex;align-items:center;gap:10px;font-size:36px;white-space:nowrap}
+.jrready .l1 b{font-weight:normal}
+.jrready .l1 span{white-space:nowrap}
+.jrready .l1 .jcap{min-width:46px;height:44px;font-size:28px}
+.jrready .l2{font-size:21px;color:#5d5f68}
+.jrready .l3{font-size:19px;color:#5d5f68}
+.jrstrip{position:absolute;left:0;right:0;top:96px;display:flex;justify-content:center}
+.jrstrip>div{display:flex;align-items:center;gap:8px;padding:12px 22px;min-height:94px;background:rgba(255,255,255,.92);border:4px solid var(--ink);border-radius:26px;box-shadow:0 5px 0 var(--ink)}
+.jt{position:relative;display:flex;align-items:center;justify-content:center;width:60px;height:68px;border-radius:14px;background:#fff;border:3px solid #c3c8d0;font-size:36px;line-height:1;color:#2b2d33;flex-shrink:0}
+.jt.f1{opacity:.6}
+.jt.f2{opacity:.35}
+.jt.ok{background:#e3f6e8;border-color:#9fd8b0;color:#3d8a55}
+.jt.ok i{position:absolute;right:-7px;top:-7px;width:18px;height:18px;border-radius:50%;background:#ff4d6d;border:3px solid #fff}
+.jt.cur{width:84px;height:94px;border-radius:18px;background:#fff6c2;border:5px solid var(--ink);box-shadow:0 0 0 5px #ffc400;font-size:54px;color:var(--ink)}
+.jt.cur u{position:absolute;left:16px;right:16px;bottom:7px;height:7px;border-radius:4px}
+.jt.cur.bad{background:#ffe3e8;border-color:#d6002a;box-shadow:0 0 0 5px rgba(255,77,109,.5);color:#b0001f;animation:shake .3s}
+.jt.cur em{position:absolute;right:-20px;top:-16px;font-size:17px;font-style:normal;line-height:1;color:#fff;background:#d6002a;border:2px solid #fff;border-radius:999px;padding:4px 9px;white-space:nowrap}
+.jt.sp::before{content:'';width:54%;height:22%;border:4px solid currentColor;border-top:none;border-radius:0 0 7px 7px;margin-top:20%}
+.jrhint{position:absolute;left:0;right:0;top:236px;display:flex;justify-content:center;gap:12px}
+.jpill{display:flex;align-items:center;gap:9px;background:#fff;border:3px solid var(--ink);border-radius:999px;box-shadow:0 3px 0 var(--ink);padding:3px 18px 3px 10px;font-size:25px;white-space:nowrap}
+.jpill b{font-weight:normal}
+.jpill.wd{padding-left:18px;background:#f4f8fb;color:#4d5058}
+.jpill.wd b{color:var(--ink);font-size:28px}
+.jpill.bad{background:#ffe3e8;border-color:#d6002a;box-shadow:0 3px 0 #d6002a;color:#a8001f;padding-left:16px}
+.jdot{width:18px;height:18px;border-radius:50%;background:var(--c);border:3px solid #fff;box-shadow:0 0 0 2px var(--c);flex-shrink:0}
+.jcap{display:inline-flex;align-items:center;justify-content:center;min-width:40px;height:38px;padding:0 6px;border-radius:9px;background:#fff6c2;border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink);font-size:25px;line-height:1}
+.jcap.w{font-size:18px;padding:0 10px}
+/* 오늘 별 받은 판 · 별 */
+.jtoday{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 auto 6px;width:fit-content;background:#fff7cf;border:3px solid var(--ink);border-radius:999px;padding:5px 22px;font-size:22px}
+.jtoday.done{background:#dff7e6;border-color:#157a35;color:#0f5a27}
+.jpips{display:inline-flex;gap:5px;align-items:center}
+.jpips i{width:18px;height:18px;border-radius:50%;border:3px solid var(--ink);background:#fff}
+.jpips i.on{background:#2fbf5b}
+.jstars{display:inline-flex;gap:4px}
+.jstars svg{fill:#e3e6ea;stroke:#a9afb8;stroke-width:1.7;stroke-linejoin:round}
+.jstars svg.on{fill:#ffcd3c;stroke:var(--ink)}
+/* 게임 고르기: 자리 연습 카드 · 별똥별 잠금 */
+.gcard{position:relative}
+.gcard.wig{animation:shake .4s}
+.gcard .gthumb{position:relative;width:300px;height:150px;border-radius:16px;border:3px solid var(--ink);overflow:hidden;background:#dff0ff;flex-shrink:0}
+.gcard .gthumb canvas{border:none;border-radius:0;display:block}
+.gcard .gthumb svg{display:block}
+.gcard .glock{position:absolute;inset:0;background:rgba(16,12,36,.68);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#fff;font-size:21px}
+.gcard .glock .gl1{font-size:34px;line-height:1.1}
+.gcard .glock .gl2{display:flex;align-items:center;gap:8px;font-size:19px}
+.gcard .glock span{min-height:0;color:inherit;font-size:inherit}
+.gcard .glock .jpips i{width:16px;height:16px;border:2px solid #fff;background:rgba(255,255,255,.25)}
+.gcard .glock .jpips i.on{background:#2fbf5b}
+.gcard .gbadge{position:absolute;left:-10px;top:-14px;font-size:18px;line-height:1;color:#fff;background:#d6336c;border:3px solid var(--ink);border-radius:10px;padding:5px 10px;transform:rotate(-4deg);white-space:nowrap;z-index:1}
+.gcard .gbadge.done{background:#157a35}
+.gcard .gmode.off{background:#eceef1;border-color:#9aa0ab;box-shadow:none;color:#5d616a}
+.gcard .gmode.off small{color:#5d616a}
+/* 단계 고르기 */
+.panel.jr{padding:18px 30px 20px;text-align:left}
+.jrhead{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.jrhead h2{margin:0;font-size:44px}
+.jrtabs{margin-left:auto;display:flex;gap:8px}
+.jrtab{font-size:25px;padding:5px 26px;border:3px solid var(--ink);border-radius:999px;background:#fff}
+.jrtab.on{background:linear-gradient(#ffe36b,#f7b500);box-shadow:0 3px 0 var(--ink)}
+.panel.jr .jtoday{margin:0 0 12px;width:auto;justify-content:flex-start;border-radius:16px;font-size:20px;padding:7px 16px}
+.jrgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.jrcard{text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:10px 12px 12px;border-radius:18px;min-height:168px;background:#fff;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
+.jrcard:active{transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
+.jrcard .hd{display:flex;align-items:center;gap:8px;width:100%}
+.jrcard .no{width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.jrcard .nm{font-size:23px;white-space:nowrap}
+.jrcard .ks{font-size:21px;color:#3b3f4a}
+.jrcard .nt{font-size:18px;color:#5d5f68}
+.jrcard.open{background:linear-gradient(#fffbe6,#fff0a8);border-width:4px;box-shadow:0 0 0 5px rgba(255,196,0,.85),0 4px 0 var(--ink)}
+.jrcard .go{font-size:19px;color:#fff;background:#d6336c;border:2px solid var(--ink);border-radius:999px;padding:2px 12px}
+.jrcard.lock{color:#5d616a;background:#eceef1;border:3px dashed #a3a9b3;box-shadow:none;cursor:default;transform:none}
+.jrcard.lock .no{background:#b9bec7}
+.jrcard.lock .ks{color:#6b6f78}
+.jrcard.lock .nt{margin-top:auto;font-size:17px;color:#5d616a}
+.jrfoot{display:flex;align-items:center;gap:16px;margin-top:14px;font-size:19px;color:#4d5058;line-height:1.35}
+.jrfoot .sbtn{margin-left:auto}
+/* 결과 */
+.panel.jres{width:880px;padding:16px 34px 20px;display:flex;flex-direction:column;align-items:center;gap:9px}
+.panel.jres .sub{margin:0}
+.jres .ttl{display:flex;align-items:center;gap:14px}
+.jres .ttl h2{margin:0}
+.jres .stats{width:100%;margin:0}
+.jres .note{margin:0}
+.jres .two{display:flex;gap:12px;width:100%;text-align:left}
+.jres .box{flex:1;background:#fff;border:3px solid var(--steel);border-radius:16px;padding:8px 12px 10px;display:flex;flex-direction:column;gap:4px;font-size:21px}
+.jres .box.wk{flex:1.2}
+.jres .box.got{background:#fffbea}
+.jres .box>small{font-size:19px;color:#5d5f68}
+.jres .wkrow{display:flex;align-items:center;gap:10px;font-size:25px;line-height:1.25}
+.jres .wkrow b{font-weight:normal}
+.jres .wkrow span{font-size:19px;color:#5d5f68}
+.jres .wkrow svg{flex-shrink:0}
+.jres .gotl{display:flex;align-items:center;gap:8px}
+.jres .gotl.big{font-size:30px}
+.jres .gotl small{font-size:17px;color:#5d5f68}
+.jres .jtoday{width:100%;margin:0;border-radius:16px;font-size:23px;box-sizing:border-box}
+.jres .btnrow{margin-top:4px}
+.jres .btnrow .inline{font-size:25px;min-width:0;margin:0 4px;padding:7px 22px}
 </style>
 </head>
 <body>
@@ -414,8 +528,22 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
     <div id="count"></div>
   </div>
 
+  <!-- 자리 연습 -->
+  <div id="jr" class="screen hidden">
+    <svg id="jrKb" viewBox="0 286 1280 434" aria-hidden="true"><g transform="translate(205,306)" font-family="Jua,'Malgun Gothic','Apple SD Gothic Neo',sans-serif"><g id="jrKeys"></g><g id="jrPhi"></g><g id="jrPL"></g><g id="jrPR"></g><g id="jrPtop"></g></g></svg>
+    <div class="jrbar"><span class="jrtag" id="jrTag"></span><b id="jrStage"></b><span class="grow"></span>
+      <div class="jrprog"><div class="bar"><i id="jrBarI"></i></div><span id="jrCnt"></span></div>
+      <span class="jchip" id="jrAcc"></span><span class="jchip" id="jrCpm"></span>
+      <button class="jrq" id="jrQ" data-act="jr-quit" tabindex="-1">그만하기</button></div>
+    <div class="jrready" id="jrReady"></div>
+    <div class="jrstrip" id="jrStripBox"><div id="jrStrip"></div></div>
+    <div class="jrhint" id="jrHint"></div>
+  </div>
+
   <div id="pReg" class="overlay hidden"></div>
   <div id="pGames" class="overlay hidden"></div>
+  <div id="pJr" class="overlay hidden"></div>
+  <div id="pJrRes" class="overlay hidden"></div>
   <div id="pLoad" class="overlay hidden"></div>
   <div id="pPause" class="overlay hidden"></div>
   <div id="pResult" class="overlay hidden"></div>
@@ -432,7 +560,7 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 (()=>{
 'use strict';
 // 게임 버전: 새 파일을 만들 때마다 꼭 올려요(날짜-그날 몇 번째). 학생 크롬북이 이 번호로 새 버전을 알아채요.
-const APP_VER='2026-11-13-01';
+const APP_VER='2026-11-15-02';
 const vnum=v=>Number(String(v||'').replace(/\D/g,''))||0;
 const $=id=>document.getElementById(id);
 const W=1280,H=720,GROUND=650;
@@ -453,11 +581,10 @@ const GAMES=[
  {id:'meteor',name:'별똥별 방어전 한글',short:'별똥별 한글',lang:'ko',ready:true},
  {id:'meteor_en',name:'별똥별 방어전 영어',short:'별똥별 영어',lang:'en',ready:true}];
 const READY=GAMES.filter(g=>g.ready);
-// 게임 고르기 카드: 한 카드 안의 버튼으로 한글·영어를 골라요
+// 게임 고르기 카드: 한 카드 안의 버튼으로 한글·영어를 골라요 (맨 앞의 [자리 연습] 카드는 openGames에서 따로 그려요)
 const CARDS=[
  {name:'별똥별 방어전',desc:'우리 마을로 떨어지는 별똥별을 낱말로 막아요!',thumb:'meteor',modes:[['meteor','한글',''],['meteor_en','영어','en']]},
- {name:'새 게임 준비 중',desc:'곧 새로운 타자 게임이 와요'},
- {name:'새 게임 준비 중',desc:'기대해 주세요!'}];
+ {name:'새 게임 준비 중',desc:'곧 새로운 타자 게임이 와요'}];
 const gameName=id=>(GAMES.find(g=>g.id===id)||{name:id}).name;
 const gameLang=id=>(GAMES.find(g=>g.id===id)||{}).lang||'ko';
 
@@ -695,7 +822,8 @@ function fixDeco(s){let d=s.deco;
  if(hold.o.length||Object.keys(hold.s).length||Object.keys(hold.g).length){hold.n=d.n;if(sh){hold.o.forEach(o=>{o.i+=sh;o.j+=sh;});const g2={};for(const key in hold.g){const[a,b]=key.split(',').map(Number);g2[(a+sh)+','+(b+sh)]=hold.g[key];}hold.g=g2;}s.hold=hold;}else delete s.hold;}
 function defaultSave(name,no,gr,cl){const games={};for(const g of READY)games[g.id]={bestRound:0,bestWords:0,bestTasu:0,plays:0,words:0};
  return{v:1,id:rid(),name,no,gr:gr||0,cl:cl||0,coins:0,created:Date.now(),inv:{bolt:1,ice:1,slow:0,shield:1,heart:0,double:0},up:{hp:0,calm:0,bag:0,luck:0,magic:0,guard:0},
-  deco:starterDeco(),pz:{},games,stats:{coins:0,plays:0},skin:'base',skins:{base:1},cm:0,cmGot:0};}
+  deco:starterDeco(),pz:{},games,stats:{coins:0,plays:0},skin:'base',skins:{base:1},cm:0,cmGot:0,
+  jr:{ko:[0,0,0,0,0,0,0,0],en:[0,0,0,0,0,0,0,0],day:0,n:0,plays:0}};} // jr: 자리 연습 (단계별 별 · 오늘 별 받은 판)
 function fixSave(s){if(!s||typeof s!=='object'||!s.id)return null;const d=defaultSave(s.name||'',s.no||0,s.gr,s.cl);
  for(const k in d)if(s[k]==null&&k!=='deco')s[k]=d[k];
  for(const k of ITEM_IDS)if(typeof s.inv[k]!=='number')s.inv[k]=0;
@@ -707,6 +835,9 @@ function fixSave(s){if(!s||typeof s!=='object'||!s.id)return null;const d=defaul
  if(!s.skins||typeof s.skins!=='object')s.skins={base:1};s.skins.base=1;if(!SKINS[s.skin]||!s.skins[s.skin])s.skin='base';
  s.cm=Math.max(0,Math.min(7,+s.cm||0));s.cmGot=s.cmGot?1:0;
  if(!s.stats)s.stats=d.stats;
+ if(!s.jr||typeof s.jr!=='object')s.jr=d.jr;
+ for(const l of['ko','en']){const a=Array.isArray(s.jr[l])?s.jr[l]:[];s.jr[l]=d.jr[l].map((_,i)=>Math.max(0,Math.min(3,Math.floor(+a[i]||0))));}
+ s.jr.day=+s.jr.day||0;s.jr.n=Math.max(0,Math.floor(+s.jr.n||0));s.jr.plays=Math.max(0,Math.floor(+s.jr.plays||0));
  if(s.xb&&xbRestore(s))s.xbBack=1; // 예전 파일이 지운 새 장식을 되살렸어요
  // 되팔기 값: 처음 한 번, 지금 가진 장식은 모두 '예전 값으로 산 것'으로 세어 둬요
  if(!s.oldp||typeof s.oldp!=='object')s.oldp={};
@@ -1653,10 +1784,10 @@ let toastTO=0;function toast(m){const el=$('toast');el.textContent=m;el.classLis
 let ttTO=0;function ttoast(m){const el=$('ttoast');el.textContent=m;el.classList.add('show');clearTimeout(ttTO);ttTO=setTimeout(()=>el.classList.remove('show'),2400);}
 
 /* ================= 화면 전환 ================= */
-const PANELS=['pReg','pGames','pLoad','pPause','pResult','pShop','pRank','pMe','pTeacher','pVisit','pGive'];
+const PANELS=['pReg','pGames','pJr','pJrRes','pLoad','pPause','pResult','pShop','pRank','pMe','pTeacher','pVisit','pGive'];
 const show=(id,on)=>$(id).classList.toggle('hidden',!on);
-function hideAll(){PANELS.forEach(p=>show(p,false));['home','hud','decoUI'].forEach(p=>show(p,false));}
-function goHome(){setTimeout(adjRun,400);if(ED){clearInterval(ED.timer);ED=null;$('ttoast').classList.remove('top');}R=null;scr='home';hideAll();inp.blur();if(!SAVE){openReg();return;}show('home',true);renderProfile();
+function hideAll(){PANELS.forEach(p=>show(p,false));['home','hud','decoUI','jr'].forEach(p=>show(p,false));}
+function goHome(){setTimeout(adjRun,400);if(ED){clearInterval(ED.timer);ED=null;$('ttoast').classList.remove('top');}R=null;if(JR){clearTimeout(JR.badT);JR=null;}scr='home';hideAll();inp.blur();if(!SAVE){openReg();return;}show('home',true);renderProfile();
  if(UPD.ready)setTimeout(updMaybe,800);
  if(!SAVE.gr||!SAVE.cl)openInfo();else if(SAVE.decoNew){delete SAVE.decoNew;saveGame();setTimeout(()=>ttoast('마을이 넓은 섬으로 바뀌었어요! [내 마을 꾸미기]에서 새 장식을 만나 보세요'),500);}}
 function renderProfile(){$('pName').textContent=SAVE.name;$('pMeta').textContent=`${SAVE.gr&&SAVE.cl?`${SAVE.gr}학년 ${SAVE.cl}반 `:''}${SAVE.no}번\n별지기 Lv.${charLevel()}`;$('pCoins').textContent=SAVE.coins.toLocaleString();$('pSkin').src=skinFace(SAVE.skin);homeResetBtn();renderBadge();
@@ -1681,9 +1812,14 @@ function openInfo(){if(!SAVE)return;openPanel('pReg',`<div class="panel wide"><h
  <p class="msg" id="rMsg"></p><button class="gbtn" data-act="info-save">저장하기</button></div>`);setTimeout(()=>{const e=$('rGr');if(e)e.focus();},60);}
 
 /* ---------- 게임 고르기 ---------- */
-function openGames(){openPanel('pGames',`<div class="panel xl"><h2>게임 고르기</h2><p class="sub">한글과 영어는 랭킹이 따로 있고, 모두 더한 합산 랭킹도 있어요.</p><div class="gcards">${CARDS.map(cd=>cd.modes?
- `<div class="gcard"><canvas data-gthumb="${cd.thumb}"></canvas><b>${esc(cd.name)}</b><span>${esc(cd.desc)}</span><div class="gmodes">${cd.modes.map(([id,lb,cls])=>`<button class="gmode ${cls}" data-act="game-pick" data-g="${id}"><b>${lb}</b><small>최고 ${SAVE.games[id].bestRound}라운드</small></button>`).join('')}</div></div>`:
- `<div class="gcard lock"><div class="lockbox">🔒</div><b>${esc(cd.name)}</b><span>${esc(cd.desc)}</span></div>`).join('')}</div>
+function openGames(){const n=jrToday(),free=jrFree(),done=n>=JR_NEED,md=CARDS[0],nx=l=>{const i=SAVE.jr[l].findIndex(v=>v<1);return i<0?'8단계 모두 통과!':`${i+1}단계 도전 중`;};
+ openPanel('pGames',`<div class="panel xl"><h2>게임 고르기</h2><p class="sub">한글과 영어는 랭킹이 따로 있고, 모두 더한 합산 랭킹도 있어요.</p>
+ ${jrTodayLine(n,`별 받은 판이 ${JR_NEED}판이 되면 별똥별 방어전이 열려요`)}${TUNLOCK&&!done?'<p class="note">선생님 모드가 열려 있어서 잠금 없이 할 수 있어요.</p>':''}
+ <div class="gcards"><div class="gcard" id="gJr"><div class="gbadge ${done?'done':''}">${done?'✔ 오늘 완료':'오늘 먼저!'}</div><div class="gthumb"><svg width="300" height="150" viewBox="0 0 300 150" aria-hidden="true"><g transform="translate(20.5 9) scale(.3)">${KBH.svg({mode:'ko',idp:'gt'})}</g></svg></div><b>⌨️ 자리 연습</b><span>손가락 자리를 익혀요. 하루 ${JR_NEED}판(★ 1개 이상)이면 별똥별이 열려요!</span>
+  <div class="gmodes"><button class="gmode" data-act="jr-open" data-l="ko"><b>한글</b><small>${nx('ko')}</small></button><button class="gmode en" data-act="jr-open" data-l="en"><b>영어</b><small>${nx('en')}</small></button></div></div>
+ <div class="gcard"><div class="gthumb"><canvas data-gthumb="${md.thumb}"></canvas>${free?'':`<div class="glock"><div class="gl1">🔒</div><div>자리 연습 ${JR_NEED}판을 먼저 해요</div><div class="gl2">${jrPips(n)} ${n} / ${JR_NEED}</div></div>`}</div><b>${esc(md.name)}</b><span>${esc(md.desc)}</span>
+  <div class="gmodes">${md.modes.map(([id,lb,cls])=>`<button class="gmode ${cls}${free?'':' off'}" data-act="game-pick" data-g="${id}"><b>${free?'':'🔒 '}${lb}</b><small>${free?`최고 ${SAVE.games[id].bestRound}라운드`:`연습 ${JR_NEED}판 후`}</small></button>`).join('')}</div></div>
+ <div class="gcard lock"><div class="lockbox">🔒</div><b>${esc(CARDS[1].name)}</b><span>${esc(CARDS[1].desc)}</span></div></div>
  <div class="btnrow"><button class="sbtn inline" data-act="close" data-p="pGames">닫기</button></div></div>`);
  $('pGames').querySelectorAll('canvas[data-gthumb]').forEach(c=>{const S=2,w=300,h=150;c.width=w*S;c.height=h*S;const x=c.getContext('2d');x.setTransform(S,0,0,S,0,0);const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,'#0a1238');g.addColorStop(1,'#4b2d6b');x.fillStyle=g;x.fillRect(0,0,w,h);const r=rng(4);for(let i=0;i<50;i++){x.fillStyle=`rgba(255,255,255,${.3+r()*.6})`;x.fillRect(r()*w,r()*110,1.5,1.5);}x.fillStyle='#2a1f47';x.fillRect(0,128,w,22);NIGHT=true;[['house_r',36],['tree_round',88],['house_b',212],['clock',262]].forEach(([k,px])=>drawObjAt(x,k,px,138,.6));NIGHT=false;
   drawMeteor(x,{x:210,y:58,r:18,rot:.6,vx:-14,spd:40,fade:1,shape:[1,.9,1.05,.88,1,1.08,.92,1,.95]});drawLabel(x,210,22,'은하수','',18);drawGoldStar(x,70,50,0);});}
@@ -2187,6 +2323,7 @@ function tClsHTML(){const st=`<p class="sub">🔗 ${tClsLoading?'불러오는 �
 /* ---------- 내 기록 ---------- */
 function openMe(){renderMe();show('pMe',true);}
 function renderMe(code,msg){const rows=READY.map(g=>{const s=SAVE.games[g.id];return `<div class="tile"><small>${esc(g.name)}</small><b>${s.bestRound}라운드</b></div><div class="tile"><small>최고 분당 타수</small><b>${s.bestTasu}타</b></div><div class="tile"><small>플레이</small><b>${s.plays}번</b></div><div class="tile"><small>맞힌 낱말</small><b>${s.words}개</b></div>`;}).join('');
+ const jp=l=>SAVE.jr[l].filter(v=>v>=1).length,jrRow=`<div class="tile"><small>자리 연습 한글</small><b>${jp('ko')} / 8단계</b></div><div class="tile"><small>자리 연습 영어</small><b>${jp('en')} / 8단계</b></div><div class="tile"><small>받은 별</small><b>★ ${SAVE.jr.ko.concat(SAVE.jr.en).reduce((a,b)=>a+b,0)}</b></div><div class="tile"><small>연습한 판</small><b>${SAVE.jr.plays}번</b></div>`;
  const codeBox=`<div class="coderow"><textarea class="code" id="meCode" readonly placeholder="[기록 코드 만들기]를 누르면 여기에 코드가 생겨요">${code||''}</textarea><div style="display:flex;flex-direction:column;gap:8px"><button class="gbtn" data-act="me-code">기록 코드 만들기</button><button class="sbtn" data-act="copy" data-t="meCode">복사</button></div></div>`;
  const body=SYNC?`<h3>🔗 반 랭킹 자동 연동</h3><div class="coinlist" style="display:block"><div><span>${SAVE.syncPending?'⏳ 아직 보내지 못한 기록이 있어요. 인터넷 연결을 확인해 주세요.':'✅ 게임이 끝날 때마다 기록이 선생님께 자동으로 보내져요.'}</span><span>${SAVE.syncAt?`마지막 전송 ${ago(SAVE.syncAt)}`:''}</span></div></div>
   <div class="btnrow"><button class="sbtn inline" data-act="me-push">지금 보내기</button></div><p class="msg ${msg&&msg.ok?'ok':''}">${msg?esc(msg.t):''}</p>
@@ -2194,7 +2331,8 @@ function renderMe(code,msg){const rows=READY.map(g=>{const s=SAVE.games[g.id];re
  :`<h3>① 선생님께 내 기록 보내기</h3>${codeBox}<p class="note">코드를 복사해서 선생님이 알려 준 곳(예: 클래스룸 댓글)에 붙여 넣어요.</p>
   <h3>② 반 랭킹 코드 넣기</h3><div class="coderow"><textarea class="code" id="meImport" placeholder="선생님께 받은 반 랭킹 코드(TJR1.으로 시작)를 붙여 넣어요"></textarea><button class="gbtn" data-act="me-import">넣기</button></div><p class="msg" id="meMsg"></p>`;
  $('pMe').innerHTML=`<div class="panel wide"><h2>📋 내 기록</h2><p class="sub">${SAVE.gr&&SAVE.cl?`${SAVE.gr}학년 ${SAVE.cl}반 `:''}${esc(SAVE.no)}번 ${esc(SAVE.name)} · 별지기 Lv.${charLevel()} · 지금까지 받은 코인 ${SAVE.stats.coins.toLocaleString()}</p>
- <div class="recgrid">${rows}</div>${body}
+ ${jrAll('ko')||jrAll('en')?`<div class="badges">${jrAll('ko')?'<span class="badge">🏅 한글 자리 연습 통과</span>':''}${jrAll('en')?'<span class="badge">🏅 영어 자리 연습 통과</span>':''}</div>`:''}
+ <div class="recgrid">${rows}${jrRow}</div>${body}
  <div class="btnrow"><button class="gbtn inline" data-act="close" data-p="pMe">닫기</button></div></div>`;}
 
 /* ---------- 선생님 모드 ---------- */
@@ -2252,8 +2390,8 @@ const verCell=v=>!vnum(v)?'<span class="vold">예전 (새로고침)</span>':vnum
 // 학생 크롬북이 올린 가방([학생 가방] 탭)을 반마다 보고, 고친 것은 [선생님 조정] 탭에 쌓였다가 그 크롬북이 다음에 연결할 때 조용히 적용돼요.
 const tmViews=()=>`<div class="tabs" style="margin:0 0 6px"><button class="chip sm2 ${tmView==='list'?'on':''}" data-act="tm-view" data-v="list">👤 이름·번호·계정</button><button class="chip sm2 ${tmView==='bag'?'on':''}" data-act="tm-view" data-v="bag">🎒 코인·아이템·장식</button></div>`;
 const tfmt=t=>{if(!t)return '-';const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;};
-const CLOG_K={g:'게임 보상',bi:'아이템 샀어요',bd:'장식 샀어요',bu:'강화했어요',bs:'스킨 샀어요',bl:'섬을 넓혔어요',sd:'장식을 팔았어요',pz:'광장 모금',cap:'아이템 한도 정리(돌려받음)',adj:'선생님 조정',tg:'선생님이 이 크롬북에서 줌',bg:'땅을 칠했어요'};
-function clogText(x){const k=x.k,id=x.x,nm=k==='bi'?(ITEMS[id]||{}).name:k==='bd'||k==='sd'?(DECO[id]||{}).name:k==='bu'?(UPS[id]||{}).name:k==='bs'?(SKINS[id]||{}).name:k==='g'?(id==='meteor_en'?'별똥별 영어':'별똥별 한글'):k==='bl'?`${id}칸`:k==='bg'?(GTYPE[id]||{}).name:'';
+const CLOG_K={g:'게임 보상',jr:'자리 연습 보상',bi:'아이템 샀어요',bd:'장식 샀어요',bu:'강화했어요',bs:'스킨 샀어요',bl:'섬을 넓혔어요',sd:'장식을 팔았어요',pz:'광장 모금',cap:'아이템 한도 정리(돌려받음)',adj:'선생님 조정',tg:'선생님이 이 크롬북에서 줌',bg:'땅을 칠했어요'};
+function clogText(x){const k=x.k,id=x.x,nm=k==='bi'?(ITEMS[id]||{}).name:k==='bd'||k==='sd'?(DECO[id]||{}).name:k==='bu'?(UPS[id]||{}).name:k==='bs'?(SKINS[id]||{}).name:k==='g'?(id==='meteor_en'?'별똥별 영어':'별똥별 한글'):k==='bl'?`${id}칸`:k==='bg'?(GTYPE[id]||{}).name:k==='jr'?id:'';
  return `${CLOG_K[k]||k}${nm?` · ${nm}`:''}${(+x.n||0)>1&&k!=='g'?` ×${x.n}`:''}`;}
 function tBagLoad(key){const[gr,cl]=key.split('-').map(Number),prev=tBag&&tBag.key===key?tBag:null;
  tBag={key,gr,cl,t:prev?prev.t:0,list:prev?prev.list:[],adj:prev?prev.adj:[],loading:true,err:'',busy:false};
@@ -2407,16 +2545,594 @@ function teacherAdd(){const txt=($('tCodes')||{}).value||'';const codes=txt.matc
 function copyFrom(id){const t=$(id);if(!t||!t.value){ttoast('먼저 코드를 만들어 주세요');return;}t.focus();t.select();
  const done=()=>ttoast('복사했어요! 붙여 넣기(Ctrl+V) 하세요'),fail=()=>ttoast('Ctrl+C를 눌러 복사해 주세요');
  try{navigator.clipboard.writeText(t.value).then(done,fail);}catch(e){fail();}}
+/* ---------- 자리 연습: 화면 자판과 두 손 그림 ----------
+   손가락마다 길이가 다르다. 기본 자리에서는 손가락을 구부려 손끝을 한 줄에 맞추고(긴 손가락일수록 더 구부린다),
+   먼 키를 칠 때는 그 손가락을 뻗고(아랫줄은 더 구부리고) 손도 조금 따라간다. 손마다 윤곽선은 하나.
+   KBH.keys({mode,u}) 자판 · KBH.dyn({mode,target:[키…],wrong,k,u}) 칠 자리와 두 손 · KBH.svg({…,x,y}) 둘 다 */
+const KBH=(function(){
+  // ---------- 자판 배열 (한 칸 = 1u) ----------
+  // [id, 영문, 한글, 너비, 종류, 윗글자(한글 Shift), 윗글자(영문 Shift)]
+  const ROWS = [
+    [['Backquote', '`', '', 1, 'dim'], ['Digit1', '1', '', 1, 'dim'], ['Digit2', '2', '', 1, 'dim'], ['Digit3', '3', '', 1, 'dim'], ['Digit4', '4', '', 1, 'dim'], ['Digit5', '5', '', 1, 'dim'], ['Digit6', '6', '', 1, 'dim'],
+     ['Digit7', '7', '', 1, 'dim'], ['Digit8', '8', '', 1, 'dim'], ['Digit9', '9', '', 1, 'dim'], ['Digit0', '0', '', 1, 'dim'], ['Minus', '-', '', 1, 'dim'], ['Equal', '=', '', 1, 'dim'], ['Backspace', '⌫', '', 2, 'mod']],
+    [['Tab', 'Tab', '', 1.5, 'mod'], ['KeyQ', 'Q', 'ㅂ', 1, '', 'ㅃ'], ['KeyW', 'W', 'ㅈ', 1, '', 'ㅉ'], ['KeyE', 'E', 'ㄷ', 1, '', 'ㄸ'], ['KeyR', 'R', 'ㄱ', 1, '', 'ㄲ'], ['KeyT', 'T', 'ㅅ', 1, '', 'ㅆ'],
+     ['KeyY', 'Y', 'ㅛ'], ['KeyU', 'U', 'ㅕ'], ['KeyI', 'I', 'ㅑ'], ['KeyO', 'O', 'ㅐ', 1, '', 'ㅒ'], ['KeyP', 'P', 'ㅔ', 1, '', 'ㅖ'], ['BracketLeft', '[', '', 1, 'dim'], ['BracketRight', ']', '', 1, 'dim'], ['Backslash', '\\', '', 1.5, 'dim']],
+    [['CapsLock', '', '', 1.75, 'mod'], ['KeyA', 'A', 'ㅁ'], ['KeyS', 'S', 'ㄴ'], ['KeyD', 'D', 'ㅇ'], ['KeyF', 'F', 'ㄹ'], ['KeyG', 'G', 'ㅎ'], ['KeyH', 'H', 'ㅗ'], ['KeyJ', 'J', 'ㅓ'], ['KeyK', 'K', 'ㅏ'], ['KeyL', 'L', 'ㅣ'],
+     ['Semicolon', ';', '', 1, ''], ['Quote', "'", '', 1, 'dim'], ['Enter', 'Enter', '', 2.25, 'mod']],
+    [['ShiftLeft', 'Shift', '', 2.25, 'mod'], ['KeyZ', 'Z', 'ㅋ'], ['KeyX', 'X', 'ㅌ'], ['KeyC', 'C', 'ㅊ'], ['KeyV', 'V', 'ㅍ'], ['KeyB', 'B', 'ㅠ'], ['KeyN', 'N', 'ㅜ'], ['KeyM', 'M', 'ㅡ'],
+     ['Comma', ',', '', 1, 'dim'], ['Period', '.', '', 1, 'dim'], ['Slash', '/', '', 1, 'dim'], ['ShiftRight', 'Shift', '', 2.75, 'mod']],
+    [['ControlLeft', 'Ctrl', '', 1.5, 'mod'], ['AltLeft', 'Alt', '', 1.5, 'mod'], ['Space', '', '', 7, 'space'], ['AltRight', 'Alt', '', 1.5, 'mod'], ['ControlRight', 'Ctrl', '', 1.5, 'mod'],
+     ['ArrowLeft', '◀', '', .66, 'mod'], ['ArrowUD', '▲▼', '', .68, 'mod'], ['ArrowRight', '▶', '', .66, 'mod']]
+  ];
+  // 손가락: Lp Lr Lm Li / Ri Rm Rr Rp / T(엄지)
+  const ZONE = {
+    Lp: 'Backquote Digit1 Tab KeyQ CapsLock KeyA ShiftLeft KeyZ ControlLeft', Lr: 'Digit2 KeyW KeyS KeyX', Lm: 'Digit3 KeyE KeyD KeyC',
+    Li: 'Digit4 Digit5 KeyR KeyT KeyF KeyG KeyV KeyB', Ri: 'Digit6 Digit7 KeyY KeyU KeyH KeyJ KeyN KeyM', Rm: 'Digit8 KeyI KeyK Comma',
+    Rr: 'Digit9 KeyO KeyL Period', Rp: 'Digit0 Minus Equal Backspace KeyP BracketLeft BracketRight Backslash Semicolon Quote Enter Slash ShiftRight ControlRight',
+    T: 'Space AltLeft AltRight'
+  };
+  const FING = {};
+  for (const f in ZONE) ZONE[f].split(' ').forEach(k => { FING[k] = f; });
+  const HOME = { Lp: 'KeyA', Lr: 'KeyS', Lm: 'KeyD', Li: 'KeyF', Ri: 'KeyJ', Rm: 'KeyK', Rr: 'KeyL', Rp: 'Semicolon' };
+  // 손가락 색 (연한 바탕 / 진한 강조)
+  const COL = { p: ['#ffd9e3', '#ff5c8a'], r: ['#ffe9b8', '#f5a300'], m: ['#cdf2d6', '#22b04f'], i: ['#d3e6ff', '#2f7df6'], t: ['#e6defd', '#8a6cf0'] };
+  const fc = f => COL[f === 'T' ? 't' : f[1]];
+  const INK = '#4a1f2b';
+  const FNAME = { Lp: '왼손 새끼', Lr: '왼손 약지', Lm: '왼손 중지', Li: '왼손 검지', Ri: '오른손 검지', Rm: '오른손 중지', Rr: '오른손 약지', Rp: '오른손 새끼', T: '엄지' };
+
+  // 키 자리 (u 단위, 자판 왼쪽 위가 0,0)
+  const KEYS = {};
+  ROWS.forEach((row, r) => {
+    let x = 0;
+    row.forEach(k => {
+      const [id, en, ko, w = 1, type = '', ks = ''] = k;
+      KEYS[id] = { id, en, ko, ks, w, type, x, y: r, cx: x + w / 2, cy: r + .5, f: FING[id] || '' };
+      x += w;
+    });
+  });
+
+  // ---------- 작은 벡터 도움 ----------
+  const P = (x, y) => ({ x, y }), add = (a, b) => P(a.x + b.x, a.y + b.y), sub = (a, b) => P(a.x - b.x, a.y - b.y), mul = (a, k) => P(a.x * k, a.y * k);
+  const len = a => Math.hypot(a.x, a.y), nrm = a => mul(a, 1 / (len(a) || 1)), lerp = (a, b, t) => P(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+
+  // 점들을 지나는 매끈한 닫힌 곡선 (centripetal Catmull-Rom → 3차 베지어)
+  function smoothClosed(pts, S) {
+    const n = pts.length, q = i => pts[(i + n) % n];
+    let d = `M${(q(0).x * S).toFixed(1)},${(q(0).y * S).toFixed(1)}`;
+    for (let i = 0; i < n; i++) {
+      const p0 = q(i - 1), p1 = q(i), p2 = q(i + 1), p3 = q(i + 2);
+      const d1 = Math.pow(len(sub(p1, p0)), .5) || 1e-4, d2 = Math.pow(len(sub(p2, p1)), .5) || 1e-4, d3 = Math.pow(len(sub(p3, p2)), .5) || 1e-4;
+      const b1 = mul(add(sub(mul(p2, d1 * d1), mul(p0, d2 * d2)), mul(p1, 2 * d1 * d1 + 3 * d1 * d2 + d2 * d2)), 1 / (3 * d1 * (d1 + d2)));
+      const b2 = mul(add(sub(mul(p1, d3 * d3), mul(p3, d2 * d2)), mul(p2, 2 * d3 * d3 + 3 * d3 * d2 + d2 * d2)), 1 / (3 * d3 * (d3 + d2)));
+      d += `C${(b1.x * S).toFixed(1)},${(b1.y * S).toFixed(1)} ${(b2.x * S).toFixed(1)},${(b2.y * S).toFixed(1)} ${(p2.x * S).toFixed(1)},${(p2.y * S).toFixed(1)}`;
+    }
+    return d + 'Z';
+  }
+
+  // ---------- 손 (2026-11-14: 길이가 다른 손가락을 구부려 올리고, 먼 키는 뻗는 손) ----------
+  // 위에서 내려다본 손. 손가락은 길이가 서로 달라서, 손끝을 기본 자리 한 줄에 맞추려면 긴 손가락일수록 더 구부린다.
+  // 구부린 손가락은 위에서 보면 짧아 보이고(끝 마디와 손톱이 눕는다), 먼 키로 뻗으면 길게 펴진다. 손도 조금 따라간다.
+  // 왼손을 기준으로 만들고, 오른손은 F·J 가운데를 축으로 거울에 비춘다. 손마다 윤곽선은 하나(매끈한 닫힌 곡선).
+  const D2R = Math.PI / 180, MID = (KEYS.KeyF.cx + KEYS.KeyJ.cx) / 2;
+  const cosd = a => Math.cos(a * D2R), sind = a => Math.sin(a * D2R), clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const rotv = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return P(p.x * c - p.y * s, p.x * s + p.y * c); };
+  const mirP = p => P(2 * MID - p.x, p.y);
+  const ORDER = ['p', 'r', 'm', 'i'];
+  // 손 좌표: 가운뎃손가락 손등 마디가 (0,0), +x = 엄지 쪽, +y = 손목 쪽 (단위 u = 키 한 칸)
+  const HAND = {
+    O: P(4.0, 5.12),          // 기본 자리에서 가운뎃손가락 손등 마디가 놓이는 곳
+    th: 11 * D2R,             // 손이 안쪽으로 돌아간 각
+    aim: .14,                 // 손끝은 키 가운데보다 이만큼 아래에 둔다 (키 글자가 보이게)
+    F: {                      // K = 손등 마디 자리, l = 마디 길이(뿌리 → 끝), r = 반너비(손등 마디 · 둘째 마디 · 첫째 마디 · 손끝)
+      p: { K: P(-1.64, .45), l: [1.36, .86, .80], r: [.335, .30, .27, .25], bow: .06 },
+      r: { K: P(-.88, .18), l: [1.64, 1.04, .88], r: [.37, .335, .30, .28], bow: .03 },
+      m: { K: P(0, 0), l: [1.76, 1.12, .92], r: [.39, .355, .315, .295], bow: 0 },
+      i: { K: P(.93, .15), l: [1.64, 1.02, .88], r: [.385, .35, .31, .29], bow: -.045 }
+    },
+    T: { K: P(1.72, 1.3), r: [.44, .385, .335], home: P(6.30, 4.62) },   // 엄지: 뿌리 마디 · 반너비 · 손끝(스페이스 위)
+    ulnar: [[-1.62, 4.7, 1.0], [-1.68, 3.5, 1.1], [-1.98, 2.6, 1.3], [-2.12, 1.75, 1.45], [-2.07, 1.02, 1.55]],   // 손날 (아래 → 위) [x, y, 높이]
+    purl: [1.40, .66, 1.3],                                                                                      // 검지와 엄지 사이
+    thenar: [[1.78, 2.2, 1.2], [1.3, 3.1, 1.1], [.84, 3.8, 1.05], [.8, 4.7, 1.0]]                                // 엄지 두덩 → 손목
+  };
+  // 구부림 t (0 = 쭉 폄, 1 = 꼭 구부림): 세 마디가 바닥과 이루는 각
+  const TMAX = 1.22, TREST = .92;
+  const PHI = t => [4 + 28 * t, 12 + 60 * t, Math.min(86, 20 + 66 * t)];
+  function proj(F, t) { const ph = PHI(t); return F.l[0] * cosd(ph[0]) + F.l[1] * cosd(ph[1]) + (F.l[2] - F.r[3]) * cosd(ph[2]); }
+  function solveT(F, Dc) {
+    if (Dc >= proj(F, 0)) return 0; if (Dc <= proj(F, TMAX)) return TMAX;
+    let a = 0, b = TMAX; for (let k = 0; k < 30; k++) { const m = (a + b) / 2; if (proj(F, m) > Dc) a = m; else b = m; } return (a + b) / 2;
+  }
+  // 손등 마디 M에서 손끝 A까지 손가락 하나 (위에서 본 모습)
+  function fingerPose(F, M, A) {
+    const v = sub(A, M), L = len(v) || 1e-6, d = mul(v, 1 / L), n = P(d.y, -d.x);   // n = 새끼 쪽
+    const r3 = F.r[3], Dc = Math.max(.3, L - r3), t = solveT(F, Dc), ph = PHI(t);
+    let a1 = F.l[0] * cosd(ph[0]), a2 = F.l[1] * cosd(ph[1]), a3 = (F.l[2] - r3) * cosd(ph[2]);
+    const k = Dc / (a1 + a2 + a3); a1 *= k; a2 *= k;
+    const z3 = r3, z2 = z3 + (F.l[2] - r3) * sind(ph[2]), z1 = z2 + F.l[1] * sind(ph[1]), z0 = z1 + F.l[0] * sind(ph[0]), zk = Math.min(1, 1.9 / z0);
+    const a = { F, M, A, d, n, t, ph, s: [a1, a1 + a2, Dc], sw: .4 * a1, z: [z0 * zk, z1 * zk, z2 * zk, z3 * .5],
+      bw: (F.bow || 0) * (.35 + .65 * sind(ph[1] - ph[0])) };   // 구부릴수록 둘째 마디가 바깥으로 살짝 벌어진다
+    a.C1 = center(a, a1); a.C2 = center(a, a1 + a2); a.C3 = add(M, mul(d, Dc));
+    return a;
+  }
+  // 손가락 가운데 선 (뿌리에서 s만큼 간 곳)
+  function center(a, s) {
+    const s1 = a.s[0], s3 = a.s[2], w = s <= 0 || s >= s3 ? 0 : s < s1 ? .5 * (1 - Math.cos(Math.PI * s / s1)) : .5 * (1 + Math.cos(Math.PI * (s - s1) / (s3 - s1)));
+    return add(add(a.M, mul(a.d, s)), mul(a.n, a.bw * w));
+  }
+  function rad(a, s) {   // 반너비: 뿌리에서 끝으로 가늘어지고, 마디에서 살짝 도톰하다
+    const s1 = a.s[0], s2 = a.s[1], s3 = a.s[2], r = a.F.r, bump = (c, w) => Math.exp(-((s - c) / w) * ((s - c) / w));
+    const knob = .014 * bump(s1, .2) + .008 * bump(s2, .14);
+    if (s <= 0) return r[0]; if (s < s1) return r[0] + (r[1] - r[0]) * s / s1 + knob;
+    if (s < s2) return r[1] + (r[2] - r[1]) * (s - s1) / Math.max(1e-6, s2 - s1) + knob;
+    return r[2] + (r[3] - r[2]) * Math.min(1, (s - s2) / Math.max(1e-6, s3 - s2)) + knob * Math.max(0, 1 - (s - s2) / Math.max(1e-6, s3 - s2));
+  }
+  function zAt(a, s) {
+    const s1 = a.s[0], s2 = a.s[1], s3 = a.s[2], z = a.z;
+    if (s <= 0) return z[0]; if (s < s1) return z[0] + (z[1] - z[0]) * s / s1;
+    if (s < s2) return z[1] + (z[2] - z[1]) * (s - s1) / Math.max(1e-6, s2 - s1);
+    return z[2] + (z[3] - z[2]) * Math.min(1, (s - s2) / Math.max(1e-6, s3 - s2));
+  }
+  const edge = (a, s, sgn) => add(center(a, s), mul(a.n, sgn * rad(a, s)));   // sgn +1 = 새끼 쪽, −1 = 엄지 쪽
+  function segDist(p, a, b) {
+    const ab = sub(b, a), t = clamp(((p.x - a.x) * ab.x + (p.y - a.y) * ab.y) / (ab.x * ab.x + ab.y * ab.y || 1), 0, 1);
+    return { d: len(sub(p, add(a, mul(ab, t)))), t };
+  }
+  // a의 손끝·둘째 마디와 b의 몸통 사이 틈 (음수면 겹침)
+  function clear1(a, b) {
+    let best = { g: 9, lever: 1 };
+    [[a.C3, a.F.r[3], a.s[2]], [a.C1, a.F.r[1], a.s[0]]].forEach(q => {
+      const r = segDist(q[0], b.M, b.C3), g = r.d - q[1] - rad(b, r.t * b.s[2]);
+      if (g < best.g) best = { g, lever: a.s[2] / q[2] };
+    });
+    return best;
+  }
+  function thumbPose(K1, A) {
+    const T = HAND.T, v = sub(A, K1); let L = len(v); const d = mul(v, 1 / L), n = P(d.y, -d.x);
+    if (L > 2.42) { L = 2.42; A = add(K1, mul(d, L)); } else if (L < 1.5) { L = 1.5; A = add(K1, mul(d, L)); }
+    const C3 = add(A, mul(d, -T.r[2])), bow = .05 + Math.max(0, 2.2 - L) * .35;
+    return { K1, K2: add(add(K1, mul(d, (L - T.r[2]) * .5)), mul(n, -bow)), C3, A, d, n, L };
+  }
+  const homeAim = {}, homeM = {};
+  ORDER.forEach(f => { const K = KEYS[HOME['L' + f]]; homeAim[f] = P(K.cx, K.cy + HAND.aim); homeM[f] = add(HAND.O, rotv(HAND.F[f].K, HAND.th)); });
+  const homeK1 = add(HAND.O, rotv(HAND.T.K, HAND.th));
+  // 손끝이 닿을 곳 (실제 좌표): 넓은 키는 가까운 쪽, 보통 키는 제 줄 쪽으로 살짝
+  function aimFor(key, fid) {
+    const K = KEYS[key], H = KEYS[HOME[fid]];
+    const x = K.w > 1.2 ? clamp(H.cx, K.x + .5, K.x + K.w - .5) : K.cx + clamp((H.cx - K.cx) * .3, -.15, .15);
+    return P(x, K.cy + HAND.aim);
+  }
+  // 손 하나의 자세. act = null(기본 자리) 또는 { f: 'm', A: 손끝이 갈 곳(왼손 기준 좌표) }
+  function poseHand(act) {
+    let tau = P(0, 0), om = 0, piv = homeM.i;
+    if (act && HAND.F[act.f]) {
+      const F = HAND.F[act.f], dl = sub(act.A, homeAim[act.f]);
+      // 손가락만 가는 게 아니라 손도 조금 따라간다. 그래도 안 닿으면(또는 너무 접히면) 더 옮긴다.
+      let dM = P(dl.x * (act.f === 'p' ? .45 : .35), dl.y * (dl.y < 0 ? .28 : .3));
+      for (let k = 0; k < 4; k++) {
+        const M = add(homeM[act.f], dM), v = sub(act.A, M), L = len(v), u = mul(v, 1 / L), Dc = L - F.r[3];
+        const hi = proj(F, 0) * .95, lo = proj(F, TMAX);
+        if (Dc > hi) dM = add(dM, mul(u, Dc - hi)); else if (Dc < lo) dM = sub(dM, mul(u, lo - Dc)); else break;
+      }
+      // 새끼·약지로 칠 때는 검지 쪽을, 검지로 칠 때는 새끼 쪽을 축으로 손을 조금 돌린다
+      const lam = { p: .5, r: .65, m: 1, i: .75 }[act.f];
+      piv = act.f === 'i' ? homeM.p : homeM.i;
+      const arm = homeM[act.f].x - piv.x;
+      om = act.f === 'm' ? 0 : clamp((1 - lam) * dM.y / arm, -.2, .2);
+      tau = sub(add(homeM[act.f], dM), add(piv, rotv(sub(homeM[act.f], piv), om)));
+    }
+    const Hm = p => add(add(piv, rotv(sub(p, piv), om)), tau);        // 기본 자세의 자리 → 지금 자리
+    const HL = q => Hm(add(HAND.O, rotv(q, HAND.th)));                // 손 좌표 → 지금 자리
+    const fp = {};
+    ORDER.forEach(f => {
+      const F = HAND.F[f], M = Hm(homeM[f]); let A;
+      if (act && act.f === f) A = act.A;
+      else {   // 다른 손가락은 기본 자리에 둔다. 손이 옮겨 가서 모자라거나 남으면 손끝이 조금 미끄러진다.
+        A = add(homeAim[f], P((M.x - homeM[f].x) * .3, 0));
+        const v = sub(A, M), L = len(v), u = mul(v, 1 / L), Dc = L - F.r[3], hi = proj(F, 0) * .955, lo = proj(F, TREST);
+        if (Dc > hi) A = add(M, mul(u, hi + F.r[3])); else if (Dc < lo) A = add(M, mul(u, lo + F.r[3]));
+      }
+      fp[f] = fingerPose(F, M, A);
+    });
+    // 이웃 손가락과 겹치지 않게 손끝을 옆으로 조금 비킨다
+    for (let pass = 0; pass < 4; pass++) for (let k = 0; k < 3; k++) {
+      const ka = ORDER[k], kb = ORDER[k + 1], a = fp[ka], b = fp[kb], ca = clear1(a, b), cb = clear1(b, a), GAP = .045;
+      if (Math.min(ca.g, cb.g) >= GAP) continue;
+      if (ca.g <= cb.g) fp[ka] = fingerPose(a.F, a.M, add(a.A, mul(a.n, Math.min(.3, (GAP - ca.g) * ca.lever))));
+      else fp[kb] = fingerPose(b.F, b.M, add(b.A, mul(b.n, -Math.min(.3, (GAP - cb.g) * cb.lever))));
+    }
+    // 엄지: 스페이스 위에서 손을 따라 옆으로 움직이고, 검지와 겹치면 비킨다
+    const T = HAND.T, K1 = HL(T.K);
+    let At = P(T.home.x + (K1.x - homeK1.x) * .9, clamp(T.home.y + (K1.y - homeK1.y) * .6, 4.36, 4.8)), tp = thumbPose(K1, At);
+    for (let k = 0; k < 5; k++) {
+      const r1 = segDist(tp.C3, fp.i.M, fp.i.C3), r2 = segDist(tp.K2, fp.i.M, fp.i.C3);
+      const g = Math.min(r1.d - T.r[2] - rad(fp.i, r1.t * fp.i.s[2]), r2.d - T.r[1] - rad(fp.i, r2.t * fp.i.s[2]));
+      if (g >= .07) break;
+      At = add(tp.A, P(.09 - g, 0)); tp = thumbPose(K1, At);
+    }
+    return { f: fp, t: tp, HL, act };
+  }
+  // 손가락 옆선 (뿌리 → 끝). 마디가 너무 붙으면 점을 줄인다.
+  function sidePts(a, sgn, s0) {
+    const s1 = a.s[0], s2 = a.s[1], s3 = a.s[2], out = [], put = s => out.push({ p: edge(a, s, sgn), z: zAt(a, s) });
+    put(s0);
+    if (s1 - s0 > .3) { if (s1 - s0 > .9) put((s0 + s1) / 2); if (s3 - s1 > .2) put(s1); }
+    if (s2 - s1 > .24 && s3 - s2 > .16) put(s2);
+    else if (s3 - Math.max(s1, s0) > .6) put((Math.max(s1, s0) + s3) / 2);
+    return out;
+  }
+  function tipArc(a, g) {   // 새끼 쪽 → 꼭대기 → 엄지 쪽
+    const out = [], r = a.F.r[3] * g;
+    for (let k = 0; k <= 6; k++) { const an = Math.PI * k / 6; out.push(add(a.C3, add(mul(a.n, r * Math.cos(an)), mul(a.d, r * 1.03 * Math.sin(an))))); }
+    return out;
+  }
+  // 손가락 한 토막 (s0부터 손끝까지, 조금 넓게: 손 윤곽으로 잘라 쓴다). cap > 0이면 뿌리 쪽을 마디 모양으로 둥글게.
+  function fingerPoly(a, s0, cap) {
+    const g = 1.14, ss = [s0].concat([a.s[0], a.s[1]].filter(s => s > s0 + .15 && s < a.s[2] - .12)), L = [], Rr = [];
+    ss.forEach(s => { const c = center(a, s), r = rad(a, s) * g; L.push(add(c, mul(a.n, r))); Rr.push(add(c, mul(a.n, -r))); });
+    const out = L.concat(tipArc(a, g), Rr.reverse());
+    if (cap) out.push(center(a, s0 + cap));
+    return out;
+  }
+  // 손 하나의 윤곽 (왼손 기준, 시계 방향). 점마다 높이 z (그림자에 쓴다)
+  function outline3(ps) {
+    const o = [], put = (p, z) => o.push({ x: p.x, y: p.y, z });
+    HAND.ulnar.forEach(q => put(ps.HL(P(q[0], q[1])), q[2]));
+    ORDER.forEach((k, idx) => {
+      const a = ps.f[k];
+      sidePts(a, 1, idx === 0 ? 0 : a.sw + .2).forEach(q => put(q.p, q.z));
+      tipArc(a, 1).forEach(p => put(p, a.z[3]));
+      sidePts(a, -1, idx === 3 ? 0 : a.sw + .2).reverse().forEach(q => put(q.p, q.z));
+      if (idx < 3) {   // 손가락 사이 (물갈퀴)
+        const b = ps.f[ORDER[idx + 1]], w = lerp(edge(a, a.sw, -1), edge(b, b.sw, 1), .5);
+        put(add(w, mul(add(a.d, b.d), -.015)), (zAt(a, a.sw) + zAt(b, b.sw)) / 2);
+      }
+    });
+    const t = ps.t, T = HAND.T, q = HAND.purl, mid = lerp(t.K2, t.C3, .5), longTip = len(sub(t.C3, t.K2)) > .5;
+    put(ps.HL(P(q[0], q[1])), q[2]);
+    put(add(t.K2, mul(t.n, T.r[1])), .5);
+    if (longTip) put(add(mid, mul(t.n, (T.r[1] + T.r[2]) / 2)), .3);
+    for (let k = 0; k <= 6; k++) { const an = Math.PI * k / 6; put(add(t.C3, add(mul(t.n, T.r[2] * Math.cos(an)), mul(t.d, T.r[2] * 1.03 * Math.sin(an)))), .15); }
+    if (longTip) put(add(mid, mul(t.n, -(T.r[1] + T.r[2]) / 2 - .01)), .3);
+    put(add(t.K2, mul(t.n, -(T.r[1] + .03))), .5);
+    put(add(t.K1, mul(t.n, -(T.r[0] + .05))), .9);
+    HAND.thenar.forEach(q2 => put(ps.HL(P(q2[0], q2[1])), q2[2]));
+    return o;
+  }
+
+  function handSVG(hand, S, ps, on, opt) {
+    const R = hand === 'R', id = (opt.idp || 'h') + hand, ink = '#6b4232';   // id는 쓰는 곳마다 idp를 다르게 준다 (같은 자세면 같은 글이 나오게)
+    const mx = p => R ? P(2 * MID - p.x, p.y) : p, f1 = v => (v * S).toFixed(1);
+    const pstr = p => { const q = mx(p); return `${f1(q.x)},${f1(q.y)}`; };
+    const closed = pts => smoothClosed(pts.map(mx), S);
+    const curve = (a, c, b) => `M${pstr(a)}Q${pstr(sub(mul(c, 2), mul(add(a, b), .5)))} ${pstr(b)}`;   // a → (c를 지나) → b
+    const angOf = d => Math.atan2(R ? -d.x : d.x, -d.y) / D2R;   // 위쪽이 0°, 시계 방향 +
+    const lw = Math.max(1.1, S * .034), o3 = outline3(ps);
+    const d = closed(o3), KZ = .2;
+    const dsh = smoothClosed(o3.map(q => { const m = mx(q); return P(m.x + KZ * q.z * .5, m.y + KZ * q.z * .9); }), S);
+    const lg = (gid, a, b, stops) => { const A = mx(a), B = mx(b); return `<linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${f1(A.x)}" y1="${f1(A.y)}" x2="${f1(B.x)}" y2="${f1(B.y)}">${stops.map(s => `<stop offset="${s[0]}" stop-color="${s[1]}" stop-opacity="${s[2]}"/>`).join('')}</linearGradient>`; };
+    let defs = `<path id="${id}o" d="${d}"/><clipPath id="${id}c"><use href="#${id}o"/></clipPath>`   // 윤곽은 한 번만 쓰고 여러 번 불러 쓴다
+      + `<linearGradient id="${id}k" gradientUnits="userSpaceOnUse" x1="0" y1="${f1(2.4)}" x2="0" y2="${f1(7.4)}"><stop offset="0" stop-color="#ffeee4"/><stop offset=".55" stop-color="#f9d2ba"/><stop offset="1" stop-color="#f1c0a2"/></linearGradient>`
+      + `<radialGradient id="${id}h"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>`;
+    let shade = '', lit = '', hi = '', marks = '', nails = '';
+    const ell = (c, rx, ry, ang, op) => { const q = mx(c); return `<ellipse cx="${f1(q.x)}" cy="${f1(q.y)}" rx="${f1(rx)}" ry="${f1(ry)}" transform="rotate(${ang.toFixed(1)} ${f1(q.x)} ${f1(q.y)})" fill="url(#${id}h)" opacity="${op.toFixed(2)}"/>`; };
+    const nail = (c, w, h, ang, isOn, col) => { const q = mx(c); return `<rect x="${f1(q.x - w / 2)}" y="${f1(q.y - h / 2)}" width="${f1(w)}" height="${f1(h)}" rx="${f1(Math.min(w * .42, h * .5))}" transform="rotate(${ang.toFixed(1)} ${f1(q.x)} ${f1(q.y)})" fill="${isOn ? '#ffffff' : '#fff4ee'}" fill-opacity="${isOn ? .95 : .62}" stroke="${isOn ? col : '#a87560'}" stroke-opacity="${isOn ? 1 : .8}" stroke-width="${(isOn ? lw * 1.1 : lw * .6).toFixed(1)}"/>`; };
+    const line = (dd, op, w) => `<path d="${dd}" fill="none" stroke="${ink}" stroke-opacity="${op.toFixed(2)}" stroke-width="${(lw * w).toFixed(1)}" stroke-linecap="round"/>`;
+    ORDER.forEach(k => {
+      const a = ps.f[k], key = hand + k, isOn = on.indexOf(key) >= 0, c = fc(key), F = a.F, ang = angOf(a.d);
+      const bend = sind(a.ph[1] - a.ph[0]), steep = sind(a.ph[1]), bend2 = sind(a.ph[2] - a.ph[1]), s1 = a.s[0], s2 = a.s[1], s3 = a.s[2];
+      const sag = .05 + .13 * bend, pc = a.C1;
+      // 둘째 마디 너머는 아래로 꺾여 내려간다: 마디 바로 뒤가 가장 어둡다
+      defs += lg(`${id}s${k}`, add(pc, mul(a.d, sag * .6)), a.A, [[0, '#9a5230', (.5 * bend).toFixed(2)], [.4, '#9a5230', (.2 * steep).toFixed(2)], [1, '#9a5230', (.3 * steep).toFixed(2)]]);
+      shade += `<path d="${closed(fingerPoly(a, s1 - .03, sag + .03))}" fill="url(#${id}s${k})"/>`;
+      if (isOn) {
+        defs += lg(`${id}g${k}`, a.A, a.M, [[0, c[1], .95], [.55, c[1], .6], [1, c[1], 0]]);
+        lit += `<path d="${closed(fingerPoly(a, -.2, 0))}" fill="url(#${id}g${k})"/>`;
+      }
+      // 손등 마디 · 둘째 마디는 볼록 (밝게), 주름은 짧은 곡선
+      hi += ell(add(a.M, mul(a.d, .06)), F.r[0] * .95, .34, ang, .5);
+      hi += ell(add(pc, mul(a.d, -.12)), F.r[1] * .9, .2 + .16 * bend, ang, .25 + .5 * bend);
+      marks += line(curve(add(a.M, add(mul(a.d, .16), mul(a.n, F.r[0] * .55))), add(a.M, mul(a.d, .25)), add(a.M, add(mul(a.d, .16), mul(a.n, -F.r[0] * .55)))), .32, .8);
+      const wA = (.5 + .32 * bend) * F.r[1];
+      marks += line(curve(add(pc, mul(a.n, wA)), add(pc, mul(a.d, sag)), add(pc, mul(a.n, -wA))), .34 + .36 * bend, .85);
+      if (s2 - s1 > .24 && s3 - s2 > .1) {
+        const dc = a.C2, w2 = (.45 + .25 * bend2) * F.r[2];
+        marks += line(curve(add(dc, mul(a.n, w2)), add(dc, mul(a.d, .03 + .07 * bend2)), add(dc, mul(a.n, -w2))), .3 + .3 * bend2, .8);
+      }
+      // 손톱: 끝 마디가 누울수록 짧게 보인다
+      const Ln = Math.max(.13, .5 * F.l[2] * cosd(a.ph[2])), Wn = F.r[3] * 1.36;
+      nails += nail(add(a.A, mul(a.d, -(.06 + Ln / 2))), Wn, Ln, ang, isOn, c[1]);
+    });
+    // 엄지
+    const t = ps.t, T = HAND.T, tOn = on.indexOf('T') >= 0, tc = fc('T'), tang = angOf(t.d);
+    if (tOn) {
+      const poly = [add(t.K1, mul(t.n, T.r[0])), add(t.K2, mul(t.n, T.r[1] * 1.14))];
+      for (let k = 0; k <= 6; k++) { const an = Math.PI * k / 6; poly.push(add(t.C3, add(mul(t.n, T.r[2] * 1.14 * Math.cos(an)), mul(t.d, T.r[2] * 1.14 * Math.sin(an))))); }
+      poly.push(add(t.K2, mul(t.n, -T.r[1] * 1.14)), add(t.K1, mul(t.n, -T.r[0])));
+      defs += lg(`${id}gt`, t.A, t.K1, [[0, tc[1], .95], [.55, tc[1], .6], [1, tc[1], 0]]);
+      lit += `<path d="${closed(poly)}" fill="url(#${id}gt)"/>`;
+    }
+    hi += ell(add(t.K2, mul(t.d, -.05)), T.r[1] * .85, .26, tang, .4);
+    marks += line(curve(add(t.K2, mul(t.n, T.r[1] * .6)), add(t.K2, mul(t.d, .08)), add(t.K2, mul(t.n, -T.r[1] * .6))), .45, .9);
+    nails += nail(add(add(t.A, mul(t.d, -.3)), mul(t.n, -.05)), T.r[2] * 1.2, .46, tang, tOn, tc[1]);
+    // 그림자 → 살 → 그늘 · 색 · 볼록 → 주름 · 손톱 → 윤곽
+    // 가장자리 그늘: 흐림 효과 대신 굵기가 다른 선을 겹쳐서 부드럽게 (글자마다 다시 그려도 가볍게)
+    const rim = [[.3, .06], [.2, .08], [.11, .1]].map(q => `<use href="#${id}o" fill="none" stroke="#a8603a" stroke-opacity="${q[1]}" stroke-width="${(S * q[0]).toFixed(1)}"/>`).join('');
+    return `<defs>${defs}</defs><path d="${dsh}" fill="#2d1c14" fill-opacity=".13"/>`
+      + `<use href="#${id}o" fill="url(#${id}k)" fill-opacity="${opt.alpha || .76}"/>`
+      + `<g clip-path="url(#${id}c)">${rim}${shade}${lit}${hi}</g>${marks}${nails}`
+      + `<use href="#${id}o" fill="none" stroke="${ink}" stroke-width="${lw.toFixed(1)}" stroke-linejoin="round" stroke-opacity=".9"/>`;
+  }
+  // ---------- 자판 + 손 ----------
+  // 키 하나. st: '' 보통 · 't' 칠 자리(노랑) · 'w' 틀린 자리(빨강)
+  function keyG(id, S, mode, st) {
+    const K = KEYS[id], x = K.x * S + 3, y = K.y * S + 3, w = K.w * S - 6, h = S - 6, f = K.f, isT = st === 't';
+    const zone = f && K.type !== 'mod' && K.type !== 'dim' ? fc(f) : null;
+    let fill = K.type === 'mod' || K.type === 'space' ? '#e4e7ec' : zone ? zone[0] : '#eef0f3', stroke = '#9aa0ab', sw = 1.6;
+    if (K.type === 'dim') fill = '#e9ebef';
+    if (id === 'Space') fill = fc('T')[0];
+    if (HOME[f] === id) { stroke = zone[1]; sw = 3; }
+    if (isT) { fill = '#fff6c2'; stroke = INK; sw = 4.5; }          // 칠 자리 = 노란 바탕 + 진한 테두리 (빨강은 '틀림'에만)
+    if (st === 'w') { fill = '#ffccd5'; stroke = '#e0002a'; sw = 4; }
+    let s = `<rect x="${x}" y="${y + 3}" width="${w}" height="${h}" rx="${S * .16}" fill="#00000030"/>`;
+    if (isT) s += `<rect x="${x - 7}" y="${y - 7}" width="${w + 14}" height="${h + 14}" rx="${S * .24}" fill="none" stroke="#ffc400" stroke-opacity=".85" stroke-width="6"/>`;
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${S * .16}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+    const big = mode === 'ko' ? (K.ko || (K.type === 'dim' || K.type === 'mod' ? '' : K.en)) : (K.ko || K.en.length === 1 ? K.en : '');
+    const col = isT ? INK : K.type === 'dim' ? '#9aa0ab' : '#2b2d33';
+    if (K.type === 'mod' || (K.type === 'dim' && !K.ko)) {
+      if (K.en) s += `<text x="${x + w / 2}" y="${y + h / 2 + S * .1}" text-anchor="middle" font-size="${S * (K.en.length > 2 ? .24 : .3)}" fill="${isT ? INK : '#7a808b'}">${K.en}</text>`;
+    } else if (big) {
+      s += `<text x="${x + w / 2}" y="${y + h / 2 + S * .15}" text-anchor="middle" font-size="${S * .44}" fill="${col}">${big}</text>`;
+      if (mode === 'ko' && K.ko) s += `<text x="${x + S * .13}" y="${y + S * .28}" font-size="${S * .2}" fill="#8a909b">${K.en}</text>`;
+      if (mode === 'ko' && K.ks) s += `<text x="${x + w - S * .13}" y="${y + S * .28}" text-anchor="end" font-size="${S * .22}" fill="${isT ? INK : '#6b7280'}">${K.ks}</text>`;
+      if (mode === 'en' && K.ko) s += `<text x="${x + w - S * .13}" y="${y + S * .28}" text-anchor="end" font-size="${S * .2}" fill="#8a909b">${K.ko}</text>`;
+    }
+    if (id === 'KeyF' || id === 'KeyJ') s += `<rect x="${x + w / 2 - S * .14}" y="${y + h - S * .2}" width="${S * .28}" height="${S * .06}" rx="${S * .03}" fill="${isT ? INK : '#5b616d'}"/>`;
+    return s;
+  }
+  // 자판 (바뀌지 않는 부분)
+  function keys(o) {
+    o = o || {}; const S = o.u || 58, mode = o.mode || 'ko';
+    let s = `<rect x="${-S * .22}" y="${-S * .22}" width="${S * 15.44}" height="${S * 5.44}" rx="${S * .36}" fill="#3b3f4a"/><rect x="${-S * .14}" y="${-S * .14}" width="${S * 15.28}" height="${S * 5.28}" rx="${S * .3}" fill="#52576380"/>`;
+    for (const id in KEYS) s += keyG(id, S, mode, '');
+    return s;
+  }
+  // 칠 자리 · 틀린 자리 · 두 손 (글자가 바뀔 때마다 다시 그리는 부분). o.k = 0(손가락이 기본 자리) ~ 1(칠 자리에 닿음)
+  // → { hi: 칠 자리·틀린 자리 키, L: 왼손, R: 오른손, top: 손 위에 다시 쓰는 글자 }
+  function parts(o) {
+    o = o || {}; const S = o.u || 58, mode = o.mode || 'ko', tg = (o.target || []).filter(k => KEYS[k]), on = [], kk = o.k == null ? 1 : o.k, bad = o.wrong && KEYS[o.wrong] ? o.wrong : '';
+    let hi = '', s = '';
+    tg.forEach(k => { const f = FING[k]; if (f && on.indexOf(f) < 0) on.push(f); hi += keyG(k, S, mode, 't'); });
+    if (bad) hi += keyG(bad, S, mode, 'w');
+    // 손: 칠 손가락이 그 키로 가고(뻗거나 더 구부리고), 손도 조금 따라간다
+    const act = { L: null, R: null };
+    tg.forEach(k => {
+      const f = FING[k]; if (!f || f === 'T' || act[f[0]]) return;
+      const H = KEYS[HOME[f]], A = lerp(P(H.cx, H.cy + HAND.aim), aimFor(k, f), kk);
+      act[f[0]] = { f: f[1], A: f[0] === 'R' ? mirP(A) : A };
+    });
+    const hands = o.hands !== false, L = hands ? handSVG('L', S, poseHand(act.L), on, o) : '', R = hands ? handSVG('R', S, poseHand(act.R), on, o) : '';
+    // 손 위에 다시: 칠 자리의 글자(노란 테)와 틀린 자리(빨강)가 손에 가려지지 않게
+    const sh = tg.some(t => /^Shift/.test(t));
+    const top = (k, wrong) => {
+      const K = KEYS[k], x = K.x * S + 3, y = K.y * S + 3, w = K.w * S - 6, h = S - 6, mod = K.type === 'mod';
+      const lab = mod ? K.en : mode === 'ko' ? ((!wrong && sh && K.ks) || K.ko || K.en) : K.en;
+      if (wrong) s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${S * .16}" fill="#ffccd5" fill-opacity=".8" stroke="#e0002a" stroke-width="4.5"/>`;
+      if (lab) s += `<text x="${x + w / 2}" y="${y + h / 2 + S * (mod ? .1 : .15)}" text-anchor="middle" font-size="${S * (mod ? .3 : .44)}" fill="${wrong ? '#e0002a' : INK}" stroke="${wrong ? '#ffccd5' : '#fff6c2'}" stroke-width="${(S * .1).toFixed(1)}" stroke-linejoin="round" paint-order="stroke">${lab}</text>`;
+    };
+    tg.forEach(k => top(k, false));
+    if (bad) top(bad, true);
+    return { hi, L, R, top: s };
+  }
+  const dyn = o => { const p = parts(o); return p.hi + p.L + p.R + p.top; };
+  const svg = o => `<g transform="translate(${(o && o.x) || 0},${(o && o.y) || 0})" font-family="Jua,'Malgun Gothic','Apple SD Gothic Neo',sans-serif">${keys(o)}${dyn(o)}</g>`;
+  return { svg, keys, dyn, parts, KEYS, FING, HOME, COL };
+})();
+
+/* ================= 자리 연습 (2026-11-15) =================
+   손가락마다 맡은 자리를 익히는 연습이에요. 한글·영어 8단계씩, 한 판 40글자.
+   - 누른 키의 '자리'(e.code)로 맞고 틀림을 가려요. 한/영 상태와 상관없어요.
+   - 틀리면 그 키가 빨갛게 보이고, 같은 글자를 다시 쳐요.
+   - 별: ★ 정확도 90% · ★★ 95% + 분당 60타 · ★★★ 97% + 분당 100타 (단계마다 가장 좋은 별을 남겨요)
+   - 별을 1개 이상 받은 판이 하루(한국 시간)에 JR_NEED판이면 그날 별똥별 방어전이 열려요. 한글·영어를 같이 세고, 같은 단계를 다시 해도 세요.
+   - 단계마다 처음 ★ 50코인, 처음 ★★★ 100코인 더. 앞 단계에서 ★ 1개를 받으면 다음 단계가 열려요.
+   - 진행 상황은 이 크롬북 저장(SAVE.jr)에만 있어요: {ko:[단계별 별], en:[…], day:마지막으로 센 날, n:그날 별 받은 판, plays:모두 몇 판}
+   - 선생님 모드를 연 동안에는 잠금(별똥별·단계) 없이 바로 할 수 있어요.
+   - 시작한 바로 뒤 JR_GRACE(0.5초) 동안 눌린 키는 세지 않아요. 시작하려고 누른 ㄹ·ㅓ가 한 번 더 눌려도 틀린 것으로 치지 않게요. */
+const JR_N=40,JR_NEED=3,JR_STAR=[[90,0],[95,60],[97,100]],JR_GRACE=500;
+const JR_LH='KeyA KeyS KeyD KeyF',JR_RH='KeyJ KeyK KeyL',JR_ALL='KeyQ KeyW KeyE KeyR KeyT KeyY KeyU KeyI KeyO KeyP KeyA KeyS KeyD KeyF KeyG KeyH KeyJ KeyK KeyL KeyZ KeyX KeyC KeyV KeyB KeyN KeyM';
+// nw: 이 단계에서 새로 익히는 키 · rv: 섞어 넣는 복습 키 · sh: Shift와 함께 누르는 키 · words: 낱말
+const JR_ST={
+ ko:[{n:'기본 자리',keys:'ㅁ ㄴ ㅇ ㄹ · ㅓ ㅏ ㅣ',nw:JR_LH+' '+JR_RH},
+  {n:'검지 안쪽',keys:'ㅎ ㅗ',nw:'KeyG KeyH',rv:'KeyF KeyJ KeyD KeyK'},
+  {n:'왼손 윗자리',keys:'ㅂ ㅈ ㄷ ㄱ ㅅ',nw:'KeyQ KeyW KeyE KeyR KeyT',rv:JR_LH},
+  {n:'오른손 윗자리',keys:'ㅛ ㅕ ㅑ ㅐ ㅔ',nw:'KeyY KeyU KeyI KeyO KeyP',rv:JR_RH},
+  {n:'아랫자리',keys:'ㅋ ㅌ ㅊ ㅍ · ㅠ ㅜ ㅡ',nw:'KeyZ KeyX KeyC KeyV KeyB KeyN KeyM',rv:JR_LH+' '+JR_RH},
+  {n:'쌍자음 · ㅒㅖ',keys:'ㅃ ㅉ ㄸ ㄲ ㅆ · ㅒ ㅖ',sh:'KeyQ KeyW KeyE KeyR KeyT KeyO KeyP',rv:'KeyK KeyJ KeyL'},
+  {n:'모든 자리',keys:'모든 자모를 섞어서',nw:JR_ALL},
+  {n:'짧은 낱말',keys:'나무 · 하늘 · 바다',words:'나무 하늘 바다 구름 나비 다리 머리 모자 바지 사자 소리 우유 이마 지구 포도 하마 고래 노래 모래 가방 강물 공책 나라 달님 동물 마을 바람 사람 사랑 산길 손님 친구 학교 호수 기차 버스 자리 타자 별빛 은하 마음 여름 겨울 가을 아침 저녁 연필 종이 그림 노랑 파랑 초록 우리 이름 시소 거울 감자 당근 수박 참외'}],
+ en:[{n:'기본 자리',keys:'a s d f · j k l ;',nw:JR_LH+' '+JR_RH+' Semicolon'},
+  {n:'검지 안쪽',keys:'g h',nw:'KeyG KeyH',rv:'KeyF KeyJ KeyD KeyK'},
+  {n:'왼손 윗자리',keys:'q w e r t',nw:'KeyQ KeyW KeyE KeyR KeyT',rv:JR_LH},
+  {n:'오른손 윗자리',keys:'y u i o p',nw:'KeyY KeyU KeyI KeyO KeyP',rv:JR_RH+' Semicolon'},
+  {n:'아랫자리',keys:'z x c v b · n m',nw:'KeyZ KeyX KeyC KeyV KeyB KeyN KeyM',rv:JR_LH+' '+JR_RH},
+  {n:'대문자 (Shift)',keys:'A B C … Z',sh:JR_ALL,rv:JR_ALL},
+  {n:'모든 자리',keys:'모든 글자를 섞어서',nw:JR_ALL},
+  {n:'짧은 낱말',keys:'cat · sun · dog',words:'cat sun dog map pen cup hat red big run jump fish bird book tree star moon milk home play type king lake frog desk hand blue gold ship wind rain snow cake bike ball game key fox zoo quiz van yes web jam box six win hop'}]};
+const JR_FN={p:'새끼',r:'약지',m:'중지',i:'검지',t:'엄지'},JR_FC={p:'#c2185b',r:'#8a5a00',m:'#157a35',i:'#1f5fc4',t:'#5b3fc4'};
+const JR_STARP=(()=>{const p=[];for(let i=0;i<10;i++){const r=i%2?4.7:10.6,a=-Math.PI/2+i*Math.PI/5;p.push((12+r*Math.cos(a)).toFixed(2)+','+(12.8+r*Math.sin(a)).toFixed(2));}return p.join(' ');})();
+let JR=null,jrLang='ko';
+const jrToday=()=>SAVE&&SAVE.jr&&SAVE.jr.day===kstDay()?(+SAVE.jr.n||0):0;   // 오늘 별 받은 판
+const jrFree=()=>TUNLOCK||jrToday()>=JR_NEED;                                // 별똥별 방어전을 해도 되나요
+const jrStOpen=(l,i)=>i===0||TUNLOCK||SAVE.jr[l][i-1]>=1;
+const jrAll=l=>SAVE.jr[l].every(v=>v>=1);
+const jrPips=n=>`<span class="jpips">${Array.from({length:JR_NEED},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</span>`;
+const jrCnt=n=>n>JR_NEED?n+'판':n+' / '+JR_NEED;
+const jrStars=(n,sz)=>`<span class="jstars">${[0,1,2].map(i=>`<svg viewBox="0 0 24 24" width="${sz}" height="${sz}" class="${i<n?'on':''}" aria-hidden="true"><polygon points="${JR_STARP}"/></svg>`).join('')}</span>`;
+function jrNeed(){ttoast(`오늘 자리 연습을 ${JR_NEED}판 하면 별똥별 방어전이 열려요 (지금 ${jrToday()}판)`);const c=$('gJr');if(c){c.classList.remove('wig');void c.offsetWidth;c.classList.add('wig');}}
+const jrTodayLine=(n,more)=>n>=JR_NEED?`<div class="jtoday done">✔ 오늘 자리 연습 ${JR_NEED}판 완료! ${jrPips(n)} 별똥별 방어전을 할 수 있어요</div>`
+ :`<div class="jtoday">⭐ 오늘 별 받은 판 ${jrPips(n)} ${jrCnt(n)} · ${more}</div>`;
+
+/* ---------- 칠 글자 만들기 ---------- */
+function jrItem(lang,code,sh){const K=KBH.KEYS[code];return{c:code,s:sh?1:0,ch:code==='Space'?'':lang==='ko'?(sh?K.ks:K.ko):(K.ko?(sh?K.en:K.en.toLowerCase()):K.en)};}
+// 같은 키가 연달아 나오지 않게 섞어요: 남은 개수만큼의 확률로 고르되, 지금 안 쓰면 나중에 연달아 나올 수밖에 없는 키는 먼저 써요
+function jrMix(a){const cnt={},out=[];a.forEach(c=>{cnt[c]=(cnt[c]||0)+1;});let prev='';
+ for(let i=0;i<a.length;i++){const rest=a.length-i,ks=Object.keys(cnt).filter(k=>cnt[k]>0&&k!==prev);let pick=prev;
+  if(ks.length){const must=ks.filter(k=>cnt[k]*2>rest);
+   if(must.length)pick=must[0];else{let r=Math.random()*ks.reduce((t,k)=>t+cnt[k],0);for(const k of ks){r-=cnt[k];if(r<0){pick=k;break;}}if(pick===prev)pick=ks[0];}}
+  out.push(pick);cnt[pick]--;prev=pick;}
+ return out;}
+// 한글 낱말 → 자모 → 키 (겹모음·겹받침은 두 키, 쌍자음은 Shift)
+const JR_CHO='ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ',JR_JUNG=['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅗㅏ','ㅗㅐ','ㅗㅣ','ㅛ','ㅜ','ㅜㅓ','ㅜㅔ','ㅜㅣ','ㅠ','ㅡ','ㅡㅣ','ㅣ'],
+ JR_JONG=['','ㄱ','ㄲ','ㄱㅅ','ㄴ','ㄴㅈ','ㄴㅎ','ㄷ','ㄹ','ㄹㄱ','ㄹㅁ','ㄹㅂ','ㄹㅅ','ㄹㅌ','ㄹㅍ','ㄹㅎ','ㅁ','ㅂ','ㅂㅅ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+let JR_JAMO=null;
+function jrWord(lang,w){const out=[];
+ if(!JR_JAMO){JR_JAMO={};for(const id in KBH.KEYS){const K=KBH.KEYS[id];if(K.ko)JR_JAMO[K.ko]=[id,0];if(K.ks)JR_JAMO[K.ks]=[id,1];}}
+ for(const ch of w){
+  if(lang==='en'){const id='Key'+ch.toUpperCase();if(KBH.KEYS[id])out.push(jrItem('en',id,ch!==ch.toLowerCase()));continue;}
+  const n=ch.charCodeAt(0)-0xAC00;if(n<0||n>11171)continue;
+  for(const j of JR_CHO[Math.floor(n/588)]+JR_JUNG[Math.floor(n%588/28)]+JR_JONG[n%28]){const m=JR_JAMO[j];if(m)out.push(jrItem('ko',m[0],m[1]));}}
+ out.forEach(it=>{it.w=w;});return out;}
+function jrSeq(lang,si){const st=JR_ST[lang][si],L=k=>(k||'').split(' ').filter(Boolean);let out=[];
+ if(st.words){ // 낱말 사이는 스페이스(엄지). 40글자에 가장 가깝게 채워요
+  for(const w of shuffle(L(st.words))){const it=jrWord(lang,w),sp=out.length?1:0;if(!it.length||out.length+sp+it.length>JR_N)continue;
+   if(sp)out.push(Object.assign(jrItem(lang,'Space',0),{w}));out=out.concat(it);if(out.length>=JR_N-1)break;}
+  return out;}
+ if(st.sh){ // 보통 글자와 Shift 글자를 번갈아
+  const rv=L(st.rv);let bag=[];while(bag.length<JR_N/2)bag=bag.concat(shuffle(L(st.sh)));
+  for(let i=0;i<JR_N;i++){if(i%2){out.push(jrItem(lang,bag[(i-1)/2],1));}else{let c;do{c=rv[Math.floor(Math.random()*rv.length)];}while(out.length>1&&c===out[out.length-2].c&&rv.length>2);out.push(jrItem(lang,c,0));}}
+  return out;}
+ const nw=L(st.nw),rv=L(st.rv),nNew=rv.length?Math.round(JR_N*.7):JR_N;let bag=[];
+ while(bag.length<nNew)bag=bag.concat(shuffle(nw.slice()));bag=bag.slice(0,nNew);
+ while(bag.length<JR_N)bag.push(rv[Math.floor(Math.random()*rv.length)]);
+ return jrMix(bag).map(c=>jrItem(lang,c,0));}
+
+/* ---------- 단계 고르기 ---------- */
+function openJr(lang){jrLang=lang==='en'?'en':'ko';const L=jrLang,ST=JR_ST[L],sv=SAVE.jr[L],n=jrToday();
+ const cards=ST.map((s,i)=>{const st=sv[i],hd=`<span class="hd"><span class="no">${i+1}</span><span class="nm">${s.n}</span></span><span class="ks">${s.keys}</span>`;
+  if(!jrStOpen(L,i))return `<button class="jrcard lock" disabled>${hd}<span class="nt">🔒 앞 단계 ★ 1개면 열려요</span></button>`;
+  return `<button class="jrcard ${st?'':'open'}" data-act="jr-start" data-s="${i}">${hd}${jrStars(st,30)}${st?`<span class="nt">${st>=3?'별 3개! 다시 해도 좋아요':'다시 해서 별 더 받기'}</span>`:'<span class="go">도전!</span>'}</button>`;}).join('');
+ openPanel('pJr',`<div class="panel xl jr"><div class="jrhead"><h2>⌨️ 자리 연습</h2>${jrAll(L)?`<span class="badge">🏅 ${L==='en'?'영어':'한글'} 8단계 통과!</span>`:''}
+  <div class="jrtabs"><button class="jrtab ${L==='ko'?'on':''}" data-act="jr-tab" data-l="ko">한글</button><button class="jrtab ${L==='en'?'on':''}" data-act="jr-tab" data-l="en">영어</button></div></div>
+  ${jrTodayLine(n,`어느 단계든 ★ 1개 이상인 판이 ${JR_NEED}판이면 오늘 별똥별 방어전이 열려요`)}
+  <div class="jrgrid">${cards}</div>
+  <div class="jrfoot"><div>★ 정확도 90% · ★★ 95% + 분당 60타 · ★★★ 97% + 분당 100타<br>단계마다 처음 ★ 50코인 · 처음 ★★★ 100코인 더 · 8단계 모두 통과하면 배지</div><button class="sbtn inline" data-act="jr-back">뒤로</button></div></div>`);
+ show('pGames',false);}
+
+/* ---------- 연습 화면 ---------- */
+function jrStart(lang,si){const ST=JR_ST[lang];if(!SAVE||!ST||!ST[si]||!jrStOpen(lang,si))return;
+ if(JR)clearTimeout(JR.badT);
+ JR={lang,st:si,seq:jrSeq(lang,si),i:0,wrong:0,strokes:0,errs:{},errK:{},t0:0,t1:0,tGo:0,phase:'ready',dn:{},bad:null,an:0,raf:0,badT:0,last:{},res:null};
+ R=null;scr='jr';hideAll();show('jr',true);$('ttoast').classList.remove('show');inp.blur();if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+ $('jrKeys').innerHTML=KBH.keys({mode:lang});
+ $('jrTag').textContent=`⌨️ ${lang==='en'?'영어':'한글'} 자리 연습`;$('jrTag').className='jrtag'+(lang==='en'?' en':'');
+ $('jrStage').textContent=`${si+1}단계 · ${ST[si].n}`;
+ // 시작: 두 검지를 ㄹ·ㅓ(F·J)에 올리고 함께 누르기
+ const en=lang==='en';
+ $('jrReady').innerHTML=`<div><div class="l1"><span>두 <b style="color:${JR_FC.i}">검지</b>를</span><span class="jcap">${en?'F':'ㄹ'}</span><span class="jcap">${en?'J':'ㅓ'}</span><span>에 올리고, 함께 누르면 시작!</span></div><div class="l2">손끝으로 볼록 튀어나온 돌기를 찾아요. 나머지 손가락은 옆 자리에 나란히 올려요.</div><div class="l3">한 판 ${JR.seq.length}글자 · 틀리면 같은 글자를 다시 · 손가락은 둥글게 구부려요</div></div>`;
+ show('jrReady',true);show('jrStripBox',false);show('jrHint',false);show('jrAcc',false);show('jrCpm',false);$('jrQ').textContent='나가기';
+ jrBar();jrDraw(1);}
+function jrGo(){JR.phase='play';JR.tGo=performance.now();show('jrReady',false);show('jrStripBox',true);show('jrHint',true);show('jrAcc',true);show('jrCpm',true);$('jrQ').textContent='그만하기';SFX.go();jrShow(true);}
+// 지금 눌러야 할 키들 (Shift 글자는 반대쪽 손의 Shift와 함께)
+function jrTargets(){if(JR.phase==='ready')return['KeyF','KeyJ'];const it=JR.seq[JR.i];if(!it)return[];
+ return it.s?[it.c,KBH.FING[it.c][0]==='L'?'ShiftRight':'ShiftLeft']:[it.c];}
+// 자판 위 그림: 바뀐 부분만 다시 넣어요. k = 0(손가락이 기본 자리) ~ 1(칠 자리)
+function jrDraw(k){if(!JR)return;const p=KBH.parts({mode:JR.lang,target:jrTargets(),wrong:(JR.bad&&JR.bad.c)||'',k,idp:'j'}),L=JR.last;
+ for(const g of['hi','L','R','top'])if(L[g]!==p[g]){L[g]=p[g];$('jrP'+g).innerHTML=p[g];}}
+// 글자가 바뀌면 손가락이 기본 자리에서 그 키로 움직여요 (0.15초)
+function jrFrame(){if(!JR)return;JR.raf=0;if(!JR.an)return;const k=Math.min(1,(performance.now()-JR.an)/150);jrDraw(1-(1-k)*(1-k));if(k<1)JR.raf=requestAnimationFrame(jrFrame);else JR.an=0;}
+function jrShow(anim){jrStrip();jrHintRow();jrBar();if(anim){JR.an=performance.now();jrDraw(0);if(!JR.raf)JR.raf=requestAnimationFrame(jrFrame);}else if(!JR.an)jrDraw(1);}
+function jrBar(){const n=JR.seq.length,i=JR.i,acc=i+JR.wrong?Math.round(i/(i+JR.wrong)*100):100,ms=JR.t0?(JR.t1||JR.t0)-JR.t0:0;
+ $('jrBarI').style.width=(i/n*100)+'%';$('jrCnt').textContent=`${i} / ${n}`;$('jrAcc').textContent=`정확도 ${acc}%`;$('jrCpm').textContent=`분당 ${ms>1500?Math.round(Math.max(0,JR.strokes-1)/(ms/60000)):0}타`;}
+function jrStrip(){const S=JR.seq,i=JR.i,a=Math.max(0,i-5),b=Math.min(S.length,i+8);let h='';
+ for(let k=a;k<b;k++){const it=S[k],sp=it.c==='Space'?' sp':'',ch=esc(it.ch);
+  if(k<i)h+=`<div class="jt ok${sp}">${ch}${it.e?'<i></i>':''}</div>`;
+  else if(k===i){const f=KBH.FING[it.c];h+=`<div class="jt cur${JR.bad?' bad':''}${sp}">${ch}<u style="background:${KBH.COL[f==='T'?'t':f[1]][1]}"></u>${JR.bad?'<em>다시</em>':''}</div>`;}
+  else h+=`<div class="jt${k-i>=7?' f2':k-i>=6?' f1':''}${sp}">${ch}</div>`;}
+ $('jrStrip').innerHTML=h;}
+// 안내 글: 어느 손가락을 어떻게 움직여 어느 키를 치는지
+function jrHintRow(){const it=JR.seq[JR.i];if(!it){$('jrHint').innerHTML='';return;}
+ const f=KBH.FING[it.c],cap=(t,w)=>`<span class="jcap${w?' w':''}">${t}</span>`,dot=c=>`<span class="jdot" style="--c:${c}"></span>`;let h='';
+ if(it.w)h+=`<div class="jpill wd">낱말 <b>${esc(it.w)}</b></div>`;
+ if(f==='T')h+=`<div class="jpill">${dot(KBH.COL.t[1])}<span><b style="color:${JR_FC.t}">엄지</b>로</span>${cap('스페이스',1)}</div>`;
+ else{const K=KBH.KEYS[it.c],H=KBH.KEYS[KBH.HOME[f]],q=f[1],left=f[0]==='L',
+   how=it.c===KBH.HOME[f]?'로':K.y<H.y?'를 위로 뻗어':K.y>H.y?'를 아래로 구부려':'를 옆으로 뻗어';
+  h+=`<div class="jpill">${dot(KBH.COL[q][1])}${it.s?`<span>${left?'오른손':'왼손'} <b style="color:${JR_FC.p}">새끼</b>로</span>${cap('Shift',1)}<span>누른 채,</span>`:''}<span>${left?'왼손':'오른손'} <b style="color:${JR_FC[q]}">${JR_FN[q]}</b>${how}</span>${cap(esc(it.ch))}</div>`;}
+ if(JR.bad)h+=`<div class="jpill bad">✕ ${esc(JR.bad.msg)}</div>`;
+ $('jrHint').innerHTML=h;}
+function jrOk(now){const it=JR.seq[JR.i];JR.strokes+=1+it.s;JR.i++;JR.bad=null;clearTimeout(JR.badT);JR.t1=now;tone(1175,.05,'sine',.04);
+ if(JR.i>=JR.seq.length){jrBar();jrFinish();return;}jrShow(true);}
+function jrBad(c,msg){const it=JR.seq[JR.i],f=KBH.FING[it.c],kk=it.c+(it.s?'+':'');JR.wrong++;it.e=1;JR.errs[f]=(JR.errs[f]||0)+1;(JR.errK[kk]=JR.errK[kk]||{f,ch:it.ch,n:0}).n++;
+ JR.bad={c,msg};SFX.miss();jrShow(false);
+ clearTimeout(JR.badT);JR.badT=setTimeout(()=>{if(JR&&JR.bad&&JR.bad.c){JR.bad.c='';if(!JR.an)jrDraw(1);}},600);} // 빨간 키는 잠깐만, '다시' 표시는 맞게 칠 때까지
+function jrKey(e){if(scr!=='jr'||!JR)return;const c=e.code,res=!$('pJrRes').classList.contains('hidden');
+ if(e.key==='Escape'){e.preventDefault();if(!e.repeat&&!res)jrQuit();return;}
+ if(res||e.ctrlKey||e.metaKey||e.altKey)return;
+ const K=KBH.KEYS[c];if(!K)return;
+ if(c==='Space'||c==='Quote'||c==='Slash'||c==='Tab'||c==='Backspace')e.preventDefault();
+ if(e.repeat||K.type==='mod')return;
+ if(JR.phase==='ready'){if(c==='KeyF'||c==='KeyJ'){JR.dn[c]=performance.now();if(JR.dn.KeyF&&JR.dn.KeyJ&&Math.abs(JR.dn.KeyF-JR.dn.KeyJ)<700)jrGo();}return;}
+ if(JR.phase!=='play')return;
+ const it=JR.seq[JR.i],now=performance.now();
+ if(now-JR.tGo<JR_GRACE)return; // 시작하자마자 눌린 키(ㄹ·ㅓ를 번갈아 두드리다 한 번 더 누른 것 등)는 세지 않아요
+ if(!JR.t0)JR.t0=JR.t1=now;
+ if(c===it.c&&!!e.shiftKey===!!it.s)jrOk(now);
+ else if(c===it.c)jrBad('',it.s?'Shift를 누른 채로 눌러요':'Shift는 떼고 눌러요');
+ else jrBad(c,`'${c==='Space'?'스페이스':JR.lang==='ko'?(K.ko||K.en):K.en}' 자리를 눌렀어요 · 같은 글자를 다시`);}
+document.addEventListener('keydown',jrKey);
+
+/* ---------- 결과 ---------- */
+function jrFinish(){const n=JR.seq.length,ms=Math.max(200,JR.t1-JR.t0),acc=Math.round(n/(n+JR.wrong)*100),cpm=Math.round(Math.max(0,JR.strokes-1)/(ms/60000));
+ let stars=0;JR_STAR.forEach((q,k)=>{if(acc>=q[0]&&cpm>=q[1])stars=k+1;});
+ const J=SAVE.jr,arr=J[JR.lang],prev=arr[JR.st],was=jrAll(JR.lang),got=[];let coin=0;
+ if(stars>=1&&prev<1){coin+=50;got.push([50,`${JR.st+1}단계 첫 ★`]);}
+ if(stars>=3&&prev<3){coin+=100;got.push([100,`${JR.st+1}단계 첫 ★★★`]);}
+ if(stars>prev)arr[JR.st]=stars;
+ const day=kstDay();if(J.day!==day){J.day=day;J.n=0;}const n0=J.n;if(stars>=1)J.n=n0+1;J.plays=(+J.plays||0)+1;
+ if(coin){SAVE.coins+=coin;SAVE.stats.coins+=coin;clog('jr',(JR.lang==='en'?'영어 ':'한글 ')+(JR.st+1)+'단계',1,coin);}
+ saveGame();if(coin)setTimeout(syncPush,300);
+ JR.phase='done';JR.res={acc,cpm,sec:Math.round(ms/1000),stars,prev,got,coin,badge:!was&&jrAll(JR.lang),nextNew:stars>=1&&prev<1&&JR.st<7,n0,n1:J.n,opened:n0<JR_NEED&&J.n>=JR_NEED};
+ if(stars)SFX.level();else SFX.end();jrResult();}
+function jrResult(){const r=JR.res,L=JR.lang,si=JR.st,ST=JR_ST[L],n=r.n1,lang=L==='en'?'영어':'한글';
+ // 많이 틀린 손가락: 작은 자판 그림으로
+ let wk='<div class="wkrow"><div><b>틀린 글자가 없어요!</b><br><span>완벽해요 👏</span></div></div>';
+ const fs=Object.keys(JR.errs).sort((a,b)=>JR.errs[b]-JR.errs[a]);
+ if(fs.length){const f=fs[0],ks=Object.keys(JR.errK).filter(k=>JR.errK[k].f===f).sort((a,b)=>JR.errK[b].n-JR.errK[a].n),e=JR.errK[ks[0]],code=ks[0].replace('+','');
+  const fn=f==='T'?`<b style="color:${JR_FC.t}">엄지</b>`:`${f[0]==='L'?'왼손':'오른손'} <b style="color:${JR_FC[f[1]]}">${JR_FN[f[1]]}</b>`;
+  wk=`<div class="wkrow"><svg width="230" height="85" viewBox="31.9 52.2 748.2 275.5" aria-hidden="true">${KBH.svg({mode:L,target:[code],idp:'jm'})}</svg><div>${fn}<br><span>${esc(e.ch||'스페이스')} 자리 · ${e.n}번 틀림</span></div></div>`;}
+ const tip=r.stars>=3?'별 3개! 최고예요':r.stars===2?'★★★까지: 정확도 97% 이상 · 분당 100타 이상':r.stars===1?'★★까지: 정확도 95% 이상 · 분당 60타 이상':'★까지: 정확도 90% 이상 · 천천히, 정확하게!';
+ const got=r.got.map(g=>`<div class="gotl big"><span class="coin"></span>+${g[0]} 코인 <small>${g[1]}</small></div>`).join('')
+  +(r.nextNew?`<div class="gotl">🔓 ${si+2}단계가 열렸어요 <small>${ST[si+1].n}</small></div>`:'')+(r.badge?`<div class="gotl">🏅 ${lang} 8단계를 모두 통과했어요!</div>`:'');
+ const today=r.stars<1?`<div class="jtoday${n>=JR_NEED?' done':''}">이번 판은 별이 없어서 세지 않았어요 · 오늘 별 받은 판 ${jrPips(n)} ${jrCnt(n)}</div>`
+  :n>=JR_NEED?`<div class="jtoday done">✔ 오늘 별 받은 판 ${jrPips(n)} ${jrCnt(n)} · 별똥별 방어전이 ${r.opened?'열렸어요!':'열려 있어요'}</div>`
+  :`<div class="jtoday">⭐ 오늘 별 받은 판 ${jrPips(n)} ${jrCnt(n)} · ${JR_NEED-n}판 더 하면 별똥별 방어전이 열려요</div>`;
+ openPanel('pJrRes',`<div class="panel jres"><p class="sub">${lang} 자리 연습 · ${si+1}단계 ${ST[si].n}</p>
+  <div class="ttl"><h2>${r.stars?(r.prev<1?'통과!':'잘했어요!'):'조금만 더!'}</h2>${jrStars(r.stars,56)}</div>
+  <div class="stats"><div class="tile"><small>정확도</small><b>${r.acc}%</b></div><div class="tile"><small>분당 타수</small><b>${r.cpm}타</b></div><div class="tile"><small>걸린 시간</small><b>${r.sec}초</b></div></div>
+  <p class="note">${tip}</p>
+  <div class="two"><div class="box wk"><small>많이 틀린 손가락</small>${wk}</div><div class="box got"><small>받은 것</small>${got||'<div class="gotl">이번에는 새로 받은 것이 없어요</div>'}</div></div>
+  ${today}
+  <div class="btnrow"><button class="sbtn inline" data-act="jr-again">다시 하기</button>${si<7&&jrStOpen(L,si+1)?'<button class="sbtn inline" data-act="jr-next">다음 단계</button>':''}<button class="sbtn inline" data-act="jr-list">단계 고르기</button>${jrFree()?'<button class="gbtn inline" data-act="jr-meteor">별똥별 하러 가기</button>':''}</div></div>`);}
+function jrQuit(){const l=JR?JR.lang:jrLang;if(JR)clearTimeout(JR.badT);JR=null;goHome();if(SAVE)openJr(l);}
+
 const ACT={
  'reg-save'(){const v=readInfo('r');if(v.err){$('rMsg').textContent=v.err;return;}
   SAVE=defaultSave(v.name,v.no,v.gr,v.cl);priceInit(SAVE);saveGame();goHome();syncPush();ttoast('환영해요! 번개·얼음·방패를 하나씩 선물로 넣어 뒀어요');},
  'info-save'(){const v=readInfo('r');if(v.err){$('rMsg').textContent=v.err;return;}Object.assign(SAVE,{gr:v.gr,cl:v.cl,no:v.no,name:v.name});saveGame();show('pReg',false);renderProfile();syncPush();ttoast('고마워요! 이제 우리 반 랭킹과 광장을 쓸 수 있어요');},
  play(){openGames();},
- 'game-pick'(el){openLoad(el.dataset.g);},
+ 'game-pick'(el){if(!jrFree()){jrNeed();return;}openLoad(el.dataset.g);}, // 오늘 자리 연습 3판을 해야 열려요
+ 'jr-open'(el){openJr(el.dataset.l);},
+ 'jr-tab'(el){openJr(el.dataset.l);},
+ 'jr-back'(){show('pJr',false);openGames();},
+ 'jr-start'(el){jrStart(jrLang,+el.dataset.s);},
+ 'jr-quit'(){jrQuit();},
+ 'jr-again'(){if(JR)jrStart(JR.lang,JR.st);},
+ 'jr-next'(){if(JR)jrStart(JR.lang,JR.st+1);},
+ 'jr-list'(){jrQuit();},
+ 'jr-meteor'(){goHome();if(SAVE)openGames();},
  'load-add'(el){const id=el.dataset.it;if(!LOAD.inv[id]){ttoast('상점에서 살 수 있어요');return;}if(LOAD.bag.length>=2+SAVE.up.bag){ttoast('가방이 가득 찼어요');return;}LOAD.bag.push(id);LOAD.inv[id]--;SFX.tick();renderLoad();},
  'load-rm'(el){const i=+el.dataset.i,id=LOAD.bag[i];if(!id)return;LOAD.bag.splice(i,1);LOAD.inv[id]++;renderLoad();},
  'load-back'(){show('pLoad',false);openGames();},
- 'load-go'(){const inv0=Object.assign({},SAVE.inv);for(const id of LOAD.bag)SAVE.inv[id]--;saveGame();startRun(LOAD.bag,LOAD.game);if(R)R.inv0=inv0;},
+ 'load-go'(){if(!jrFree()){show('pLoad',false);openGames();jrNeed();return;}const inv0=Object.assign({},SAVE.inv);for(const id of LOAD.bag)SAVE.inv[id]--;saveGame();startRun(LOAD.bag,LOAD.game);if(R)R.inv0=inv0;},
  'shop-open'(){if(scr==='game'){R=null;scr='home';hideAll();show('home',true);renderProfile();}openShop();},
  'shop-deco'(){openShop('deco');},
  'shop-tab'(el){shopTab=el.dataset.t;renderShop();},
@@ -2467,7 +3183,7 @@ const ACT={
  copy(el){copyFrom(el.dataset.t);},
  close(el){show(el.dataset.p,false);if(scr==='home'&&SAVE){show('home',true);renderProfile();}},
  home(){goHome();},
- 'res-again'(){const g=R.game;R=null;scr='home';hideAll();adjRun();openLoad(g);},
+ 'res-again'(){const g=R.game;R=null;scr='home';hideAll();adjRun();if(!jrFree()){show('home',true);renderProfile();openGames();jrNeed();return;}openLoad(g);}, // 날이 바뀌었으면 자리 연습부터
  pause(){pauseGame('btn');},
  resume(){if(!R||!R.paused)return;R.paused=false;show('pPause',false);inp.value='';
   // 처음 3·2·1 중이면 아직 낱말이 없으니 남은 숫자부터 이어서 세요. 그 밖에는 3초를 세고 이어져요(그동안 낱말은 가리고 입력 칸은 잠가요)
@@ -2569,7 +3285,8 @@ window.addEventListener('pointerup',e=>{if(scr==='edit'&&ED)edUp(e);else if(hDra
 window.addEventListener('pointercancel',e=>{PTRS.delete(e.pointerId);HPTRS.delete(e.pointerId);if(!HPTRS.size)hDrag=null;if(ED&&ED.drag&&ED.drag.type!=='pinch'){if(ED.carry&&ED.carry.drag)edCancel();ED.drag=null;}});
 cv.addEventListener('wheel',e=>{const f=Math.exp(-e.deltaY*(e.ctrlKey?.01:.0015));if(scr==='edit'&&ED){e.preventDefault();edZoom(f,toStage(e));}else if(scr==='home'&&SAVE&&!panelOpen()){e.preventDefault();homeZoom(f,toStage(e));}},{passive:false});
 cv.addEventListener('contextmenu',e=>{if(scr==='edit')e.preventDefault();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&scr==='game'&&R&&!R.over&&!R.paused){if((R.pauses|0)>=PAUSE_MAX)finishRun('away');else pauseGame('away');}
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&scr==='jr'&&JR&&JR.phase==='play'){jrStart(JR.lang,JR.st);ttoast('다른 화면에 다녀와서 처음부터 다시 해요');}
+ if(document.hidden&&scr==='game'&&R&&!R.over&&!R.paused){if((R.pauses|0)>=PAUSE_MAX)finishRun('away');else pauseGame('away');}
  if(!document.hidden){if(Date.now()-UPD.last>30000)updCheck(true);else updMaybe();}});
 setInterval(()=>{if(UPD.ready)updMaybe();else updCheck();},15000);
 setTimeout(()=>updCheck(true),20000+Math.random()*20000);
@@ -2579,7 +3296,7 @@ window.addEventListener('resize',fit);
 let last=performance.now();
 function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;ANIM_T+=dt;ctx.setTransform(scale*dpr,0,0,scale*dpr,0,0);
  SEA=scr==='game'||OPT.season===false?'':(SEA_FORCE||seasonNow());
- if(scr==='game'&&R){update(dt);if(R)drawGame();}else if(scr==='edit'&&ED)drawEditor();else drawHome(ANIM_T);
+ if(scr==='game'&&R){update(dt);if(R)drawGame();}else if(scr==='edit'&&ED)drawEditor();else if(scr!=='jr')drawHome(ANIM_T);
  requestAnimationFrame(loop);}
 fit();goHome();
 if(SYNC&&SAVE)setTimeout(syncPush,1500);
