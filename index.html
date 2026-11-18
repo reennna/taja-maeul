@@ -636,6 +636,26 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 .gcards.n4 .gmode small{font-size:15px}
 .gcards.n4 .gres{font-size:16px}
 .gcards.n4 .glock{font-size:18px}
+/* ---------- 풍경 고르기 (2026-11-18) ---------- */
+.ibtn .lkic{position:absolute;right:-7px;bottom:-7px;width:28px;height:28px;font-size:16px;line-height:1;background:#fff;border:3px solid var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.lookpop{position:absolute;right:18px;top:84px;z-index:9;width:452px;background:linear-gradient(#ffffff,#e9edf3);border:4px solid var(--ink);border-radius:24px;box-shadow:0 6px 0 var(--ink),0 16px 34px rgba(0,0,0,.35);padding:12px 16px 12px;text-align:left}
+.lookpop.ed{left:14px;right:auto;top:140px}
+.lookpop h4{font-size:25px;font-weight:normal;margin:0 0 6px;display:flex;align-items:center;gap:8px;color:#2a2a30}
+.lookpop h4 small{font-size:16px;color:#fff;background:#e8590c;border-radius:999px;padding:1px 9px}
+.lookpop h4 .sbtn{margin:0 0 0 auto;width:auto;display:inline-block;font-size:18px;padding:2px 14px;border-width:3px;box-shadow:0 3px 0 var(--ink)}
+.lookpop .lkrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0 8px}
+.lookpop .lkrow>span{font-size:18px;color:#5d5f68;width:40px}
+.lookpop .chip{font-size:18px;padding:3px 11px}
+.lookpop .chip small{font-size:14px;color:#6b6385}
+.lookpop .lknote{font-size:15px;color:#6a3b48;line-height:1.4;margin-top:2px}
+.lookpop .lkst{font-size:16px;margin:2px 0 4px;color:#2b8a3e}
+.lookpop .lkst.bad{color:#c92a2a}
+.lookbar{position:absolute;left:14px;top:88px;max-width:760px}
+.lookbar .lkb{font-size:18px;background:rgba(255,255,255,.95);border:3px solid var(--ink);border-radius:999px;padding:3px 14px;white-space:nowrap;box-shadow:0 3px 0 var(--ink);color:#2a2a30}
+.lookbar .lkb b{font-weight:normal;color:#1c4f8f}
+.lookbar .lkb u{text-decoration:none;font-size:16px;background:#ffe36b;border:2px solid var(--ink);border-radius:999px;padding:0 8px;margin-left:4px}
+.lookbar .lkb.lock{background:#fff6d6}
+.lookbar .lkb:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
 </style>
 </head>
 <body>
@@ -647,7 +667,7 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
     <div class="pcard"><img class="pskin" id="pSkin" alt=""><div class="pname" id="pName"></div><div class="pmeta" id="pMeta"></div><div class="pcoin"><span class="coin"></span> <b id="pCoins" style="font-weight:normal">0</b></div></div>
     <div class="logo2"><span class="l1">우리 반</span><span class="l2">타자 마을</span></div>
     <div class="topbtns">
-      <button class="ibtn" data-act="season" aria-label="계절 모습"><span class="seaic" id="seaIcon">🍂</span><span class="tip" id="seaTip">계절 모습</span></button>
+      <button class="ibtn" data-act="look" aria-label="내 마을 풍경"><span class="seaic" id="seaIcon">🍂</span><span class="lkic" id="lkIcon">🌞</span><span class="tip" id="seaTip">내 마을 풍경</span></button>
       <button class="ibtn" data-act="sound" aria-label="소리"><svg viewBox="0 0 24 24" class="sndIcon"></svg><span class="tip">소리</span></button>
       <button class="ibtn" data-act="full" aria-label="전체 화면"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="#4a1f2b" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tip">전체 화면</span></button>
       <button class="ibtn" data-act="t-open" aria-label="선생님"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="#4a1f2b" stroke-width="2.4"/></svg><span class="tip">선생님</span></button>
@@ -672,7 +692,9 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
     <div class="dpal" id="dPal"><div class="dcats" id="dCats"></div><div class="dstore" id="dStore"></div></div>
     <div class="dact hidden" id="dAct"></div>
     <div class="monbar hidden" id="monBar"></div>
+    <div class="lookbar" id="lookBar"></div>
   </div>
+  <div id="lookPop" class="lookpop hidden"></div>
 
   <!-- 게임 HUD -->
   <div id="hud" class="screen hidden">
@@ -748,7 +770,7 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 (()=>{
 'use strict';
 // 게임 버전: 새 파일을 만들 때마다 꼭 올려요(날짜-그날 몇 번째). 학생 크롬북이 이 번호로 새 버전을 알아채요.
-const APP_VER='2026-11-17-01';
+const APP_VER='2026-11-18-01';
 const vnum=v=>Number(String(v||'').replace(/\D/g,''))||0;
 const $=id=>document.getElementById(id);
 const W=1280,H=720,GROUND=650;
@@ -823,7 +845,7 @@ const UPS={
  luck:{name:'행운의 별',icon:'🍀',color:'#d3f9d8',max:5,cost:[100,220,360,520,700],eff:l=>l?`받는 코인 +${10*l}%`:'코인 보너스 없음'},
  magic:{name:'오래가는 마법',icon:'✨',color:'#f3d9fa',max:3,cost:[150,320,500],eff:l=>l?`얼음·느림보 +${l}초`:'얼음 5초 · 느림보 8초'},
  guard:{name:'든든한 방패',icon:'🔰',color:'#bac8ff',max:2,cost:[200,450],eff:l=>l?`시작할 때 방패 ${l}번`:'시작 방패 없음'}};
-const DCATS=[['nature','🌳 자연'],['deco','🪑 꾸미기'],['play','🎠 놀이'],['build','🏠 건물'],['animal','🐾 동물'],['farm','🌾 농장'],['korea','🏯 우리 문화']];
+const DCATS=[['nature','🌳 자연'],['deco','🪑 꾸미기'],['play','🎠 놀이'],['build','🏠 건물'],['animal','🐾 동물'],['farm','🌾 농장'],['korea','🏯 우리 문화'],['winter','❄️ 겨울']];
 // s: 차지하는 칸(1이면 1×1, 2면 2×2) · h: 대략의 높이(썸네일 크기 맞춤용)
 // op: 2026-11-09에 값을 올리기 전 값. 되팔기: 그 전에 산 것은 op의 반, 올라간 값으로 산 것은 price의 반이에요.
 // wo: 물 위에만 놓아요 · wb: 땅과 물 위 모두 놓아요 · tw: 상점·창고 그림은 물 위 모습(거북선, 광장 창고에서는 땅 위 모습)
@@ -858,11 +880,26 @@ const DECO={
  bridge:{name:'나무 다리',cat:'deco',price:200,s:1,h:20,wo:1},
  recycle:{name:'분리수거함',cat:'deco',price:250,s:1,h:26},
  picnic:{name:'소풍 돗자리',cat:'deco',price:300,s:1,h:16},
- snowman:{name:'눈사람',cat:'deco',price:300,s:1,h:56},
+ snowman:{name:'눈사람',cat:'winter',price:300,s:1,h:56},
  campfire:{name:'모닥불',cat:'deco',price:400,s:1,h:36},
  parasol:{name:'파라솔 테이블',cat:'deco',price:500,s:1,h:64},
  arch:{name:'꽃 아치',cat:'deco',price:700,s:1,h:74},
- xmas:{name:'크리스마스 트리',cat:'deco',price:1200,s:1,h:92},
+ xmas:{name:'크리스마스 트리',cat:'winter',price:1200,s:1,h:92},
+ // 2026-11-18 겨울 장식 (❄️ 겨울 칸, NEW는 W_UNTIL까지)
+ candycane:{name:'지팡이 사탕',cat:'winter',price:150,s:1,h:52},
+ snowduck:{name:'눈오리',cat:'winter',price:200,s:1,h:25},
+ gifts:{name:'선물 상자',cat:'winter',price:250,s:1,h:36},
+ icecrystal:{name:'얼음 수정',cat:'winter',price:300,s:1,h:51},
+ frosttree:{name:'눈꽃 나무',cat:'winter',price:400,s:1,h:81},
+ xmaslamp:{name:'크리스마스 가로등',cat:'winter',price:450,s:1,h:93},
+ sleigh:{name:'선물 썰매',cat:'winter',price:700,s:1,h:39},
+ reindeer:{name:'순록',cat:'winter',price:800,s:1,h:71},
+ igloo:{name:'이글루',cat:'winter',price:1000,s:1,h:46},
+ xmascake:{name:'딸기 케이크',cat:'winter',price:1200,s:1,h:59},
+ cookiehouse:{name:'과자 집',cat:'winter',price:1800,s:1,h:57},
+ icerink:{name:'스케이트장',cat:'winter',price:2000,s:2,h:28},
+ bigtree:{name:'큰 크리스마스 트리',cat:'winter',price:4500,s:2,h:168},
+ snowglobe:{name:'스노볼',cat:'winter',price:5000,s:2,h:120},
  balloon:{name:'풍선',cat:'play',price:300,op:35,s:1,h:78},
  sandbox:{name:'모래놀이터',cat:'play',price:550,op:70,s:1,h:24},
  tent:{name:'텐트',cat:'play',price:550,op:70,s:1,h:42},
@@ -1009,10 +1046,13 @@ function fixDeco(s){let d=s.deco;
  for(const k of Object.keys(hold.s))if(DECO[k]){d.stock[k]=(d.stock[k]||0)+(+hold.s[k]||0);delete hold.s[k];}
  for(const key of Object.keys(hold.g))if(GTYPE[hold.g[key]]){const[a,b]=key.split(',').map(Number),k2=(a+sh)+','+(b+sh);if(!d.ground[k2]&&a+sh<d.n&&b+sh<d.n)d.ground[k2]=hold.g[key];delete hold.g[key];}
  if(hold.o.length||Object.keys(hold.s).length||Object.keys(hold.g).length){hold.n=d.n;if(sh){hold.o.forEach(o=>{o.i+=sh;o.j+=sh;});const g2={};for(const key in hold.g){const[a,b]=key.split(',').map(Number);g2[(a+sh)+','+(b+sh)]=hold.g[key];}hold.g=g2;}s.hold=hold;}else delete s.hold;}
+// 풍경 (2026-11-18): s 계절(auto면 날짜대로) · n 1이면 밤. 내 마을은 SAVE.look, 반 광장은 선생님이 시트에.
+const LOOK_S=['auto','spring','summer','autumn','winter'],LOOK_DEF={s:'auto',n:0};
+function lookFix(v){return{s:v&&LOOK_S.includes(v.s)?v.s:'auto',n:v&&+v.n===1?1:0};}
 function defaultSave(name,no,gr,cl){const games={};for(const g of READY)games[g.id]={bestRound:0,bestWords:0,bestTasu:0,plays:0,words:0};
  return{v:1,id:rid(),name,no,gr:gr||0,cl:cl||0,coins:0,created:Date.now(),inv:{bolt:1,ice:1,slow:0,shield:1,heart:0,double:0},up:{hp:0,calm:0,bag:0,luck:0,magic:0,guard:0},
   deco:starterDeco(),pz:{},games,stats:{coins:0,plays:0},skin:'base',skins:{base:1},cm:0,cmGot:0,
-  jr:{ko:[0,0,0,0,0,0,0,0],en:[0,0,0,0,0,0,0,0],day:0,n:0,plays:0},adv:advFix({}),raid:raidFix({})};} // jr: 자리 연습 (단계별 별 · 오늘 별 받은 판)
+  jr:{ko:[0,0,0,0,0,0,0,0],en:[0,0,0,0,0,0,0,0],day:0,n:0,plays:0},adv:advFix({}),raid:raidFix({}),look:{s:OPT.season===false?'summer':'auto',n:0}};} // look: 예전에 계절을 끈 크롬북은 여름 모습(끈 모습과 같아요) // jr: 자리 연습 (단계별 별 · 오늘 별 받은 판)
 function fixSave(s){if(!s||typeof s!=='object'||!s.id)return null;const d=defaultSave(s.name||'',s.no||0,s.gr,s.cl);
  for(const k in d)if(s[k]==null&&k!=='deco')s[k]=d[k];
  for(const k of ITEM_IDS)if(typeof s.inv[k]!=='number')s.inv[k]=0;
@@ -1028,6 +1068,7 @@ function fixSave(s){if(!s||typeof s!=='object'||!s.id)return null;const d=defaul
  for(const l of['ko','en']){const a=Array.isArray(s.jr[l])?s.jr[l]:[];s.jr[l]=d.jr[l].map((_,i)=>Math.max(0,Math.min(3,Math.floor(+a[i]||0))));}
  s.jr.day=+s.jr.day||0;s.jr.n=Math.max(0,Math.floor(+s.jr.n||0));s.jr.plays=Math.max(0,Math.floor(+s.jr.plays||0));
  advFix(s);raidFix(s); // 별지기 모험 (2026-11-15) · 우리 반 보스 레이드 (2026-11-17)
+ s.look=lookFix(s.look); // 풍경 (2026-11-18)
  if(s.xb&&xbRestore(s))s.xbBack=1; // 예전 파일이 지운 새 장식을 되살렸어요
  // 되팔기 값: 처음 한 번, 지금 가진 장식은 모두 '예전 값으로 산 것'으로 세어 둬요
  if(!s.oldp||typeof s.oldp!=='object')s.oldp={};
@@ -1139,7 +1180,7 @@ const BG={};
 function fit(){const vw=window.innerWidth,vh=window.innerHeight;scale=Math.min(vw/W,vh/H);dpr=Math.min(window.devicePixelRatio||1,2);
  stage.style.transform=`translate(${(vw-W*scale)/2}px,${(vh-H*scale)/2}px) scale(${scale})`;
  cv.width=Math.max(1,Math.round(W*scale*dpr));cv.height=Math.max(1,Math.round(H*scale*dpr));
- const nr=Math.min(2,Math.max(1,scale*dpr));if(Math.abs(nr-RS)>.05){RS=nr;BG.sea=buildSea();BG.night=buildNight();}}
+ const nr=Math.min(2,Math.max(1,scale*dpr));if(Math.abs(nr-RS)>.05){RS=nr;BG.sea=buildSea();BG.night=buildNight();BG.seaN=null;}}
 function mk(w,h){const c=document.createElement('canvas');c.width=Math.round(w*RS);c.height=Math.round(h*RS);const x=c.getContext('2d');x.setTransform(RS,0,0,RS,0,0);return[c,x];}
 function buildSea(){const[c,x]=mk(W,H);
  let g=x.createLinearGradient(0,0,0,250);g.addColorStop(0,'#58bdf0');g.addColorStop(1,'#d8f3ff');x.fillStyle=g;x.fillRect(0,0,W,252);
@@ -1159,9 +1200,22 @@ function buildNight(){const[c,x]=mk(W,H);const r=rng(11);
  x.fillStyle='#35295e';x.beginPath();x.moveTo(0,620);for(let px=0;px<=W;px+=40)x.lineTo(px,598-Math.sin(px/170)*22-Math.sin(px/67)*8);x.lineTo(W,H);x.lineTo(0,H);x.closePath();x.fill();
  x.fillStyle='#2a1f47';x.fillRect(0,GROUND,W,70);x.fillStyle='#3d3066';x.fillRect(0,GROUND-3,W,5);
  return c;}
+// 홈·꾸미기 밤 하늘과 바다 (2026-11-18, 처음 밤이 될 때 한 번 그려요)
+function buildSeaN(){const[c,x]=mk(W,H);const r=rng(23);
+ let g=x.createLinearGradient(0,0,0,252);g.addColorStop(0,'#0b1238');g.addColorStop(.72,'#25296a');g.addColorStop(1,'#3a3a7c');x.fillStyle=g;x.fillRect(0,0,W,252);
+ for(let i=0;i<150;i++){const q=r()<.15?1.8:1.1;x.fillStyle=`rgba(255,255,255,${(.25+r()*.55).toFixed(2)})`;x.fillRect(r()*W,r()*235,q,q);}
+ x.fillStyle='rgba(255,240,190,.12)';x.beginPath();x.arc(1110,118,88,0,7);x.fill();x.fillStyle='rgba(255,240,190,.12)';x.beginPath();x.arc(1110,118,62,0,7);x.fill();
+ x.fillStyle='#fff3c4';x.beginPath();x.arc(1110,118,42,0,7);x.fill();
+ x.fillStyle='rgba(215,195,135,.55)';[[1098,108,8],[1124,130,6],[1121,100,4]].forEach(([a,b,q])=>{x.beginPath();x.arc(a,b,q,0,7);x.fill();});
+ x.fillStyle='#22385a';[[120,252,150,18],[1170,252,190,24],[640,252,90,10]].forEach(([a,b,w,h])=>{x.beginPath();x.ellipse(a,b,w,h,0,Math.PI,0);x.fill();});
+ g=x.createLinearGradient(0,248,0,H);g.addColorStop(0,'#2c4a88');g.addColorStop(.2,'#1d3a72');g.addColorStop(1,'#0f2450');x.fillStyle=g;x.fillRect(0,250,W,H-250);
+ x.fillStyle='rgba(200,215,255,.35)';x.fillRect(0,250,W,2);
+ for(let k=0;k<26;k++){const py=258+k*k*.55,w=26+k*3.2;x.fillStyle=`rgba(255,240,190,${(.3-k*.01).toFixed(3)})`;x.beginPath();x.ellipse(1110+(r()-.5)*12,py,w*(.5+r()*.5),1.6+k*.08,0,0,7);x.fill();}
+ x.fillStyle='rgba(160,185,255,.08)';for(let i=0;i<70;i++){const px=r()*W,py=270+r()*440;x.beginPath();x.ellipse(px,py,10+r()*30,1.5+r()*2,0,0,7);x.fill();}
+ return c;}
 const TW=[];{const r=rng(3);for(let i=0;i<55;i++)TW.push({x:r()*W,y:r()*540,s:2+r()*3.5,p:r()*6,sp:.8+r()*2});}
 const CLOUDS=[];{const r=rng(5);for(let i=0;i<7;i++)CLOUDS.push({x:r()*1500,y:90+r()*250,s:.45+r()*.4,v:6+r()*9});}
-function cloud(c,x,y,s){c.fillStyle='rgba(255,255,255,.92)';[[0,0,46],[44,-16,40],[86,0,44],[40,16,42],[-40,10,32],[124,12,30]].forEach(([a,b,q])=>{c.beginPath();c.arc(x+a*s,y+b*s,q*s,0,7);c.fill();});}
+function cloud(c,x,y,s,col){c.fillStyle=col||'rgba(255,255,255,.92)';[[0,0,46],[44,-16,40],[86,0,44],[40,16,42],[-40,10,32],[124,12,30]].forEach(([a,b,q])=>{c.beginPath();c.arc(x+a*s,y+b*s,q*s,0,7);c.fill();});}
 
 /* ================= 마을 그리기 (비스듬히 내려다보는 마을) ================= */
 const INK2='#1c1530';let NIGHT=false,FLIPPED=false;
@@ -1169,6 +1223,15 @@ const INK2='#1c1530';let NIGHT=false,FLIPPED=false;
 let SEA='',SEA_FORCE='',GAT=null;
 function seasonNow(){const m=new Date(Date.now()+9*3600000).getUTCMonth()+1;return m>=3&&m<=5?'spring':m<=8&&m>=6?'summer':m>=9&&m<=11?'autumn':'winter';}
 const SEA_NAME={spring:'봄',summer:'여름',autumn:'가을',winter:'겨울'},SEA_ICON={spring:'🌸',summer:'☀️',autumn:'🍂',winter:'❄️'};
+const TIME_ICON=['🌞','🌙'],TIME_NAME=['낮','밤'];
+const lookSea=lk=>lk.s==='auto'?seasonNow():lk.s;
+function lookShort(lk){const se=lookSea(lk);return `${SEA_ICON[se]} ${SEA_NAME[se]} · ${TIME_ICON[lk.n]} ${TIME_NAME[lk.n]}`;}
+let PZLK=null,LKP=null; // PZLK: 우리 반 광장 풍경(시트 답장) · LKP: 열린 풍경 창
+function myLook(){return SAVE&&SAVE.look?SAVE.look:LOOK_DEF;}
+// 지금 화면의 풍경: 게임 화면은 계절·밤 없음 / 광장은 선생님이 정한 것 / 친구 마을은 친구가 고른 것 / 나머지는 내 것
+function lookNow(){if(scr==='game'||scr==='adv'||scr==='raid'||scr==='jr')return null;
+ if(scr==='edit'&&ED){if(ED.mode==='plaza')return ED.lk||LOOK_DEF;if(ED.mode==='friend'&&!ED.fv.me)return ED.fv.lk||LOOK_DEF;}
+ return myLook();}
 const AUT=['#f08c00','#e8590c','#fab005','#d9480f','#f59f00'];
 function seaCol(day,night,i,j){if(SEA==='autumn'){const a=AUT[Math.floor(hash2((i|0)+3,(j|0)+5)*AUT.length)];return NIGHT?shade(a,-.38):a;}if(SEA==='winter')return NIGHT?'#4f6b60':'#6f8f80';return NIGHT?night:day;}
 const TLW=64,TLH=32,IW=32,IH=16;
@@ -1623,8 +1686,223 @@ Object.assign(DRAW,{
   ell(c,hd[0],hd[1],8.5,6.5,'#fcc419',true);poly(c,[[hd[0]+3,hd[1]+1],[hd[0]+11,hd[1]-1],[hd[0]+10,hd[1]+5]],'#e03131');poly(c,[[hd[0]-4,hd[1]-5],[hd[0]-7,hd[1]-13],[hd[0]-1,hd[1]-6]],'#f08c00');eye(c,hd[0]+1,hd[1]-2,1.6);
   [[.1,-.25,'#e03131'],[.16,.2,'#1c7ed6']].forEach(([u,v,col],k)=>{const p=S(u,v,14);stick(c,p[0],p[1],2,26,'#6b4a2b');const w=Math.sin(t*3+k)*2;poly(c,[[p[0],p[1]-26],[p[0]-14,p[1]-23+w],[p[0],p[1]-18]],col);});}
 });
+/* ---------- 겨울 장식 그림 (2026-11-18) ---------- */
+// 도우미: 반짝임(네 갈래 별) · 눈 결정 · 은은한 빛
+function wSpark(c,x,y,r){c.beginPath();c.moveTo(x,y-r);c.quadraticCurveTo(x,y,x+r,y);c.quadraticCurveTo(x,y,x,y+r);c.quadraticCurveTo(x,y,x-r,y);c.quadraticCurveTo(x,y,x,y-r);c.closePath();}
+function wTwinkle(c,x,y,r,t,ph){const a=Math.max(0,Math.sin(t*2.4+ph));if(a<.05)return;c.fillStyle=`rgba(255,255,255,${a.toFixed(2)})`;wSpark(c,x,y,1+r*a);c.fill();}
+function wFlake(c,x,y,r,col,lw){c.save();c.strokeStyle=col;c.lineWidth=lw||1.3;c.lineCap='round';c.beginPath();
+ for(let k=0;k<3;k++){const a=k*Math.PI/3+Math.PI/2,dx=Math.cos(a)*r,dy=Math.sin(a)*r;c.moveTo(x-dx,y-dy);c.lineTo(x+dx,y+dy);
+  const ex=x+dx*.6,ey=y+dy*.6,fx=x-dx*.6,fy=y-dy*.6,px=-dy*.28,py=dx*.28;c.moveTo(ex+px,ey+py);c.lineTo(ex-px,ey-py);c.moveTo(fx+px,fy+py);c.lineTo(fx-px,fy-py);}
+ c.stroke();c.restore();}
+function wFlakes(c,pts,r,col,lw){c.save();c.strokeStyle=col;c.lineWidth=lw||1.3;c.lineCap='round';c.beginPath();
+ for(const[x,y]of pts)for(let k=0;k<3;k++){const a=k*Math.PI/3+Math.PI/2,dx=Math.cos(a)*r,dy=Math.sin(a)*r;c.moveTo(x-dx,y-dy);c.lineTo(x+dx,y+dy);
+  const ex=x+dx*.6,ey=y+dy*.6,fx=x-dx*.6,fy=y-dy*.6,px=-dy*.28,py=dx*.28;c.moveTo(ex+px,ey+py);c.lineTo(ex-px,ey-py);c.moveTo(fx+px,fy+py);c.lineTo(fx-px,fy-py);}
+ c.stroke();c.restore();}
+// 은은한 빛: 색·크기마다 한 장 그려 두고 붙여요(밤에 매번 그라데이션을 만들지 않게)
+const W_GLOW={};
+function wGlow(c,x,y,r,rgb,a){const key=rgb+'|'+a+'|'+Math.round(r);let im=W_GLOW[key];
+ if(!im){const S=2,R=Math.round(r),cv=document.createElement('canvas');cv.width=cv.height=R*2*S;const g=cv.getContext('2d'),gr=g.createRadialGradient(R*S,R*S,2*S,R*S,R*S,R*S);
+  gr.addColorStop(0,`rgba(${rgb},${a})`);gr.addColorStop(1,`rgba(${rgb},0)`);g.fillStyle=gr;g.fillRect(0,0,cv.width,cv.height);im=W_GLOW[key]=cv;}
+ c.drawImage(im,x-r,y-r,r*2,r*2);}
+// 스노볼 안쪽 풍경(눈 덮인 땅·집·소나무·가로등·눈사람): 낮·밤 한 장씩 그려 둬요. 눈송이만 매번 그려요.
+const W_GLOBE={};
+function wGlobeIn(night){const key=night?'n':'d';if(W_GLOBE[key])return W_GLOBE[key];const R=50,S=3,cv=document.createElement('canvas');cv.width=cv.height=R*2*S;const c=cv.getContext('2d');
+ c.setTransform(S,0,0,S,R*S,R*S);const n0=NIGHT,s0=SEA;NIGHT=night;SEA='winter';
+ try{c.save();c.beginPath();c.arc(0,0,R,0,7);c.clip();
+  const sky=c.createLinearGradient(0,-R,0,R);sky.addColorStop(0,night?'#2a3a78':'#cfe8ff');sky.addColorStop(1,night?'#4a5aa0':'#eef7ff');c.fillStyle=sky;c.fillRect(-R,-R,R*2,R*2);
+  if(night){c.fillStyle='rgba(255,255,255,.8)';[[-22,-30],[18,-34],[30,-12],[-34,-8],[4,-40]].forEach(([a,b])=>c.fillRect(a,b,1.5,1.5));}
+  ell(c,0,R*.62,R*1.05,R*.42,'#ffffff');ell(c,8,R*.5,R*.5,R*.16,'rgba(116,192,252,.22)');
+  const inner=(k,dx,dy,sc)=>{c.save();c.translate(dx,dy);c.scale(sc,sc);c.translate(0,-16);try{DRAW[k](c,0,0,1,0);}finally{c.restore();}};
+  inner('tree_pine',-25,26,.55);inner('house_b',5,30,.78);inner('lamp',30,32,.42);inner('snowman',-12,40,.5);
+  c.fillStyle='rgba(190,230,255,.16)';c.fillRect(-R,-R,R*2,R*2);c.restore();}
+ finally{NIGHT=n0;SEA=s0;}
+ return W_GLOBE[key]=cv;}
+// 리본 묶은 선물 상자 (칸 좌표로 놓아요)
+function wGift(c,i,j,w,d,h,col,rib,lift,dots){lift=lift||0;const b=isoBox(c,i,j,w,d,h,col,0,lift),[T,Rt,Bo,L]=b.top,f=.11;
+ if(dots){c.fillStyle=dots;[[b.L,b.Bo],[b.Bo,b.Rt]].forEach(([p,q])=>{for(const u of[.2,.8])for(const v of[.28,.72]){const m=up(lerp2(p,q,u),h*v);c.beginPath();c.arc(m[0],m[1],1.25,0,7);c.fill();}});}
+ const band=(p0,p1,q0,q1)=>poly(c,[lerp2(p0,p1,.5-f),lerp2(p0,p1,.5+f),lerp2(q0,q1,.5+f),lerp2(q0,q1,.5-f)],rib,true);
+ band(b.L,b.Bo,up(b.L,h),up(b.Bo,h));band(b.Bo,b.Rt,up(b.Bo,h),up(b.Rt,h));band(T,L,Rt,Bo);band(T,Rt,L,Bo);
+ const cx=(T[0]+Bo[0])/2,cy=(T[1]+Bo[1])/2;c.lineWidth=1.5;c.strokeStyle=INK2;
+ [-1,1].forEach(dd=>{c.beginPath();c.ellipse(cx+dd*3.8,cy-2.6,4.2,2.8,dd*.5,0,7);c.fillStyle=rib;c.fill();c.stroke();});
+ c.beginPath();c.arc(cx,cy-2,1.9,0,7);c.fillStyle=shade(rib,-.25);c.fill();c.stroke();c.lineWidth=2;return b;}
+// 지팡이 사탕 한 개 (dir 1: 고리가 오른쪽)
+function wCane(c,x,y,h,r,dir){const path=()=>{c.beginPath();c.moveTo(x,y);c.lineTo(x,y-h);if(dir>0)c.arc(x+r,y-h,r,Math.PI,0,false);else c.arc(x-r,y-h,r,0,Math.PI,true);c.lineTo(x+dir*2*r,y-h+r*.9);};
+ c.lineCap='round';c.lineJoin='round';path();c.lineWidth=9;c.strokeStyle=INK2;c.stroke();c.lineWidth=6;c.strokeStyle='#ffffff';c.stroke();
+ c.setLineDash([4.5,4.5]);c.strokeStyle='#e03131';c.stroke();c.setLineDash([]);
+ c.lineWidth=1.3;c.strokeStyle='rgba(255,255,255,.75)';c.beginPath();c.moveTo(x-1.4,y-4);c.lineTo(x-1.4,y-h+2);c.stroke();c.lineCap='butt';c.lineWidth=2;}
+// 얼음 기둥 한 개
+function wCrystal(c,x,y,w,h,rot){c.save();c.translate(x,y);c.rotate(rot);const tip=-h,sh=-h+w*1.5;
+ poly(c,[[-w,0],[-w,sh],[0,tip],[0,0]],NIGHT?'#b4ccff':'#e3f2ff',true);poly(c,[[0,0],[0,tip],[w,sh],[w,0]],NIGHT?'#6f8ff0':'#8fcaf9',true);
+ poly(c,[[-w,0],[-w,sh],[0,tip],[w,sh],[w,0]],null);
+ c.strokeStyle='rgba(255,255,255,.9)';c.lineWidth=1.4;c.beginPath();c.moveTo(-w*.5,-3);c.lineTo(-w*.5,sh+2);c.stroke();c.lineWidth=2;c.restore();}
+// 눈오리 한 마리 (오른쪽을 봐요)
+function wDuck(c,x,y,k){c.save();c.translate(x,y);c.scale(k,k);shadowE(c,0,1,10);
+ poly(c,[[-6,-6],[-12.5,-13],[-5,-11]],'#ffffff');ell(c,0,-6.5,9.5,6.5,'#ffffff',true);
+ c.fillStyle='rgba(116,192,252,.28)';c.beginPath();c.ellipse(1.5,-4.2,7,3.4,0,0,7);c.fill();
+ c.strokeStyle='rgba(28,21,48,.5)';c.lineWidth=1.2;c.beginPath();c.arc(-1.5,-8,4.6,.25,Math.PI*.85);c.stroke();
+ ell(c,11.2,-13.8,3.8,1.9,'#ffffff',true);circ(c,5.8,-14.8,5.6,'#ffffff',true);
+ c.fillStyle=INK2;c.beginPath();c.arc(7.4,-16.2,1.2,0,7);c.fill();c.restore();c.lineWidth=2;}
+// 딸기 한 알
+function wBerry(c,x,y,r){c.beginPath();c.moveTo(x,y+r*1.1);c.quadraticCurveTo(x-r*1.25,y+r*.05,x-r*.75,y-r*.6);c.quadraticCurveTo(x,y-r*1.05,x+r*.75,y-r*.6);c.quadraticCurveTo(x+r*1.25,y+r*.05,x,y+r*1.1);c.closePath();
+ c.fillStyle='#f03e3e';c.fill();c.lineWidth=1.3;c.strokeStyle=INK2;c.stroke();c.fillStyle='#ffe8a3';[[-.32,-.05],[.3,-.15],[0,.45],[.05,-.4]].forEach(([a,b])=>c.fillRect(x+a*r-.6,y+b*r-.6,1.2,1.2));
+ poly(c,[[x-r*.7,y-r*.62],[x-r*.2,y-r*1.25],[x,y-r*.85],[x+r*.25,y-r*1.25],[x+r*.7,y-r*.62],[x,y-r*.4]],'#37b24d',true);c.lineWidth=2;}
+
+Object.assign(DRAW,{
+ candycane(c,i,j){const[x,y]=IP(i+.5,j+.5);shadowE(c,x,y,18);
+  ell(c,x,y-1,21,8.5,'#ffffff',true);c.fillStyle='rgba(116,192,252,.25)';c.beginPath();c.ellipse(x+5,y+1,11,4,0,0,7);c.fill();
+  wCane(c,x-6,y-1,40,6.5,-1);wCane(c,x+8,y+2,27,6,1);
+  const bx=x-6,by=y-30;leaf(c,bx,by,-2.7,9,'#2f9e44');leaf(c,bx,by,-.45,9,'#2f9e44');circ(c,bx-1.6,by+1.2,2.4,'#e03131',true);circ(c,bx+2,by+2,2.4,'#e03131',true);
+  ell(c,x-4,y+2.5,9,3,'#ffffff');ell(c,x+10,y+4.5,7,2.6,'#ffffff');},
+ snowduck(c,i,j){const[x,y]=IP(i+.5,j+.5);
+  wDuck(c,x-13,y-4,.98);wDuck(c,x+13,y-3,.92);wDuck(c,x,y+6,1.12);},
+ gifts(c,i,j){const[x,y]=IP(i+.5,j+.5);shadowE(c,x,y,24);
+  wGift(c,i+.1,j+.42,.48,.48,18,'#e03131','#ffd43b',0,'rgba(255,224,102,.95)');
+  wGift(c,i+.19,j+.51,.3,.3,11,'#4dabf7','#ffffff',18);
+  wGift(c,i+.6,j+.15,.33,.33,15,'#2f9e44','#ff6b6b',0,'rgba(255,255,255,.8)');
+  wGift(c,i+.62,j+.6,.27,.27,10,'#f783ac','#ffffff',0);},
+ icecrystal(c,i,j,s,t){t=t||0;const[x,y]=IP(i+.5,j+.5);
+  if(NIGHT)wGlow(c,x,y-24,44,'140,200,255',.45);
+  shadowE(c,x,y,18);ell(c,x,y-1,20,8,'#f4f9ff',true);
+  [[x+11,y-3,5.5,28,.38],[x-12,y-2,5.5,24,-.42],[x+1,y-4,7.5,46,.04],[x-5,y+2,5,19,-.2],[x+13,y+3,4.2,15,.55]].forEach(([px,py,w,h,r])=>wCrystal(c,px,py,w,h,r));
+  wTwinkle(c,x+3,y-52,5,t,0);wTwinkle(c,x-24,y-24,4,t,2.1);wTwinkle(c,x+24,y-29,4,t,4.2);},
+ frosttree(c,i,j,s,t){t=t||0;const[x,y]=IP(i+.5,j+.5);
+  if(NIGHT)wGlow(c,x,y-46,50,'170,210,255',.35);
+  shadowE(c,x,y,18);stick(c,x,y,7,22,'#8d7b6c');
+  const cs=[[x-12,y-30,12],[x+12,y-31,12],[x,y-41,15],[x-9,y-53,11],[x+9,y-54,11],[x,y-64,9]];blob(c,cs,NIGHT?'#dde8f7':'#ffffff');
+  c.fillStyle=NIGHT?'rgba(110,150,220,.3)':'rgba(116,192,252,.24)';c.beginPath();cs.forEach(([px,py,r])=>{c.moveTo(px+r*.8,py+r*.3);c.arc(px+r*.24,py+r*.3,r*.56,0,7);});c.fill();
+  c.fillStyle='rgba(255,255,255,.95)';c.beginPath();cs.forEach(([px,py,r])=>{c.moveTo(px+r*.04,py-r*.36);c.arc(px-r*.3,py-r*.36,r*.34,0,7);});c.fill();
+  wFlakes(c,[[x-13,y-31],[x+11,y-44],[x-3,y-55],[x+14,y-28],[x+5,y-65]],3.5,NIGHT?'#748ffc':'#4dabf7',1.4);
+  [[-6,-37,'#a5d8ff'],[12,-53,'#d0bfff'],[-13,-47,'#a5d8ff'],[4,-30,'#d0bfff'],[-2,-48,'#ffd8a8']].forEach(([a,b,col])=>circ(c,x+a,y+b,2.2,col));
+  c.fillStyle='#ffffff';c.beginPath();[[-6,-37],[12,-53],[-13,-47],[4,-30],[-2,-48]].forEach(([a,b])=>{c.moveTo(x+a+.1,y+b-.7);c.arc(x+a-.7,y+b-.7,.8,0,7);});c.fill();
+  wTwinkle(c,x-21,y-46,5,t,0);wTwinkle(c,x+19,y-39,5,t,2.1);wTwinkle(c,x+3,y-76,5,t,4.2);},
+ xmaslamp(c,i,j,s,t){t=t||0;const[x,y]=IP(i+.5,j+.5);
+  if(NIGHT)wGlow(c,x,y-68,60,'255,230,140',.6);
+  shadowE(c,x,y,9);ell(c,x,y,7.5,3.8,'#2b3036',true);stick(c,x,y,5,60,'#343a40');
+  c.save();c.beginPath();c.rect(x-2.5,y-60,5,58);c.clip();c.strokeStyle='#e03131';c.lineWidth=2.6;c.beginPath();for(let v=2;v<64;v+=7){c.moveTo(x-4,y-v+2);c.lineTo(x+4,y-v-3);}c.stroke();c.restore();
+  const wy=y-33;c.lineWidth=7.5;c.strokeStyle=INK2;c.beginPath();c.arc(x,wy,7.5,0,7);c.stroke();c.lineWidth=4.6;c.strokeStyle='#2b8a3e';c.stroke();
+  c.fillStyle='#51cf66';c.beginPath();for(let k=0;k<8;k++){const a=k/8*Math.PI*2,ex=x+Math.cos(a)*7.5,ey=wy+Math.sin(a)*7.5;c.moveTo(ex+Math.cos(a)*1.6,ey+Math.sin(a)*1.6);c.ellipse(ex,ey,1.6,1,a,0,7);}c.fill();
+  [[-.6,'#e03131'],[1.9,'#e03131'],[3.5,'#ffd43b'],[5.2,'#e03131']].forEach(([a,col],k)=>{const on=NIGHT?.6+.4*Math.sin(t*4+k*1.9):1;circ(c,x+Math.cos(a)*7.5,wy+Math.sin(a)*7.5,1.9,col);if(NIGHT){c.fillStyle=`rgba(255,255,255,${(on*.7).toFixed(2)})`;c.beginPath();c.arc(x+Math.cos(a)*7.5,wy+Math.sin(a)*7.5,.9,0,7);c.fill();}});
+  c.lineWidth=1.3;c.strokeStyle=INK2;[-1,1].forEach(dd=>{c.beginPath();c.ellipse(x+dd*3.6,wy+8,3.6,2.3,dd*.5,0,7);c.fillStyle='#e03131';c.fill();c.stroke();});circ(c,x,wy+8,1.5,'#c92a2a');c.lineWidth=2;
+  rrect(c,x-10,y-78,20,17,4);c.fillStyle=NIGHT?'#ffe066':'#fff3bf';c.fill();c.lineWidth=2;c.strokeStyle=INK2;c.stroke();
+  c.strokeStyle='rgba(73,80,87,.7)';c.lineWidth=1.4;c.beginPath();c.moveTo(x,y-77);c.lineTo(x,y-62);c.moveTo(x-9,y-70);c.lineTo(x+9,y-70);c.stroke();c.lineWidth=2;
+  poly(c,[[x-12,y-78],[x,y-87],[x+12,y-78]],'#343a40');poly(c,[[x-7,y-82],[x,y-87],[x+7,y-82],[x,y-84]],'#ffffff',true);circ(c,x,y-89,2.4,'#ffd43b',true);
+  const bx=x,by=y-60;c.lineWidth=1.6;c.strokeStyle=INK2;
+  [[-1,.35],[1,-.35]].forEach(([dd,r])=>{c.beginPath();c.moveTo(bx,by);c.lineTo(bx+dd*4,by+13);c.lineTo(bx+dd*7,by+11);c.closePath();c.fillStyle='#e03131';c.fill();c.stroke();
+   c.beginPath();c.ellipse(bx+dd*6,by-1,6,3.6,r,0,7);c.fill();c.stroke();});
+  circ(c,bx,by,2.6,'#c92a2a',true);c.lineWidth=2;},
+ sleigh(c,i,j,s,t){t=t||0;const[x,y]=IP(i+.5,j+.5);shadowE(c,x,y,25);
+  c.lineCap='round';const run=()=>{c.beginPath();c.moveTo(x-25,y-1);c.lineTo(x+15,y-1);c.quadraticCurveTo(x+27,y-2,x+26,y-12);c.quadraticCurveTo(x+25,y-18,x+20,y-16);};
+  run();c.lineWidth=6.5;c.strokeStyle=INK2;c.stroke();c.lineWidth=3.2;c.strokeStyle='#fcc419';c.stroke();c.lineCap='butt';c.lineWidth=2;
+  [x-17,x+7].forEach(px=>stick(c,px,y-1,3,8,'#e8a33a'));
+  ell(c,x-6,y-24,11,9.5,'#c98a4b',true);c.strokeStyle=INK2;c.beginPath();c.moveTo(x-9,y-33);c.lineTo(x-3,y-33);c.stroke();ell(c,x-6,y-35,4,2.5,'#c98a4b',true);
+  rrect(c,x+1,y-31,10,10,1.5);c.fillStyle='#2f9e44';c.fill();c.stroke();c.fillStyle='#ffd43b';c.fillRect(x+5,y-31,2,10);
+  rrect(c,x-20,y-33,9,12,1.5);c.fillStyle='#4dabf7';c.fill();c.stroke();c.fillStyle='#ffffff';c.fillRect(x-16.5,y-33,2,12);
+  c.beginPath();c.moveTo(x-24,y-9);c.lineTo(x+13,y-9);c.quadraticCurveTo(x+23,y-10,x+22,y-21);c.quadraticCurveTo(x+21,y-25,x+17,y-23);c.quadraticCurveTo(x+12,y-17,x+6,y-17);
+  c.lineTo(x-12,y-17);c.quadraticCurveTo(x-16,y-19,x-18,y-29);c.quadraticCurveTo(x-24,y-34,x-27,y-27);c.closePath();
+  c.fillStyle='#e03131';c.fill();c.lineWidth=2;c.strokeStyle=INK2;c.stroke();
+  c.strokeStyle='#fcc419';c.lineWidth=1.8;c.beginPath();c.moveTo(x-21,y-12);c.lineTo(x+12,y-12);c.stroke();
+  c.beginPath();c.arc(x-3,y-13.5,3.2,Math.PI,Math.PI*2.6);c.stroke();c.beginPath();c.arc(x+19.5,y-20.5,2.2,0,7);c.stroke();c.lineWidth=2;},
+ reindeer(c,i,j,s,t){t=t||0;const[x,y]=IP(i+.5,j+.5),nod=Math.sin(t*1.6)*1.2,bc='#a8693a',lt='#f1d2a8';shadowE(c,x,y,17);
+  [[-9,1],[-4,3],[6,1],[10,3]].forEach(([dx,dy],k)=>{stick(c,x+dx,y+dy,2.6,11,k%2?bc:shade(bc,-.18));c.fillStyle='#3b2416';c.fillRect(x+dx-1.3,y+dy-1.8,2.6,1.8);});
+  circ(c,x-14,y-20,3,'#ffffff',true);
+  rrect(c,x-15,y-25,28,15,7.5);c.fillStyle=bc;c.fill();c.lineWidth=2;c.strokeStyle=INK2;c.stroke();ell(c,x-1,y-12.5,9,2.6,lt);
+  const hx=x+14,hy=y-32+nod;poly(c,[[x+5,y-24],[hx-3,hy+2],[hx+3,hy+5],[x+12,y-17]],bc);
+  c.lineCap='round';c.lineJoin='round';
+  const ant=(pts)=>{c.beginPath();pts.forEach((p,k)=>k?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.lineWidth=3.6;c.strokeStyle=INK2;c.stroke();c.lineWidth=1.7;c.strokeStyle='#e9c08a';c.stroke();};
+  ant([[hx-2,hy-5],[hx-5,hy-12],[hx-11,hy-16]]);ant([[hx-5,hy-12],[hx-4,hy-19]]);ant([[hx-3.6,hy-9],[hx-8.5,hy-9.5]]);
+  ant([[hx+1,hy-5],[hx+3,hy-12],[hx+9,hy-17]]);ant([[hx+3,hy-12],[hx+1.5,hy-19.5]]);ant([[hx+2.2,hy-8.5],[hx+7,hy-10.5]]);c.lineCap='butt';c.lineWidth=2;
+  leaf(c,hx-4,hy-2,-2.6,6,bc);ell(c,hx,hy,6.5,5.5,bc,true);ell(c,hx+5.5,hy+2,4.2,3.3,lt,true);circ(c,hx+9,hy+1.2,1.9,'#4a2c1a',true);eye(c,hx+1,hy-1.5,1.5);
+  c.strokeStyle='#e03131';c.lineWidth=3;c.beginPath();c.moveTo(x+6,y-24);c.lineTo(x+11,y-17);c.stroke();c.lineWidth=2;circ(c,x+10,y-15,2.6,'#fcc419',true);},
+ igloo(c,i,j,s,t){t=t||0;const[x,y0]=IP(i+.5,j+.5),y=y0-1,R=25,H=31;shadowE(c,x,y0,27);
+  const g=c.createLinearGradient(x-R,y-H,x+R,y+6);g.addColorStop(0,'#ffffff');g.addColorStop(1,NIGHT?'#9fb4d0':'#c8def5');
+  c.beginPath();c.ellipse(x,y,R,H,0,Math.PI,0);c.ellipse(x,y,R,R*.5,0,0,Math.PI);c.closePath();c.fillStyle=g;c.fill();c.lineWidth=2;c.strokeStyle=INK2;c.stroke();
+  const rows=[0,.3,.56,.79,.95];c.strokeStyle='rgba(70,100,150,.42)';c.lineWidth=1.3;
+  for(let k=1;k<rows.length-1;k++){const f=rows[k],rr=R*Math.sqrt(1-f*f);c.beginPath();c.ellipse(x,y-f*H,rr,rr*.5,0,0,Math.PI);c.stroke();}
+  for(let k=0;k<rows.length-2;k++){const f0=rows[k],f1=rows[k+1],r0=R*Math.sqrt(1-f0*f0),r1=R*Math.sqrt(1-f1*f1),n=5-k;for(let q=0;q<n;q++){const a=(q+.5+(k%2)*.5)/(n+.5)*Math.PI;c.beginPath();c.moveTo(x+Math.cos(a)*r0,y-f0*H+Math.sin(a)*r0*.5);c.lineTo(x+Math.cos(a)*r1,y-f1*H+Math.sin(a)*r1*.5);c.stroke();}}
+  c.lineWidth=2;c.fillStyle='rgba(255,255,255,.85)';c.beginPath();c.ellipse(x-9,y-22,6,3.5,-.6,0,7);c.fill();
+  const tx=x+4,ty=y+10,tg=c.createLinearGradient(tx,ty-20,tx,ty);tg.addColorStop(0,'#ffffff');tg.addColorStop(1,NIGHT?'#9fb4d0':'#d3e6f8');
+  c.beginPath();c.moveTo(tx-11,ty);c.lineTo(tx-11,ty-9);c.ellipse(tx,ty-9,11,9,0,Math.PI,0);c.lineTo(tx+11,ty);c.ellipse(tx,ty,11,3.5,0,0,Math.PI);c.closePath();c.fillStyle=tg;c.fill();c.stroke();
+  if(NIGHT)wGlow(c,tx,ty-4,26,'255,180,80',.5);
+  c.beginPath();c.moveTo(tx-6.5,ty+2);c.lineTo(tx-6.5,ty-6);c.ellipse(tx,ty-6,6.5,6.5,0,Math.PI,0);c.lineTo(tx+6.5,ty+2);c.closePath();c.fillStyle=NIGHT?'#ffb84d':'#3b4a6b';c.fill();c.stroke();
+  stick(c,x-4,y-H+1,1.8,14,'#868e96');poly(c,[[x-3.2,y-H-13],[x+8,y-H-9.5],[x-3.2,y-H-6]],'#4dabf7');},
+ xmascake(c,i,j,s,t){t=t||0;const[x,y]=IP(i+.5,j+.5);shadowE(c,x,y,25);
+  ell(c,x,y-1,26,12.5,'#dee2e6',true);ell(c,x,y-3,22,10,'#f8f9fa');
+  const ring=(cy,rx,ry,n,back,f)=>{for(let k=0;k<n;k++){const a=(k+.5)/n*Math.PI*2,sn=Math.sin(a);if(back?sn>0:sn<=0)continue;f(x+Math.cos(a)*rx,cy+sn*ry,a);}};
+  const top1=y-21;ring(top1,17,8.5,8,true,(px,py)=>wBerry(c,px,py-2,4));
+  cyl(c,x,y-4,21,17,'#fffaf3');c.strokeStyle='#ff8fab';c.lineWidth=3;c.beginPath();c.ellipse(x,y-12,21,10.5,0,.05,Math.PI-.05);c.stroke();c.lineWidth=2;
+  c.fillStyle='#ffffff';ring(top1,20.5,10.2,14,false,(px,py)=>{c.beginPath();c.arc(px,py,2.6,0,7);c.fill();});
+  ring(top1,17,8.5,8,false,(px,py)=>wBerry(c,px,py-2,4.3));
+  ring(top1-14,10.5,5.2,8,true,(px,py)=>{circ(c,px,py-1,2.6,'#ffffff');});
+  cyl(c,x,top1,13,14,'#fffaf3');c.strokeStyle='#ff8fab';c.lineWidth=2.4;c.beginPath();c.ellipse(x,top1-6,13,6.5,0,.05,Math.PI-.05);c.stroke();c.lineWidth=2;
+  ring(top1-14,10.5,5.2,8,false,(px,py)=>{circ(c,px,py-1,2.6,'#ffffff');});
+  wBerry(c,x-4,top1-17,4.6);wBerry(c,x+3,top1-15,4.2);
+  leaf(c,x-9,top1-15,-2.5,7,'#2f9e44');leaf(c,x-9,top1-15,-.9,7,'#2f9e44');circ(c,x-9,top1-14,1.8,'#e03131',true);
+  const cx=x+6,cy=top1-17;stick(c,cx,cy,3.4,12,'#ff8787');c.fillStyle='#ffffff';[3,7,11].forEach(v=>c.fillRect(cx-1.7,cy-v,3.4,1.6));
+  const fl=Math.sin(t*9)*1.2;if(NIGHT)wGlow(c,cx,cy-16,22,'255,200,90',.55);
+  c.beginPath();c.moveTo(cx,cy-21-fl);c.quadraticCurveTo(cx+3.4,cy-15,cx,cy-12.5);c.quadraticCurveTo(cx-3.4,cy-15,cx,cy-21-fl);c.fillStyle='#ffa94d';c.fill();c.lineWidth=1.2;c.strokeStyle='#e8590c';c.stroke();c.lineWidth=2;
+  circ(c,cx,cy-14.6,1.3,'#fff3bf');},
+ cookiehouse(c,i,j,s,t){t=t||0;const wall='#c97b40',b=isoBox(c,i,j,1,1,28,wall,.15);
+  c.lineCap='round';c.lineWidth=3;c.strokeStyle='#ffffff';[b.L,b.Bo,b.Rt].forEach(p=>{c.beginPath();c.moveTo(p[0],p[1]-2);c.lineTo(p[0],p[1]-27);c.stroke();});c.lineCap='butt';c.lineWidth=2;
+  const win=(p0,p1,u,w,v,hh)=>{const a=up(lerp2(p0,p1,u),v),bb=up(lerp2(p0,p1,u+w),v);if(NIGHT)wGlow(c,(a[0]+bb[0])/2,(a[1]+bb[1])/2-hh/2,hh*1.3,'255,210,110',.45);
+   poly(c,[a,bb,up(bb,hh),up(a,hh)],NIGHT?'#ffd966':'#ffe8a3');const m0=lerp2(a,bb,.5);c.strokeStyle='#ffffff';c.lineWidth=1.8;c.beginPath();c.moveTo(m0[0],m0[1]);c.lineTo(m0[0],m0[1]-hh);
+   const l0=up(a,hh/2),l1=up(bb,hh/2);c.moveTo(l0[0],l0[1]);c.lineTo(l1[0],l1[1]);c.stroke();c.lineWidth=2;};
+  const d0=up(lerp2(b.L,b.Bo,.54),0),d1=up(lerp2(b.L,b.Bo,.8),0);poly(c,[d0,d1,up(d1,17),up(d0,17)],'#f06595');
+  const dm=lerp2(d0,d1,.5);c.strokeStyle='#ffffff';c.lineWidth=1.6;c.beginPath();c.moveTo(dm[0],dm[1]-1);c.lineTo(dm[0],dm[1]-16);c.stroke();c.lineWidth=2;circ(c,dm[0]+3,dm[1]-8,1.4,'#ffd43b');
+  win(b.L,b.Bo,.12,.28,9,10);win(b.Bo,b.Rt,.32,.34,9,10);
+  const gum=['#f03e3e','#40c057','#fcc419','#4dabf7','#f783ac'];[[b.L,b.Bo],[b.Bo,b.Rt]].forEach(([p,q],e)=>{for(let k=0;k<4;k++){const m=up(lerp2(p,q,.12+k*.25),24.5);circ(c,m[0],m[1],1.9,gum[(k+e*2)%5]);}});
+  const s0=SEA;SEA='winter';const rf=hipRoof(c,b,22,'#7b4a2b',.4,.16);SEA=s0;
+  const[T,Rt,Bo,L]=b.top,cx=(T[0]+Bo[0])/2,cy=(T[1]+Bo[1])/2,ex=p=>[cx+(p[0]-cx)*1.16,cy+(p[1]-cy)*1.16],l2=ex(L),b2=ex(Bo),r2=ex(Rt),P1=rf.P1,P2=rf.P2,k=.45;
+  const edge=(p,q,n)=>{c.fillStyle='#ffffff';for(let m=0;m<n;m++){const e=lerp2(p,q,(m+.5)/n);c.beginPath();c.arc(e[0],e[1]-.4,2.5,0,Math.PI);c.fill();}};
+  edge(lerp2(l2,P1,k),lerp2(b2,P2,k),6);edge(lerp2(b2,P2,k),lerp2(r2,P2,k),4);edge(l2,b2,8);edge(b2,r2,6);
+  const fl=(u,v)=>lerp2(lerp2(l2,b2,u),lerp2(P1,P2,u),v),fr=(u,v)=>lerp2(lerp2(b2,r2,u),P2,v);
+  [[fl(.2,.24),gum[0]],[fl(.5,.2),gum[1]],[fl(.8,.25),gum[3]],[fr(.3,.22),gum[2]],[fr(.72,.2),gum[4]]].forEach(([p,col])=>{c.beginPath();c.ellipse(p[0],p[1],3.1,2.5,0,Math.PI,0);c.closePath();c.fillStyle=col;c.fill();c.lineWidth=1.2;c.strokeStyle=INK2;c.stroke();c.lineWidth=2;});
+  const pm=lerp2(P1,P2,.5);circ(c,pm[0],pm[1]-2,3.6,'#ffffff',true);c.fillStyle='#e03131';for(let q=0;q<3;q++){const a=q*2.09;c.beginPath();c.moveTo(pm[0],pm[1]-2);c.arc(pm[0],pm[1]-2,3.6,a,a+.8);c.closePath();c.fill();}
+  },
+ icerink(c,i,j,s,t){t=t||0;const[x,y]=IP(i+1,j+1);
+  ell(c,x,y+3,59,28.5,'#c3d3e4',true);ell(c,x,y,59,28.5,'#ffffff',true);
+  const g=c.createLinearGradient(x-50,y-24,x+50,y+24);g.addColorStop(0,NIGHT?'#9cc0ee':'#eef8ff');g.addColorStop(1,NIGHT?'#5b84c4':'#9fd3fb');
+  c.beginPath();c.ellipse(x,y,50,23.5,0,0,7);c.fillStyle=g;c.fill();c.lineWidth=1.6;c.strokeStyle='rgba(28,21,48,.5)';c.stroke();
+  c.strokeStyle='rgba(255,255,255,.85)';c.lineWidth=1.3;c.beginPath();c.ellipse(x-15,y+2,15,7,.1,0,7);c.moveTo(x+31,y-1);c.ellipse(x+16,y-1,15,7,-.1,0,7);c.stroke();
+  c.beginPath();c.moveTo(x-38,y-6);c.quadraticCurveTo(x-24,y-15,x-6,y-12);c.stroke();
+  c.lineWidth=2.4;c.strokeStyle='rgba(255,255,255,.95)';c.lineCap='round';[[-30,-12,-22,-17],[-22,-8,-12,-14],[18,10,26,5]].forEach(([a,b,cc,d])=>{c.beginPath();c.moveTo(x+a,y+b);c.lineTo(x+cc,y+d);c.stroke();});c.lineCap='butt';c.lineWidth=2;
+  const sp=(t*.25)%1,sx=x-40+sp*80,sy=y-10+Math.sin(sp*Math.PI)*-4;c.fillStyle=`rgba(255,255,255,${Math.sin(sp*Math.PI).toFixed(2)})`;wSpark(c,sx,sy,4);c.fill();
+  [[200,7,4],[235,6,3.5],[300,8,4],[330,6,3.2],[25,7,3.8],[150,7,3.6],[95,6,3.4]].forEach(([deg,rx,ry])=>{const a=deg*Math.PI/180,px=x+Math.cos(a)*55,py=y+Math.sin(a)*26.5;ell(c,px,py-1.5,rx,ry,'#ffffff');c.lineWidth=1.2;c.strokeStyle='rgba(28,21,48,.55)';c.beginPath();c.ellipse(px,py-1.5,rx,ry,0,Math.PI*.95,Math.PI*2.05);c.stroke();c.lineWidth=2;});
+  const sk=(px,py)=>{c.save();c.translate(px,py);c.lineWidth=1.6;c.strokeStyle='#868e96';c.beginPath();c.moveTo(-6,4);c.lineTo(6,4);c.quadraticCurveTo(9,4,8.5,1);c.stroke();c.beginPath();c.moveTo(-3.5,4);c.lineTo(-3.5,1);c.moveTo(3.5,4);c.lineTo(3.5,1);c.stroke();
+   c.beginPath();c.moveTo(-5.5,1);c.lineTo(-5.5,-9);c.lineTo(.5,-9);c.lineTo(.5,-4);c.quadraticCurveTo(7,-4,7,1);c.closePath();c.fillStyle='#ffffff';c.fill();c.lineWidth=1.4;c.strokeStyle=INK2;c.stroke();
+   c.strokeStyle='#e03131';c.lineWidth=1.2;c.beginPath();c.moveTo(-1.5,-7);c.lineTo(1.5,-6);c.moveTo(-1.5,-5);c.lineTo(2.5,-4);c.stroke();c.restore();c.lineWidth=2;};
+  sk(x+37,y+21);sk(x+47,y+18);},
+ bigtree(c,i,j,s,t){t=t||0;const[x,y]=IP(i+1,j+1);
+  if(NIGHT)wGlow(c,x,y-84,88,'255,220,120',.3);
+  wGift(c,i+1.15,j+.35,.42,.42,16,'#7950f2','#ffd43b');
+  shadowE(c,x,y,48);ell(c,x,y-2,40,16,'#e03131',true);c.lineWidth=4;c.strokeStyle='#ffffff';c.beginPath();c.ellipse(x,y-2,38,15,0,.15,Math.PI-.15);c.stroke();c.lineWidth=2;
+  stick(c,x,y-6,12,16,'#7a4a2b');
+  const g=NIGHT?'#1f6b3a':'#2b8a3e',y0=y-18,TR=[[52,46,0],[45,42,26],[37,38,50],[29,34,72],[20,30,92]];
+  TR.forEach(([w,h,b],k)=>{const tr=[[x-w,y0-b],[x,y0-b-h],[x+w,y0-b]];poly(c,tr,shade(g,k*.06));const sn=SEA;SEA='winter';snowTri(c,tr[1],tr[0],tr[2]);SEA=sn;
+   c.fillStyle=shade(g,k*.06-.18);c.beginPath();c.moveTo(x-w+3,y0-b-1);for(let q=0;q<=6;q++){const px=x-w+3+q*(2*w-6)/6;c.lineTo(px,y0-b-(q%2?4:1));}c.lineTo(x+w-3,y0-b-1);c.closePath();c.fill();});
+  c.lineWidth=2;const gar=(py,w,col,ph)=>{c.strokeStyle=col;c.lineWidth=2.4;c.beginPath();c.moveTo(x-w,py-3);c.quadraticCurveTo(x,py+9,x+w,py-6);c.stroke();c.lineWidth=2;};
+  gar(y0-12,44,'#ffd43b');gar(y0-38,37,'#ff6b6b');gar(y0-62,30,'#ffd43b');gar(y0-84,22,'#ff6b6b');
+  const orn=[[-34,-8,'#e03131'],[30,-12,'#339af0'],[-12,-4,'#fcc419'],[14,-22,'#f783ac'],[-26,-30,'#339af0'],[24,-36,'#e03131'],[-4,-26,'#ffffff'],[-18,-52,'#fcc419'],[16,-56,'#7950f2'],[2,-46,'#e03131'],[-10,-76,'#339af0'],[11,-78,'#fcc419'],[0,-96,'#f783ac'],[38,-4,'#fcc419'],[-40,-2,'#7950f2']];
+  c.lineWidth=2;c.strokeStyle=INK2;[...new Set(orn.map(o=>o[2]))].forEach(col=>{c.beginPath();orn.forEach(([a,b,cc])=>{if(cc!==col)return;c.moveTo(x+a+4,y0+b);c.arc(x+a,y0+b,4,0,7);});c.fillStyle=col;c.fill();c.stroke();});
+  for(let g3=0;g3<3;g3++){const on=.3+.6*Math.max(0,Math.sin(t*3+g3*2.1));c.fillStyle=`rgba(255,255,255,${on.toFixed(2)})`;c.beginPath();orn.forEach(([a,b],k)=>{if(k%3!==g3)return;c.moveTo(x+a+.2,y0+b-1.3);c.arc(x+a-1.3,y0+b-1.3,1.5,0,7);});c.fill();}
+  if(NIGHT)for(let g3=0;g3<3;g3++){const on=.4+.6*Math.max(0,Math.sin(t*4+g3*2.1));c.fillStyle=`rgba(255,236,150,${on.toFixed(2)})`;c.beginPath();
+   for(let k=g3;k<22;k+=3){const r1=hash2(k,5),r2=hash2(k,9),lv=Math.floor(r2*5),[w,h,bb]=TR[lv],py=y0-bb-6-r1*h*.55,hw=w*(1-(y0-bb-py)/h)*.85,px=x+(hash2(k,13)*2-1)*hw;c.moveTo(px+2.1,py);c.arc(px,py,2.1,0,7);}c.fill();}
+  const sy=y0-128;c.fillStyle=`rgba(255,224,102,${(.3+.15*Math.sin(t*2)).toFixed(2)})`;c.beginPath();c.arc(x,sy,22,0,7);c.fill();
+  starPath(c,x,sy,15,6.5,Math.sin(t*1.5)*.08);c.fillStyle='#ffd43b';c.fill();c.lineWidth=2.4;c.strokeStyle=INK2;c.stroke();c.lineWidth=2;circ(c,x-4,sy-4,2.6,'rgba(255,255,255,.7)');
+  wGift(c,i+1.2,j+1.25,.42,.42,15,'#2f9e44','#ff6b6b');wGift(c,i+.55,j+1.35,.36,.36,12,'#4dabf7','#ffffff');},
+ snowglobe(c,i,j,s,t){t=t||0;const[x,y]=IP(i+1,j+1);shadowE(c,x,y,50);
+  cyl(c,x,y-1,46,11,'#8b5a2b');cyl(c,x,y-12,40,12,'#c92a2a');
+  c.fillStyle='#fcc419';c.beginPath();c.ellipse(x,y-18,40,20,0,0,Math.PI);c.lineTo(x-40,y-21);c.ellipse(x,y-21,40,20,0,Math.PI,0,true);c.closePath();c.fill();c.lineWidth=1.5;c.strokeStyle=INK2;c.stroke();c.lineWidth=2;
+  const R=50,gx=x,gy=y-24-R*.86;c.drawImage(wGlobeIn(NIGHT),gx-R,gy-R,R*2,R*2);
+  c.fillStyle='rgba(255,255,255,.95)';c.beginPath();for(let k=0;k<26;k++){const r1=hash2(k,21),r2=hash2(k,33),r3=hash2(k,47),fall=(r2+t*(.08+r3*.06))%1,dx=(r1*2-1)*R*.9+Math.sin(t*1.2+k)*5,dy=-R+fall*R*1.9,rr=1.2+r3*1.6;
+   if(dx*dx+dy*dy>(R-rr-1)*(R-rr-1))continue;c.moveTo(gx+dx+rr,gy+dy);c.arc(gx+dx,gy+dy,rr,0,7);}c.fill();
+  c.lineWidth=2.5;c.strokeStyle=INK2;c.beginPath();c.arc(gx,gy,R,0,7);c.stroke();c.lineWidth=2;
+  c.strokeStyle='rgba(255,255,255,.75)';c.lineWidth=5;c.lineCap='round';c.beginPath();c.arc(gx,gy,R-8,Math.PI*1.08,Math.PI*1.38);c.stroke();c.lineWidth=3;c.beginPath();c.arc(gx,gy,R-8,Math.PI*1.46,Math.PI*1.52);c.stroke();c.lineCap='butt';c.lineWidth=2;
+  c.fillStyle='#c92a2a';c.beginPath();c.ellipse(x,y-24,34,15,0,0,Math.PI);c.lineTo(x-34,y-27);c.ellipse(x,y-27,34,15,0,Math.PI,0,true);c.closePath();c.fill();c.stroke();
+  const bx=x,by=y-14;c.lineWidth=1.6;c.strokeStyle=INK2;[-1,1].forEach(dd=>{c.beginPath();c.ellipse(bx+dd*7,by-1,7,4.2,dd*.4,0,7);c.fillStyle='#fcc419';c.fill();c.stroke();
+   c.beginPath();c.moveTo(bx,by);c.lineTo(bx+dd*5,by+10);c.lineTo(bx+dd*9,by+8);c.closePath();c.fill();c.stroke();});circ(c,bx,by,3,'#f59f00',true);c.lineWidth=2;}
+});
 // 동물은 조금 크게 그려요(발밑 가운데 기준)
-['chicken','squirrel','duck','rabbit','puppy','kitty','sheep','cow'].forEach(k=>{const f=DRAW[k];DRAW[k]=function(c,i,j,s,t){const[x,y]=IP(i+.5,j+.5);c.save();c.translate(x,y);c.scale(1.35,1.35);c.translate(-x,-y);try{f(c,i,j,s,t);}finally{c.restore();}};});
+['chicken','squirrel','duck','rabbit','puppy','kitty','sheep','cow','reindeer'].forEach(k=>{const f=DRAW[k];DRAW[k]=function(c,i,j,s,t){const[x,y]=IP(i+.5,j+.5);c.save();c.translate(x,y);c.scale(1.35,1.35);c.translate(-x,-y);try{f(c,i,j,s,t);}finally{c.restore();}};});
 function objSize(o){return o.k==='monument'?2:(DECO[o.k]?DECO[o.k].s:1);}
 function drawObj(c,o,t){if(o.k!=='monument'&&!DRAW[o.k])return;const s=objSize(o);c.save();FLIPPED=!!o.f;if(o.f){const cx=(o.i-o.j)*IW;c.translate(cx,0);c.scale(-1,1);c.translate(-cx,0);}
  try{if(o.k==='monument')drawMonument(c,o.i,o.j,o.label||'',t,o.lv||1);else DRAW[o.k](c,o.i,o.j,s,t);}finally{c.restore();FLIPPED=false;}}
@@ -1648,13 +1926,17 @@ function drawTile(c,i,j,type,t){const T=IP(i,j),R=IP(i+1,j),B=IP(i+1,j+1),L=IP(i
  else if(type==='deck'){c.strokeStyle='rgba(110,70,30,.5)';c.lineWidth=1.2;for(let k=1;k<4;k++){const a=IP(i,j+k/4),b2=IP(i+1,j+k/4);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b2[0],b2[1]);c.stroke();}for(let k=0;k<4;k++){const u=.15+((k*.37+hash2(i,j+k))%1)*.7,a=IP(i+u,j+k/4),b2=IP(i+u,j+(k+1)/4);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b2[0],b2[1]);c.stroke();}}
  else if(type==='brick'){c.strokeStyle='rgba(255,226,200,.55)';c.lineWidth=1.2;for(let k=1;k<3;k++){const a=IP(i,j+k/3),b2=IP(i+1,j+k/3);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b2[0],b2[1]);c.stroke();}for(let k=0;k<3;k++)for(const u of(k%2?[.25,.75]:[.5])){const a=IP(i+u,j+k/3),b2=IP(i+u,j+(k+1)/3);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b2[0],b2[1]);c.stroke();}}}
 function footDiamond(c,i,j,s,fill,stroke){const pts=[IP(i,j),IP(i+s,j),IP(i+s,j+s),IP(i,j+s)];c.beginPath();pts.forEach((p,k)=>k?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=3;c.strokeStyle=stroke;c.stroke();}}
+// 밤에는 땅과 섬 옆면을 달빛 색으로 곱해서 어둡게 (장식은 그림마다 밤 모습이 있어요)
+function nightGround(c,n){const T=IP(0,0),R=IP(n,0),B=IP(n,n),L=IP(0,n);c.save();c.globalCompositeOperation='multiply';c.fillStyle='#9aaadb';
+ c.beginPath();c.moveTo(T[0],T[1]);c.lineTo(R[0],R[1]);c.lineTo(R[0],R[1]+22);c.lineTo(B[0],B[1]+22);c.lineTo(L[0],L[1]+22);c.lineTo(L[0],L[1]);c.closePath();c.fill();c.restore();}
 function drawIsland(c,n,groundAt,objs,opt){opt=opt||{};const t=ANIM_T;GAT=groundAt;
- if(!opt.noSea){const k=.06*Math.sin(t*1.3);c.fillStyle='rgba(255,255,255,.28)';c.beginPath();[IP(-.7-k,-.7-k),IP(n+.7+k,-.7-k),IP(n+.7+k,n+.7+k),IP(-.7-k,n+.7+k)].forEach((p,q)=>q?c.lineTo(p[0],p[1]+20):c.moveTo(p[0],p[1]+20));c.closePath();c.fill();
+ if(!opt.noSea){const k=.06*Math.sin(t*1.3);c.fillStyle=NIGHT?'rgba(170,190,255,.12)':'rgba(255,255,255,.28)';c.beginPath();[IP(-.7-k,-.7-k),IP(n+.7+k,-.7-k),IP(n+.7+k,n+.7+k),IP(-.7-k,n+.7+k)].forEach((p,q)=>q?c.lineTo(p[0],p[1]+20):c.moveTo(p[0],p[1]+20));c.closePath();c.fill();
   c.fillStyle='rgba(20,90,140,.22)';c.beginPath();[IP(-.25,-.25),IP(n+.25,-.25),IP(n+.25,n+.25),IP(-.25,n+.25)].forEach((p,q)=>q?c.lineTo(p[0],p[1]+30):c.moveTo(p[0],p[1]+30));c.closePath();c.fill();}
  for(let i=0;i<n;i++){const a=IP(i,n),b=IP(i+1,n);poly(c,[a,b,[b[0],b[1]+22],[a[0],a[1]+22]],'#b07a43');}
  for(let j=0;j<n;j++){const a=IP(n,j),b=IP(n,j+1);poly(c,[a,b,[b[0],b[1]+22],[a[0],a[1]+22]],'#8d5f32');}
  const V=opt.view;
  for(let i=0;i<n;i++)for(let j=0;j<n;j++){if(V){const tx=(i-j)*IW,ty=(i+j)*IH;if(tx+IW<V.x0||tx-IW>V.x1||ty+TLH<V.y0||ty>V.y1)continue;}drawTile(c,i,j,groundAt(i,j),t);}
+ if(NIGHT)nightGround(c,n);
  if(opt.grid){c.strokeStyle='rgba(255,255,255,.3)';c.lineWidth=1;c.beginPath();for(let k=0;k<=n;k++){let a=IP(k,0),b=IP(k,n);c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);a=IP(0,k);b=IP(n,k);c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);}c.stroke();}
  if(opt.under)opt.under(c);
  const list=objs.filter(o=>!o.hidden).sort(depthCmp);
@@ -1668,8 +1950,8 @@ function drawObjAt(c,k,x,y,sc,f){const s=DECO[k]?DECO[k].s:2;c.save();c.translat
 function drawVillageStrip(c){if(!SAVE)return;SEA='';const objs=SAVE.deco.objs.filter(o=>DECO[o.k]&&DECO[o.k].h>=40&&!DECO[o.k].wo).sort((a,b)=>DECO[b.k].price-DECO[a.k].price||(a.i+a.j)-(b.i+b.j));
  const placed=[];let x=222;for(const o of objs){const s=DECO[o.k].s,sc=s===2?.6:.86,w=s*TLW*sc*.78;let cx=x+w/2;if(cx+w/2>552&&cx-w/2<728){x=732;cx=x+w/2;}if(cx+w/2>1270)continue;placed.push({o,cx,sc});x+=w+3;}
  NIGHT=true;for(const p of placed)drawObjAt(c,p.o.k,p.cx,GROUND-6,p.sc,p.o.f);NIGHT=false;}
-function fillThumbs(root){const s0=SEA;SEA='';root.querySelectorAll('canvas[data-thumb]').forEach(el=>{const k=el.dataset.thumb,d=DECO[k];if(!d)return;const w=+el.dataset.sz||84,S=2;el.width=w*S;el.height=w*S;const x=el.getContext('2d');x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,w,w);
- const s=d.s,sc=Math.min((w-6)/(s*TLW),(w-6)/(s*IH+d.h+6));x.save();x.translate(w/2,w-3-s*TLH*sc);x.scale(sc,sc);const wet=!!(d.wo||(d.tw&&el.dataset.land!=='1')),g0=GAT;GAT=wet?()=>'water':null;for(let a=0;a<s;a++)for(let b=0;b<s;b++)drawTile(x,a,b,wet?'water':'grass',0);try{drawObj(x,{k,i:0,j:0},ANIM_T);}finally{GAT=g0;}x.restore();});SEA=s0;}
+function fillThumbs(root){const s0=SEA,n0=NIGHT;SEA='';NIGHT=false;root.querySelectorAll('canvas[data-thumb]').forEach(el=>{const k=el.dataset.thumb,d=DECO[k];if(!d)return;const w=+el.dataset.sz||84,S=2;el.width=w*S;el.height=w*S;const x=el.getContext('2d');x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,w,w);
+ const s=d.s,sc=Math.min((w-6)/(s*TLW),(w-6)/(s*IH+d.h+6));x.save();x.translate(w/2,w-3-s*TLH*sc);x.scale(sc,sc);const wet=!!(d.wo||(d.tw&&el.dataset.land!=='1')),g0=GAT;GAT=wet?()=>'water':null;for(let a=0;a<s;a++)for(let b=0;b<s;b++)drawTile(x,a,b,wet?'water':'grass',0);try{drawObj(x,{k,i:0,j:0},ANIM_T);}finally{GAT=g0;}x.restore();});SEA=s0;NIGHT=n0;}
 function camFit(n,area){const minX=-n*IW,maxX=n*IW,minY=-150,maxY=n*TLH+30,z=Math.max(.3,Math.min(2.4,Math.min((area[2]-area[0])/(maxX-minX),(area[3]-area[1])/(maxY-minY))));return{z,x:(area[0]+area[2])/2-(minX+maxX)/2*z,y:(area[1]+area[3])/2-(minY+maxY)/2*z};}
 /* ================= 별지기·별똥별 그리기 ================= */
 function drawGuardian(c,x,y,aim,t,sk){const S=skinOf(sk),A=S.acc;c.save();c.translate(x,y);c.lineWidth=3;c.strokeStyle=INK2;c.lineJoin='round';
@@ -1885,7 +2167,11 @@ function drawParts(){for(const p of R.parts){const a=Math.max(0,p.life/p.max);ct
 
 /* ================= 장면 그리기 ================= */
 const WAVES=[];{const r=rng(9);for(let i=0;i<46;i++)WAVES.push({x:r()*W,y:262+r()*450,s:.6+r()*.8,p:r()*6});}
-function drawSky(t){ctx.drawImage(BG.sea,0,0,W,H);
+function drawSkyN(t){if(!BG.seaN)BG.seaN=buildSeaN();ctx.drawImage(BG.seaN,0,0,W,H);
+ ctx.fillStyle='#fff';for(const s of TW){if(s.y>236)continue;ctx.globalAlpha=.2+.6*Math.abs(Math.sin(t*s.sp+s.p));starPath(ctx,s.x,s.y,s.s*.75,s.s*.26,0);ctx.fill();}ctx.globalAlpha=1;
+ for(const cl of CLOUDS){const x=((cl.x+t*cl.v)%1560)-160;cloud(ctx,x,40+(cl.y-90)*.55,cl.s*.75,'rgba(120,130,200,.2)');}
+ ctx.lineCap='round';ctx.lineWidth=2.4;for(const w of WAVES){const a=.08+.12*Math.sin(t*1.2+w.p),x=(w.x+t*6*w.s)%(W+60)-30;ctx.strokeStyle=`rgba(190,210,255,${a.toFixed(3)})`;ctx.beginPath();ctx.moveTo(x-10*w.s,w.y);ctx.quadraticCurveTo(x,w.y-5*w.s,x+10*w.s,w.y);ctx.stroke();}}
+function drawSky(t){if(NIGHT){drawSkyN(t);return;}ctx.drawImage(BG.sea,0,0,W,H);
  for(const cl of CLOUDS){const x=((cl.x+t*cl.v)%1560)-160;cloud(ctx,x,40+(cl.y-90)*.55,cl.s*.75);}
  ctx.lineCap='round';ctx.lineWidth=2.4;for(const w of WAVES){const a=.25+.3*Math.sin(t*1.2+w.p),x=(w.x+t*6*w.s)%(W+60)-30;ctx.strokeStyle=`rgba(255,255,255,${a})`;ctx.beginPath();ctx.moveTo(x-10*w.s,w.y);ctx.quadraticCurveTo(x,w.y-5*w.s,x+10*w.s,w.y);ctx.stroke();}}
 // ---------- 홈 화면 섬: 18칸 섬까지만 한눈에, 끌어서 둘러보기, 휠·터치패드로 크게·작게, 누르면 꾸미기 ----------
@@ -1981,12 +2267,12 @@ let ttTO=0;function ttoast(m){const el=$('ttoast');el.textContent=m;el.classList
 /* ================= 화면 전환 ================= */
 const PANELS=['pReg','pGames','pJr','pJrRes','pAdv','pAdvRes','pAdvPause','pRaid','pRaidRes','pRaidPause','pLoad','pPause','pResult','pShop','pRank','pMe','pTeacher','pVisit','pGive'];
 const show=(id,on)=>$(id).classList.toggle('hidden',!on);
-function hideAll(){PANELS.forEach(p=>show(p,false));['home','hud','decoUI','jr','adv','raid'].forEach(p=>show(p,false));}
+function hideAll(){PANELS.forEach(p=>show(p,false));['home','hud','decoUI','jr','adv','raid'].forEach(p=>show(p,false));if(LKP)lookClose();}
 function goHome(){setTimeout(adjRun,400);if(ED){clearInterval(ED.timer);ED=null;$('ttoast').classList.remove('top');}R=null;if(JR){clearTimeout(JR.badT);JR=null;}advStop();raidStop();scr='home';hideAll();inp.blur();if(!SAVE){openReg();return;}show('home',true);renderProfile();
  if(UPD.ready)setTimeout(updMaybe,800);
  if(!SAVE.gr||!SAVE.cl)openInfo();else if(SAVE.decoNew){delete SAVE.decoNew;saveGame();setTimeout(()=>ttoast('마을이 넓은 섬으로 바뀌었어요! [내 마을 꾸미기]에서 새 장식을 만나 보세요'),500);}}
 function renderProfile(){$('pName').textContent=SAVE.name;$('pMeta').textContent=`${SAVE.gr&&SAVE.cl?`${SAVE.gr}학년 ${SAVE.cl}반 `:''}${SAVE.no}번\n별지기 Lv.${charLevel()}`;$('pCoins').textContent=SAVE.coins.toLocaleString();$('pSkin').src=skinFace(SAVE.skin);homeResetBtn();renderBadge();
- const si=$('seaIcon');if(si){const se=seasonNow(),off=OPT.season===false;si.textContent=SEA_ICON[se];si.parentElement.classList.toggle('off',off);$('seaTip').textContent=off?'계절 모습 켜기':`${SEA_NAME[se]} 모습 끄기`;}
+ const si=$('seaIcon');if(si){const lk=myLook();si.textContent=SEA_ICON[lookSea(lk)];$('lkIcon').textContent=TIME_ICON[lk.n];$('seaTip').textContent=`내 마을 풍경 · ${lookShort(lk)}`;}
  document.querySelectorAll('.sndIcon').forEach(s=>s.innerHTML=OPT.sound?'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="#4a1f2b" stroke-width="2.2" stroke-linecap="round"/>':'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="#4a1f2b" stroke-width="2.4" stroke-linecap="round"/>');}
 function openPanel(id,html){$(id).innerHTML=html;show(id,true);}
 
@@ -2131,12 +2417,13 @@ function fundHTML(){const p=ED.pzI;if(!p)return ED.pz.last&&!ED.admin?'<div clas
  const pct=Math.max(2,Math.min(100,Math.round(p.f/Math.max(1,p.goal)*100)));
  return `<div class="pzfund"><b>🐷 광장 모금함</b><small>지금 ${n}×${n} → 다음 ${n+2}×${n+2}</small><div class="mbar"><i style="width:${pct}%"></i></div><span>${p.f.toLocaleString()} / ${p.goal.toLocaleString()}코인${p.d?` · 함께한 친구 ${p.d.length}${p.m?`/${p.m}`:''}명`:''}</span>${ED.admin?'':'<button class="gbtn sm mvisit" data-act="pz-give">🐷 코인 보태기</button>'}</div>`;}
 // 광장 단계·모금함 정보 받기 (새 Apps Script만 보내요). 단계가 바뀌면 광장을 다시 그려요.
-function pzSetInfo(ed,p){if(!ed||!p||typeof p!=='object'||!(+p.n>0))return;const old=ed.pzI,prev=old?old.lv:null,lv=Math.max(0,+p.lv|0);
+function pzSetInfo(ed,p){if(!ed||!p||typeof p!=='object'||!(+p.n>0))return;
+ if(p.lk&&typeof p.lk==='object'){if(!(LKP&&LKP.ed===ed&&(LKP.busy||LKP.dirty)))ed.lk=lookFix(p.lk);if(!ed.visit&&SAVE&&ed.gr===SAVE.gr&&ed.cl===SAVE.cl)PZLK=lookFix(p.lk);}const old=ed.pzI,prev=old?old.lv:null,lv=Math.max(0,+p.lv|0);
  ed.pzI={lv,n:PLAZA_N+2*lv,cap:+p.cap||PLAZA_MAX+2*lv,max:+p.max||0,goal:+p.goal||0,f:+p.f||0,day:+p.day||1000,d:Array.isArray(p.d)?p.d.map(String):(old?old.d:null),m:+p.m||(old?old.m:0),h:p.h!=null?String(p.h):(old?old.h:'')};
  if(prev!==lv&&ED===ed){ed.pzObjs=pzFixed().concat(ed.pz.items.map(it=>({k:it.k,i:it.x+lv,j:it.y+lv,x:it.x,y:it.y,f:it.f,o:it.o,n:it.n})));ed.sel=null;ed.cam=camFit(edN(),edArea());}
  if(!ed.visit&&!ed.admin&&SAVE&&ed.gr===SAVE.gr&&ed.cl===SAVE.cl){const lab=plazaLabel(ed.gr,ed.cl);SAVE.pzSeen=SAVE.pzSeen||{};const seen=SAVE.pzSeen[lab];
   if(seen!=null&&lv>seen)pzCelebrate(ed,lv);if(seen!==lv){SAVE.pzSeen[lab]=lv;saveGame();}}
- if(ED===ed){renderEdBar();if(GV&&!$('pGive').classList.contains('hidden'))renderGive();}}
+ if(ED===ed){renderEdBar();if(GV&&!$('pGive').classList.contains('hidden'))renderGive();if(LKP&&LKP.ed===ed)renderLook();}}
 function pzCelebrate(ed,lv){const n=PLAZA_N+2*lv;let cnt=0;for(const x of String(ed.pzI&&ed.pzI.h||'').matchAll(/(\d+)(?:단계)?:(\d+)/g))if(+x[1]===lv)cnt=+x[2];
  MON_FX_T=ANIM_T;SFX.level();ttoast(`🎉 우리 반 광장이 ${n}×${n}으로 넓어졌어요!${cnt?` 친구 ${cnt}명이 함께 모았어요`:''}`);}
 
@@ -2146,8 +2433,8 @@ function openEditor(mode,opt){opt=opt||{};let gr=opt.gr||(SAVE&&SAVE.gr),cl=opt.
  else if(!SAVE)return;
  if(ED)clearInterval(ED.timer);
  R=null;scr='edit';hideAll();inp.blur();
- ED={mode,admin:!!opt.admin,visit:!!opt.visit,fv:opt.fv||null,gr,cl,cam:null,sel:null,carry:null,paint:null,hover:null,drag:null,pending:null,cat:edCat[mode],pz:{items:[],loading:false,busy:false,last:0},pzObjs:[],timer:0};
- if(mode==='plaza'){ED.pzObjs=pzFixed();ED.timer=setInterval(plazaTick,4000);plazaPull();}
+ ED={mode,admin:!!opt.admin,visit:!!opt.visit,fv:opt.fv||null,gr,cl,cam:null,sel:null,carry:null,paint:null,hover:null,drag:null,pending:null,cat:edCat[mode],pz:{items:[],loading:false,busy:false,last:0},pzObjs:[],timer:0,lk:null};
+ if(mode==='plaza'){ED.pzObjs=pzFixed();ED.timer=setInterval(plazaTick,4000);if(!ED.visit&&SAVE&&gr===SAVE.gr&&cl===SAVE.cl&&PZLK)ED.lk=PZLK;plazaPull();}
  ED.cam=camFit(edN(),edArea());
  show('decoUI',true);$('ttoast').classList.add('top');renderEdBar();renderPalette();renderAct();setHint();}
 function closeEditor(){if(!ED)return;const admin=ED.admin,mode=ED.mode,visit=ED.visit;if(ED.carry&&ED.carry.obj)delete ED.carry.obj.hidden;clearInterval(ED.timer);ED=null;PTRS.clear();$('ttoast').classList.remove('top');
@@ -2162,7 +2449,7 @@ function renderEdBar(){if(!ED)return;const pz=ED.mode==='plaza',fr=ED.mode==='fr
  if(fr)ex+=`<span class="dchip">섬 ${ED.fv.n}×${ED.fv.n} · 구경만 해요</span>`;
  else if(pz){const n=edN();ex+=`<span class="dchip">광장 ${n}×${n}</span>`;ex+=ED.admin?'<span class="dchip">선생님 관리</span>':ED.visit?'<span class="dchip">구경만 해요</span>':`<span class="dchip">내 장식 ${ED.pz.items.filter(it=>it.o===myTag()).length}/${pzCap()}</span>`;ex+=`<button class="sbtn sm" data-act="pz-refresh">${ED.pz.loading?'불러오는 중…':'↻ 새로고침'}</button>`;}
  else{const n=SAVE.deco.n,nx=LAND[LAND.indexOf(n)+1];ex+=nx?`<button class="sbtn sm" data-act="ed-land" title="지금 ${n}×${n} → ${nx}×${nx}">🏝️ 넓히기 <span class="coin"></span>${LAND_COST[nx]}</button>`:`<span class="dchip">섬 ${n}×${n} (최고)</span>`;}
- $('dExtra').innerHTML=ex;$('dShop').classList.toggle('hidden',!!(ED.admin||ro));$('dDone').textContent=fr?'← 랭킹으로':ED.visit?'🎪 우리 반 광장으로':'다 했어요';renderMonBar();}
+ $('dExtra').innerHTML=ex;renderLookBar();$('dShop').classList.toggle('hidden',!!(ED.admin||ro));$('dDone').textContent=fr?'← 랭킹으로':ED.visit?'🎪 우리 반 광장으로':'다 했어요';renderMonBar();}
 function setHint(){if(!ED)return;const c=ED.carry;let h;
  if(c)h=ED.mode==='plaza'&&ED.pz.busy?'광장에 보내는 중이에요…':DECO[c.k].wo?'물(파란 땅) 위에만 놓을 수 있어요. 물은 [땅 칠하기]에서 만들어요.':'초록색 자리에 놓을 수 있어요. 빨간색 자리에는 놓을 수 없어요.';
  else if(ED.mode==='friend')h=ED.fv.me?'친구들도 내 마을을 이렇게 구경해요. 끌어서 둘러보고, 휠로 크게·작게 볼 수 있어요.':'친구 마을을 구경해요. 끌어서 둘러보고, 휠로 크게·작게 볼 수 있어요. 장식을 누르면 이름이 보여요.';
@@ -2413,6 +2700,7 @@ function syncReply(j){if(!SAVE||!j)return;
  if(ch.length){saveGame();renderProfile();ttoast(`선생님이 ${ch.join('·')}를 바꿨어요: ${SAVE.name} · ${SAVE.no}번`);}
  if(j.mon&&SAVE.gr&&SAVE.cl)monUpdate(plazaLabel(SAVE.gr,SAVE.cl),j.mon);
  if(j.cls&&SAVE.gr&&SAVE.cl)clsGot(j.cls);
+ if(j.pz&&j.pz.lk&&typeof j.pz.lk==='object'&&SAVE.gr&&SAVE.cl)PZLK=lookFix(j.pz.lk); // 우리 반 광장 풍경 (2026-11-18)
  if(j.pz&&SAVE.gr&&SAVE.cl){const lab=plazaLabel(SAVE.gr,SAVE.cl),lv=+j.pz.lv|0;SAVE.pzHome=SAVE.pzHome||{};const seen=SAVE.pzHome[lab];
   if(seen!=null&&lv>seen&&scr==='home'){const n=PLAZA_N+2*lv;setTimeout(()=>ttoast(`🎉 우리 반 광장이 ${n}×${n}으로 넓어졌어요! 광장에 가 보세요`),1200);}
   if(seen!==lv){SAVE.pzHome[lab]=lv;saveGame();}}}
@@ -2451,7 +2739,8 @@ function renderRank(){if(rkV==='cls'){renderClsRank();return;}const live=SYNC?li
 /* ---------- 반별 랭킹: 이번 주(월요일부터), 같은 학년 반끼리, 반 점수 = 반 별가루 ÷ 반 친구 수 ---------- */
 // 한국 시간으로 이번 주 월요일을 20261102처럼 (Apps Script의 kstWeek_와 같아요)
 function kstDay(){const d=new Date(Date.now()+9*3600000);return d.getUTCFullYear()*10000+(d.getUTCMonth()+1)*100+d.getUTCDate();}
-const isNew=k=>NEW_KEYS.has(k)&&kstDay()<=NEW_UNTIL;
+const W_KEYS=new Set(['candycane','snowduck','gifts','icecrystal','frosttree','xmaslamp','sleigh','reindeer','igloo','xmascake','cookiehouse','icerink','bigtree','snowglobe']),W_UNTIL=20270228; // 2026-11-18 겨울 장식
+const isNew=k=>W_KEYS.has(k)?kstDay()<=W_UNTIL:NEW_KEYS.has(k)&&kstDay()<=NEW_UNTIL;
 function kstWeek(back){const d=new Date(Date.now()+9*3600000),dow=(d.getUTCDay()+6)%7,m=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()-dow-7*(back||0)));return m.getUTCFullYear()*10000+(m.getUTCMonth()+1)*100+m.getUTCDate();}
 const wkLabel=wk=>`${Math.floor(wk/100)%100}월 ${wk%100}일(월)`;
 let CLS=store.get('taja2_cls',null),clsLoading=false,clsErr='';
@@ -2497,11 +2786,12 @@ function renderClsRank(){const hasCls=SAVE.gr&&SAVE.cl,x=hasCls&&CLS&&CLS.list.s
 /* ---------- 친구 마을 구경 (우리 반 랭킹에서 별지기를 눌러요) ---------- */
 // 시트에 올리는 내 마을 모습: '1|섬 크기|땅(칸마다 한 글자, 잔디 0)|장식,i,j,뒤집기;…'
 function vgPack(){const d=SAVE.deco,n=d.n;let g='';for(let i=0;i<n;i++)for(let j=0;j<n;j++){const x=GT_IDS.indexOf(d.ground[i+','+j]);g+=(x>0?x:0).toString(36);}
- return `1|${n}|${g.replace(/0+$/,'')}|${d.objs.filter(o=>DECO[o.k]).map(o=>`${o.k},${o.i},${o.j},${o.f?1:0}`).join(';')}`;}
+ const ob=d.objs.filter(o=>DECO[o.k]).map(o=>`${o.k},${o.i},${o.j},${o.f?1:0}`),lk=myLook();if(lk.s!=='auto'||lk.n)ob.push(`_lk,${LOOK_S.indexOf(lk.s)},${lk.n},0`); // 풍경 (2026-11-18)
+ return `1|${n}|${g.replace(/0+$/,'')}|${ob.join(';')}`;}
 function vgParse(s){const p=String(s||'').split('|');if(p.length!==4||p[0]!=='1')return null;const n=+p[1];if(!LAND.includes(n))return null;
  const ground={};for(let q=0;q<p[2].length&&q<n*n;q++){const g=GT_IDS[parseInt(p[2][q],36)];if(g&&g!=='grass')ground[Math.floor(q/n)+','+(q%n)]=g;}
- const objs=[];for(const t of p[3].split(';')){const[k,i,j,f]=t.split(',');if(!DECO[k])continue;const o={k,i:+i|0,j:+j|0,f:+f?1:0};if(o.i>=0&&o.j>=0&&o.i+DECO[k].s<=n&&o.j+DECO[k].s<=n)objs.push(o);}
- return{n,ground,objs};}
+ const objs=[];let lk=null;for(const t of p[3].split(';')){const[k,i,j,f]=t.split(',');if(k==='_lk'){lk=lookFix({s:LOOK_S[+i|0],n:+j});continue;}if(!DECO[k])continue;const o={k,i:+i|0,j:+j|0,f:+f?1:0};if(o.i>=0&&o.j>=0&&o.i+DECO[k].s<=n&&o.j+DECO[k].s<=n)objs.push(o);}
+ return{n,ground,objs,lk};}
 let vgBusy=false;
 async function vgOpen(t){if(!SAVE||vgBusy||!t)return;
  if(t===myTag()){const d=SAVE.deco;openEditor('friend',{fv:{me:true,name:SAVE.name,sk:SAVE.skin,n:d.n,ground:Object.assign({},d.ground),objs:d.objs.map(o=>Object.assign({},o))}});return;}
@@ -2580,7 +2870,7 @@ function renderTeacher(out,msg){const live=SYNC?(tLive||liveCached()):null,ALL=m
   ${out?`<div class="coderow"><textarea class="code" id="tOut" readonly>${out}</textarea><button class="sbtn" data-act="copy" data-t="tOut">복사</button></div><p class="note">이 코드를 학생들에게 나눠 주면, 학생들이 [내 기록]에서 넣어 반 랭킹을 볼 수 있어요.</p>`:''}`;}
  else if(tTab==='manage')body=renderManage(msg);
  else if(tTab==='plaza'){const pg=store.get('taja2_tpz',null)||{gr:(SAVE&&SAVE.gr)||'',cl:(SAVE&&SAVE.cl)||''};
-  body=SYNC?`<p class="sub">반을 골라 광장을 열고, 장식을 눌러 [치우기]를 누르면 없어져요.<br>치운 장식은 그 학생이 다음에 광장을 열 때 학생의 창고로 돌아가요.</p>
+  body=SYNC?`<p class="sub">반을 골라 광장을 열고, 장식을 눌러 [치우기]를 누르면 없어져요.<br>치운 장식은 그 학생이 다음에 광장을 열 때 학생의 창고로 돌아가요.<br>🎨 광장을 열면 왼쪽 위 [광장 풍경 · 바꾸기]에서 그 반 광장의 계절과 밤낮을 정할 수 있어요(선생님만).</p>
   <div class="form" style="align-items:flex-end"><label>학년<select id="tpGr">${grOpts(pg.gr)}</select></label><label>반<input id="tpCl" type="number" min="1" max="20" value="${esc(pg.cl)}"></label><button class="gbtn inline" data-act="t-plaza" style="margin-bottom:4px">광장 열기</button></div>
   <p class="msg" id="tPzMsg">${msg?esc(msg.t):''}</p><div id="tMonBox">${tMonHTML()}</div><div id="tFundBox">${tFundHTML()}</div><p class="note">구글 시트의 [광장] 탭에서 줄을 지워도 그 장식이 없어져요. 한 학생은 광장에 장식을 ${PLAZA_MAX}개까지 놓을 수 있고, 광장이 한 단계 넓어질 때마다 2개씩 더 놓을 수 있어요.</p>`
   :'<p class="empty">우리 반 광장은 반 랭킹 자동 연동(구글 시트)이 켜져 있어야 쓸 수 있어요.</p>';}
@@ -3915,6 +4205,46 @@ function raidQuit(){if(!RD||RD.over)return;show('pRaidPause',false);RD.paused=fa
  document.addEventListener('visibilitychange',()=>{if(!document.hidden||scr!=='raid'||!RD||RD.over)return;saveGame();
   if(RD.phase==='win'||RD.phase==='timeup'){raidFinish(RD.phase);return;}if(RD.paused)return;if(RD.pauses>=RD_PAUSE)raidFinish('away');else raidPause('away');});})();
 
+/* ================= 풍경 고르기 (2026-11-18) =================
+   내 마을: 학생이 계절·밤낮을 골라요(SAVE.look). 친구가 구경 올 때도 이 모습(마을 모습 vgPack에 '_lk'로 실어요).
+   우리 반 광장: 선생님만 정해요(관리 화면 위 [🎨 광장 풍경] → 시트 pz_look). 학생 화면에는 '🔒 선생님이 정해요'.
+   LKP: 열린 풍경 창 {mode:'me'|'plaza', ed, st(저장 상태), busy, dirty, to} */
+function lookOpen(mode){if(mode==='plaza'&&!(ED&&ED.mode==='plaza'&&ED.admin))return;if(mode==='me'&&!SAVE)return;
+ if(LKP&&LKP.mode===mode&&!$('lookPop').classList.contains('hidden')){lookClose();return;}
+ if(LKP)lookClose();LKP={mode,ed:mode==='plaza'?ED:null,st:'',busy:false,dirty:false,to:0};renderLook();show('lookPop',true);SFX.tick();}
+function lookClose(){const lk=LKP;LKP=null;$('lookPop').classList.add('hidden');if(!lk)return;
+ if(lk.mode==='plaza'&&lk.dirty){clearTimeout(lk.to);pzLookSend(lk);}
+ if(lk.mode==='me'&&SYNC&&SAVE&&hash(vgPack())!==SAVE.vgH)syncSoon();} // 바뀐 풍경을 친구들도 볼 수 있게 올려요
+function lookName(s){const now=seasonNow();return s==='auto'?`🗓️ 자동 <small>(지금 ${SEA_ICON[now]} ${SEA_NAME[now]})</small>`:`${SEA_ICON[s]} ${SEA_NAME[s]}`;}
+function renderLook(){const el=$('lookPop');if(!LKP){el.classList.add('hidden');return;}const pz=LKP.mode==='plaza',ed=LKP.ed,lk=pz?(ed&&ed.lk||LOOK_DEF):myLook();
+ el.classList.toggle('ed',scr==='edit');
+ const sc=LOOK_S.map(s=>`<button class="chip ${lk.s===s?'on':''}" data-act="lk-s" data-s="${s}">${lookName(s)}</button>`).join('');
+ const tc=[0,1].map(n=>`<button class="chip ${lk.n===n?'on':''}" data-act="lk-n" data-n="${n}">${TIME_ICON[n]} ${TIME_NAME[n]}</button>`).join('');
+ const ST={busy:'저장하는 중이에요…',ok:'✓ 저장했어요. 반 친구들 화면에도 곧 바뀌어요',pin:'비밀번호가 맞지 않아요. 선생님 모드에서 광장을 다시 열어 주세요',old:'선생님이 Apps Script를 새 버전으로 올리면 정할 수 있어요',net:'연결하지 못했어요. 잠시 뒤에 다시 골라 보세요'};
+ const st=pz&&LKP.st?`<p class="lkst ${LKP.st==='ok'||LKP.st==='busy'?'':'bad'}">${ST[LKP.st]}</p>`:'';
+ const note=pz?`<p class="lknote">· 학생들 광장 화면에는 '🔒 선생님이 정해요'로 보여요.<br>· 광장을 열어 둔 친구는 15초쯤 뒤에 바뀌어요.<br>· 다른 반이 구경 올 때도 이 모습이에요.</p>`
+  :`<p class="lknote">· 친구가 내 마을에 놀러 오면 이 모습으로 보여요.<br>· 🔒 우리 반 광장 풍경은 선생님이 정해요${PZLK?` (지금 ${lookShort(PZLK)})`:''}.</p>`;
+ el.innerHTML=`<h4>🎨 ${pz?`${esc(plazaLabel(ed.gr,ed.cl))} 광장 풍경 <small>선생님만</small>`:'내 마을 풍경'}<button class="sbtn sm" data-act="lk-close">닫기</button></h4>
+  <div class="lkrow"><span>계절</span>${sc}</div><div class="lkrow"><span>시간</span>${tc}</div>${st}${note}`;}
+function lookSet(v){if(!LKP)return;
+ if(LKP.mode==='me'){if(!SAVE)return;SAVE.look=lookFix(Object.assign({},myLook(),v));saveGame();renderProfile();if(ED)renderLookBar();}
+ else{const ed=LKP.ed;if(!ed||ED!==ed)return;ed.lk=lookFix(Object.assign({},ed.lk||LOOK_DEF,v));const lk=LKP;lk.dirty=true;lk.st='busy';clearTimeout(lk.to);lk.to=setTimeout(()=>pzLookSend(lk),600);renderLookBar();}
+ SFX.tick();renderLook();}
+// 선생님: 고른 풍경을 시트에 저장 (여러 번 누르면 마지막 것만, 보내는 중에 또 바꾸면 끝나고 다시)
+async function pzLookSend(lk){const ed=lk.ed;if(!ed||lk.busy)return;if(!TPIN){lk.st='pin';lk.dirty=false;if(LKP===lk)renderLook();return;}
+ lk.busy=true;lk.dirty=false;const v=lookFix(ed.lk);
+ const res=await pzReq({type:'pz_look',gr:ed.gr,cl:ed.cl,s:v.s,n:v.n,pin:TPIN});lk.busy=false;
+ lk.st=res&&res.ok?'ok':res&&res.error==='pin'?'pin':res&&res.error==='bad'?'old':'net';
+ if(res&&res.ok&&res.pz&&ED===ed&&!lk.dirty)pzSetInfo(ed,res.pz);
+ if(lk.dirty&&ED===ed){lk.st='busy';lk.to=setTimeout(()=>pzLookSend(lk),300);}
+ if(LKP===lk)renderLook();if(ED===ed)renderLookBar();}
+// 꾸미기·광장·구경 화면 왼쪽 위: 지금 풍경과 누가 정했는지
+function renderLookBar(){const el=$('lookBar');if(!el)return;if(!ED){el.innerHTML='';return;}const lk=lookNow()||LOOK_DEF,t=`<b>${lookShort(lk)}</b>`;let h;
+ if(ED.mode==='plaza')h=ED.admin?`<button class="lkb" data-act="pz-look">🎨 광장 풍경 · ${t} <u>바꾸기</u></button>`
+  :`<button class="lkb lock" data-act="look-lock">🔒 광장 풍경 · ${t} · ${ED.visit?'그 반 선생님이':'선생님이'} 정해요</button>`;
+ else if(ED.mode==='friend')h=`<button class="lkb" data-act="look-fr">🎨 ${ED.fv.me?'내가':esc(ED.fv.name)+josa(ED.fv.name,'이','가')} 고른 풍경 · ${t}</button>`;
+ else h=`<button class="lkb" data-act="look">🎨 내 마을 풍경 · ${t} <u>바꾸기</u></button>`;
+ el.innerHTML=h;}
 const ACT={
  'reg-save'(){const v=readInfo('r');if(v.err){$('rMsg').textContent=v.err;return;}
   SAVE=defaultSave(v.name,v.no,v.gr,v.cl);priceInit(SAVE);saveGame();goHome();syncPush();ttoast('환영해요! 번개·얼음·방패를 하나씩 선물로 넣어 뒀어요');},
@@ -4023,7 +4353,9 @@ const ACT={
  quit(){if(!R||R.over)return;show('pPause',false);R.paused=false;finishRun('quit');},
  'slot-tip'(el){if(!R)return;const id=R.bag[+el.dataset.i];if(id){const nm=itName(id);toast(R.en?`'${nm}' 치고 Enter를 눌러야 써요`:`'${nm}'${josa(nm,'을','를')} 치고 Enter를 눌러야 써요`);}inp.focus();},
  sound(){OPT.sound=!OPT.sound;saveOpt();renderProfile();if(OPT.sound)SFX.tick();},
- season(){OPT.season=OPT.season===false;saveOpt();renderProfile();SFX.tick();const se=seasonNow();ttoast(OPT.season?`${SEA_ICON[se]} ${SEA_NAME[se]} 모습으로 바꿨어요`:'계절 모습을 껐어요. 언제나 여름 모습이에요');},
+ season(){lookOpen('me');},look(){lookOpen('me');},'lk-s'(el){lookSet({s:el.dataset.s});},'lk-n'(el){lookSet({n:+el.dataset.n});},'lk-close'(){lookClose();},'pz-look'(){lookOpen('plaza');},
+ 'look-lock'(){if(!ED)return;ttoast(`🔒 ${ED.visit?'이 반':'우리 반'} 광장의 계절과 밤낮은 선생님이 정해요 (지금 ${lookShort(ED.lk||LOOK_DEF)})`);},
+ 'look-fr'(){if(!ED||ED.mode!=='friend')return;ttoast(ED.fv.me?'내 마을 풍경은 홈 화면 오른쪽 위 🎨 단추에서 바꿔요':`🎨 ${ED.fv.name}${josa(ED.fv.name,'이','가')} 고른 풍경이에요. 내 마을 풍경은 내가 골라요`);},
  full(){try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else{const p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(()=>ttoast('이 화면에서는 전체 화면을 쓸 수 없어요'));}}catch(e){ttoast('이 화면에서는 전체 화면을 쓸 수 없어요');}},
  't-open'(){openTeacher();},
  't-pin'(){const v=(($('tPin')||{}).value||'').trim();if(HANGUL.test(v)){$('tPinMsg').textContent='한글이 섞여 들어갔어요. 한/영 키를 눌러 영어로 바꾼 뒤 다시 입력해 주세요.';$('tPin').value='';$('tPin').focus();return;}
@@ -4126,7 +4458,7 @@ window.addEventListener('resize',fit);
 /* ================= 시작 ================= */
 let last=performance.now();
 function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;ANIM_T+=dt;ctx.setTransform(scale*dpr,0,0,scale*dpr,0,0);
- SEA=scr==='game'||scr==='adv'||scr==='raid'||OPT.season===false?'':(SEA_FORCE||seasonNow());
+ {const lk=lookNow();SEA=lk?(SEA_FORCE||lookSea(lk)):'';NIGHT=!!(lk&&lk.n);} // 풍경 (2026-11-18)
  if(scr==='game'&&R){update(dt);if(R)drawGame();}else if(scr==='edit'&&ED)drawEditor();else if(scr==='adv'){if(AV){advUpdate(dt);if(AV)advDraw();}}else if(scr==='raid'){if(RD){raidUpdate(dt);if(RD)raidDraw();}}else if(scr!=='jr')drawHome(ANIM_T);
  requestAnimationFrame(loop);}
 fit();goHome();
