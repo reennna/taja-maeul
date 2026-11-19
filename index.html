@@ -636,6 +636,15 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 .gcards.n4 .gmode small{font-size:15px}
 .gcards.n4 .gres{font-size:16px}
 .gcards.n4 .glock{font-size:18px}
+/* ---------- 계정 되살리기 (2026-11-19) ---------- */
+.panel.rs{max-width:880px}
+.rscode{font-family:inherit;font-size:44px;letter-spacing:10px;text-align:center;text-transform:uppercase;width:340px;padding:8px 12px;border:4px solid var(--ink);border-radius:16px;background:#fff;color:var(--ink)}
+.rsbox{background:#fff8e1;border:3px solid #f2b705;border-radius:16px;padding:10px 16px;margin:8px 0;text-align:left;font-size:20px;line-height:1.5}
+.rsbox .who{font-size:26px}
+.rsbox b.big{font-size:36px;letter-spacing:6px;color:#c2410c;background:#fff;border-radius:10px;padding:0 10px;margin:0 6px}
+.rslist{text-align:left;margin:6px 0;font-size:19px;line-height:1.6}
+.rswarn{color:#d0263a;font-weight:bold}
+.reglinks{display:flex;justify-content:center;align-items:center;gap:34px;flex-wrap:wrap}
 /* ---------- 풍경 고르기 (2026-11-18) ---------- */
 .ibtn .lkic{position:absolute;right:-7px;bottom:-7px;width:28px;height:28px;font-size:16px;line-height:1;background:#fff;border:3px solid var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center}
 .lookpop{position:absolute;right:18px;top:84px;z-index:9;width:452px;background:linear-gradient(#ffffff,#e9edf3);border:4px solid var(--ink);border-radius:24px;box-shadow:0 6px 0 var(--ink),0 16px 34px rgba(0,0,0,.35);padding:12px 16px 12px;text-align:left}
@@ -761,6 +770,7 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
   <div id="pRank" class="overlay hidden"></div>
   <div id="pMe" class="overlay hidden"></div>
   <div id="pTeacher" class="overlay hidden"></div>
+  <div id="pRs" class="overlay hidden"></div>
   <div id="pVisit" class="overlay hidden"></div>
   <div id="pGive" class="overlay hidden"></div>
   <div id="ttoast"></div>
@@ -770,7 +780,7 @@ textarea.code{width:100%;height:76px;border:3px solid var(--steel);border-radius
 (()=>{
 'use strict';
 // 게임 버전: 새 파일을 만들 때마다 꼭 올려요(날짜-그날 몇 번째). 학생 크롬북이 이 번호로 새 버전을 알아채요.
-const APP_VER='2026-11-18-01';
+const APP_VER='2026-11-19-01';
 const vnum=v=>Number(String(v||'').replace(/\D/g,''))||0;
 const $=id=>document.getElementById(id);
 const W=1280,H=720,GROUND=650;
@@ -1096,7 +1106,7 @@ function bagSync(ms){clearTimeout(bagT);bagT=setTimeout(()=>{if(SAVE)syncSoon();
 function bagSnap(){const D=SAVE.deco,d={},add=(k,i,n)=>{if(!DECO[k]||DECO[k].special||!(n>0))return;(d[k]=d[k]||[0,0,0])[i]+=n;};
  for(const k in D.stock)add(k,0,+D.stock[k]||0);for(const o of D.objs)add(o.k,1,1);for(const lab in SAVE.pz||{})for(const r of SAVE.pz[lab]||[])add(r.k,2,1);
  const it={};for(const id of ITEM_IDS)it[id]=+SAVE.inv[id]||0;
- return{v:1,c:SAVE.coins,it,d,up:Object.assign({},SAVE.up),sk:Object.keys(SAVE.skins||{}).filter(k=>SAVE.skins[k]),n:D.n,lg:(SAVE.clog||[]).slice(-40)};}
+ return{v:1,c:SAVE.coins,it,d,up:Object.assign({},SAVE.up),sk:Object.keys(SAVE.skins||{}).filter(k=>SAVE.skins[k]),n:D.n,lg:(SAVE.clog||[]).slice(-40),rs:rsSnap()};}
 // 선생님 조정: 기록을 보낸 답(adj)으로 받아 한 번만 적용하고, 다음 기록 때 '적용했어요'(aa)를 보내요. 학생에게는 알리지 않아요.
 //  게임·꾸미기 중이거나 가방 챙기기 창이 열려 있으면 홈 화면으로 돌아온 뒤에 적용해요.
 let ADJQ=[];
@@ -2265,7 +2275,7 @@ let toastTO=0;function toast(m){const el=$('toast');el.textContent=m;el.classLis
 let ttTO=0;function ttoast(m){const el=$('ttoast');el.textContent=m;el.classList.add('show');clearTimeout(ttTO);ttTO=setTimeout(()=>el.classList.remove('show'),2400);}
 
 /* ================= 화면 전환 ================= */
-const PANELS=['pReg','pGames','pJr','pJrRes','pAdv','pAdvRes','pAdvPause','pRaid','pRaidRes','pRaidPause','pLoad','pPause','pResult','pShop','pRank','pMe','pTeacher','pVisit','pGive'];
+const PANELS=['pReg','pGames','pJr','pJrRes','pAdv','pAdvRes','pAdvPause','pRaid','pRaidRes','pRaidPause','pLoad','pPause','pResult','pShop','pRank','pMe','pTeacher','pVisit','pGive','pRs'];
 const show=(id,on)=>$(id).classList.toggle('hidden',!on);
 function hideAll(){PANELS.forEach(p=>show(p,false));['home','hud','decoUI','jr','adv','raid'].forEach(p=>show(p,false));if(LKP)lookClose();}
 function goHome(){setTimeout(adjRun,400);if(ED){clearInterval(ED.timer);ED=null;$('ttoast').classList.remove('top');}R=null;if(JR){clearTimeout(JR.badT);JR=null;}advStop();raidStop();scr='home';hideAll();inp.blur();if(!SAVE){openReg();return;}show('home',true);renderProfile();
@@ -2288,7 +2298,7 @@ function readInfo(p){const v=id=>(($(p+id)||{}).value||''),gr=parseInt(v('Gr'),1
  if([...name].length<2)return{err:'이름을 두 글자 이상 써 주세요 (내 이름이 들어가야 해요)'};
  return{gr,cl,no,name};}
 function openReg(){openPanel('pReg',`<div class="panel wide"><h2>반가워요!</h2><p class="sub">이 크롬북 주인의 학년, 반, 번호, 이름을 알려 주세요.</p>${regForm('r')}
- <p class="msg" id="rMsg"></p><button class="gbtn" data-act="reg-save">시작하기</button><button class="linkbtn" data-act="t-open">선생님이세요?</button></div>`);setTimeout(()=>{const e=$('rGr');if(e)e.focus();},60);}
+ <p class="msg" id="rMsg"></p><button class="gbtn" data-act="reg-save">시작하기</button><div class="reglinks">${SYNC?'<button class="linkbtn" data-act="rs-open" data-f="reg">🔁 예전 계정 되살리기 (선생님께 코드를 받았어요)</button>':''}<button class="linkbtn" data-act="t-open">선생님이세요?</button></div></div>`);setTimeout(()=>{const e=$('rGr');if(e)e.focus();},60);}
 function openInfo(){if(!SAVE)return;openPanel('pReg',`<div class="panel wide"><h2>학년과 반을 알려 주세요</h2><p class="sub">이제 우리 반 친구들끼리 랭킹을 보고, 우리 반 광장을 함께 꾸밀 수 있어요.<br>번호와 이름도 한 번 더 확인해 주세요.</p>${regForm('r',SAVE)}
  <p class="msg" id="rMsg"></p><button class="gbtn" data-act="info-save">저장하기</button></div>`);setTimeout(()=>{const e=$('rGr');if(e)e.focus();},60);}
 
@@ -2644,7 +2654,7 @@ async function giveCheck(){const t=SAVE&&SAVE.pzTry;if(!t||!SYNC||giveBusy)retur
  if(GV&&!$('pGive').classList.contains('hidden'))renderGive();}
 
 /* ---------- 랭킹 ---------- */
-function myEntry(){const g={};let cw=0;for(const gm of READY){const s=SAVE.games[gm.id];g[gm.id]={r:s.bestRound,w:s.bestWords,t:s.bestTasu};cw+=+s.words||0;}const rd=SAVE.raid;if(rd)cw+=+rd.words||0;const e={i:SAVE.id,gr:SAVE.gr||0,cl:SAVE.cl||0,n:SAVE.name,b:SAVE.no,lv:charLevel(),sk:SAVE.skin||'base',cw,ver:APP_VER,g,ts:Date.now()};if(rd&&rd.rk>0){e.rk=rd.rk;e.rc=rd.rc;}return e;}
+function myEntry(){const g={};let cw=0;for(const gm of READY){const s=SAVE.games[gm.id];g[gm.id]={r:s.bestRound,w:s.bestWords,t:s.bestTasu};cw+=+s.words||0;}const rd=SAVE.raid;if(rd)cw+=+rd.words||0;cw=Math.max(0,cw+(+SAVE.cw0||0));const e={i:SAVE.id,gr:SAVE.gr||0,cl:SAVE.cl||0,n:SAVE.name,b:SAVE.no,lv:charLevel(),sk:SAVE.skin||'base',cw,ver:APP_VER,g,ts:Date.now()};if(rd&&rd.rk>0){e.rk=rd.rk;e.rc=rd.rc;}return e;}
 const validEntry=e=>e&&typeof e.i==='string'&&typeof e.n==='string'&&e.g&&typeof e.g==='object';
 // 시트에서 온 기록은 학생ID 대신 암호 꼬리표(8자리)를 써요. 코드로 모은 기록도 같은 꼬리표로 바꿔서 겹치지 않게 해요.
 const tagOf=id=>/^[0-9a-f]{8}$/.test(String(id))?String(id):hash(SALT+'tag'+id);
@@ -2664,12 +2674,12 @@ let pushPin='';
 const SYNC_GAP=60000;let pushT=0,pushLastAt=0;
 function syncSoon(){if(!SYNC||!SAVE)return;const w=pushLastAt+SYNC_GAP-Date.now();if(w<=0){syncPush();return;}if(!pushT)pushT=setTimeout(()=>{pushT=0;syncPush();},w);}
 // 기록에 실을 것: 가방은 바뀌었을 때만(코인·코인 기록만 바뀌었으면 3분에 한 번), 마을은 바뀌었거나 6시간이 지났을 때만
-function syncEntry(){const ent=myEntry(),vg=vgPack(),bag=bagSnap(),bh=hash(JSON.stringify(bag)),bc=hash(JSON.stringify(Object.assign({},bag,{c:0,lg:0}))),now=Date.now(),ba=+SAVE.bagAt||0;
+function syncEntry(){const ent=myEntry(),vg=vgPack(),bag=bagSnap(),bh=hash(JSON.stringify(bag)),bc=hash(JSON.stringify(Object.assign({},bag,{c:0,lg:0,rs:rsKey(bag.rs)}))),now=Date.now(),ba=+SAVE.bagAt||0;
  if(bc!==SAVE.bagC||(bh!==SAVE.bagH&&now-ba>180000)||now-ba>21600000)ent.bag=bag;
  if(Array.isArray(SAVE.adjAck)&&SAVE.adjAck.length)ent.aa=SAVE.adjAck.slice(0,20);
  if(hash(vg)!==SAVE.vgH||now-(+SAVE.vgAt||0)>21600000)ent.vg=vg; // 친구 마을 구경용
  return{ent,bh,bc};}
-async function syncPush(pin){if(typeof pin==='string'&&pin)pushPin=pin;if(!SYNC||!SAVE)return false;if(pushing){pushAgain=true;return false;}pushing=true;
+async function syncPush(pin){if(typeof pin==='string'&&pin)pushPin=pin;if(!SYNC||!SAVE||rsLock)return false;if(pushing){pushAgain=true;return false;}pushing=true;
  clearTimeout(pushT);pushT=0;pushLastAt=Date.now();const{ent,bh,bc}=syncEntry();
  const data=JSON.stringify(ent),req={type:'record',data,sig:hash(SALT+'sync'+data)},usedPin=pushPin;if(usedPin)req.pin=usedPin;
  const body=JSON.stringify(req);let ok=false,res=null,j=null;
@@ -2690,7 +2700,7 @@ window.addEventListener('pagehide',()=>{if(!SYNC||!SAVE||pushing||!(pushT||SAVE.
 async function syncPull(){if(!SYNC)return null;try{const r=await tmo(fetch(SYNC_URL+(SYNC_URL.includes('?')?'&':'?')+'action=list&_='+Date.now()),20000);const j=await r.json();
  if(j&&j.ok&&Array.isArray(j.list)){liveMem={t:Date.now(),list:j.list.filter(validEntry)};store.set('taja2_live',liveMem);return liveMem;}}catch(e){}return null;}
 // 시트의 답: 선생님이 바꾼 이름·번호는 이 크롬북에도 바꾸고, 선생님이 지운 계정이면 이 크롬북을 처음 상태로 돌려요
-function syncReply(j){if(!SAVE||!j)return;
+function syncReply(j){if(!SAVE||!j||rsLock)return;
  if(j.error==='deleted'){if(R&&!R.over)return;accountDeleted();return;}
  if(!j.ok)return;
  adjGot(j);
@@ -2832,7 +2842,7 @@ function renderMe(code,msg){const rows=MET.map(g=>{const s=SAVE.games[g.id];retu
  const codeBox=`<div class="coderow"><textarea class="code" id="meCode" readonly placeholder="[기록 코드 만들기]를 누르면 여기에 코드가 생겨요">${code||''}</textarea><div style="display:flex;flex-direction:column;gap:8px"><button class="gbtn" data-act="me-code">기록 코드 만들기</button><button class="sbtn" data-act="copy" data-t="meCode">복사</button></div></div>`;
  const body=SYNC?`<h3>🔗 반 랭킹 자동 연동</h3><div class="coinlist" style="display:block"><div><span>${SAVE.syncPending?'⏳ 아직 보내지 못한 기록이 있어요. 인터넷 연결을 확인해 주세요.':'✅ 게임이 끝날 때마다 기록이 선생님께 자동으로 보내져요.'}</span><span>${SAVE.syncAt?`마지막 전송 ${ago(SAVE.syncAt)}`:''}</span></div></div>
   <div class="btnrow"><button class="sbtn inline" data-act="me-push">지금 보내기</button></div><p class="msg ${msg&&msg.ok?'ok':''}">${msg?esc(msg.t):''}</p>
-  <h3>연동이 안 될 때: 기록 코드로 보내기</h3>${codeBox}`
+  <h3>연동이 안 될 때: 기록 코드로 보내기</h3>${codeBox}<p class="note">💾 크롬북을 초기화해서 예전 계정을 잃었다면 선생님께 코드를 받아 <button class="linkbtn" data-act="rs-open" data-f="me">🔁 예전 계정 되살리기</button></p>`
  :`<h3>① 선생님께 내 기록 보내기</h3>${codeBox}<p class="note">코드를 복사해서 선생님이 알려 준 곳(예: 클래스룸 댓글)에 붙여 넣어요.</p>
   <h3>② 반 랭킹 코드 넣기</h3><div class="coderow"><textarea class="code" id="meImport" placeholder="선생님께 받은 반 랭킹 코드(TJR1.으로 시작)를 붙여 넣어요"></textarea><button class="gbtn" data-act="me-import">넣기</button></div><p class="msg" id="meMsg"></p>`;
  $('pMe').innerHTML=`<div class="panel wide"><h2>📋 내 기록</h2><p class="sub">${SAVE.gr&&SAVE.cl?`${SAVE.gr}학년 ${SAVE.cl}반 `:''}${esc(SAVE.no)}번 ${esc(SAVE.name)} · 별지기 Lv.${charLevel()} · 지금까지 받은 코인 ${SAVE.stats.coins.toLocaleString()}</p>
@@ -2895,8 +2905,8 @@ const verCell=v=>!vnum(v)?'<span class="vold">예전 (새로고침)</span>':vnum
 // 학생 크롬북이 올린 가방([학생 가방] 탭)을 반마다 보고, 고친 것은 [선생님 조정] 탭에 쌓였다가 그 크롬북이 다음에 연결할 때 조용히 적용돼요.
 const tmViews=()=>`<div class="tabs" style="margin:0 0 6px"><button class="chip sm2 ${tmView==='list'?'on':''}" data-act="tm-view" data-v="list">👤 이름·번호·계정</button><button class="chip sm2 ${tmView==='bag'?'on':''}" data-act="tm-view" data-v="bag">🎒 코인·아이템·장식</button></div>`;
 const tfmt=t=>{if(!t)return '-';const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;};
-const CLOG_K={g:'게임 보상',jr:'자리 연습 보상',bi:'아이템 샀어요',bd:'장식 샀어요',bu:'강화했어요',bs:'스킨 샀어요',bl:'섬을 넓혔어요',sd:'장식을 팔았어요',pz:'광장 모금',cap:'아이템 한도 정리(돌려받음)',adj:'선생님 조정',tg:'선생님이 이 크롬북에서 줌',bg:'땅을 칠했어요',adv:'모험 보상',ba:'모험 강화',rd:'레이드 보상'};
-function clogText(x){const k=x.k,id=x.x,nm=k==='bi'?(ITEMS[id]||{}).name:k==='bd'||k==='sd'?(DECO[id]||{}).name:k==='bu'?(UPS[id]||{}).name:k==='bs'?(SKINS[id]||{}).name:k==='g'?(id==='meteor_en'?'별똥별 영어':'별똥별 한글'):k==='bl'?`${id}칸`:k==='bg'?(GTYPE[id]||{}).name:k==='jr'||k==='adv'||k==='ba'||k==='rd'?id:'';
+const CLOG_K={g:'게임 보상',jr:'자리 연습 보상',bi:'아이템 샀어요',bd:'장식 샀어요',bu:'강화했어요',bs:'스킨 샀어요',bl:'섬을 넓혔어요',sd:'장식을 팔았어요',pz:'광장 모금',cap:'아이템 한도 정리(돌려받음)',adj:'선생님 조정',tg:'선생님이 이 크롬북에서 줌',bg:'땅을 칠했어요',adv:'모험 보상',ba:'모험 강화',rd:'레이드 보상',rs:'계정 되살리기'};
+function clogText(x){const k=x.k,id=x.x,nm=k==='bi'?(ITEMS[id]||{}).name:k==='bd'||k==='sd'?(DECO[id]||{}).name:k==='bu'?(UPS[id]||{}).name:k==='bs'?(SKINS[id]||{}).name:k==='g'?(id==='meteor_en'?'별똥별 영어':'별똥별 한글'):k==='bl'?`${id}칸`:k==='bg'?(GTYPE[id]||{}).name:k==='jr'||k==='adv'||k==='ba'||k==='rd'||k==='rs'?id:'';
  return `${CLOG_K[k]||k}${nm?` · ${nm}`:''}${(+x.n||0)>1&&k!=='g'?` ×${x.n}`:''}`;}
 function tBagLoad(key){const[gr,cl]=key.split('-').map(Number),prev=tBag&&tBag.key===key?tBag:null;
  tBag={key,gr,cl,t:prev?prev.t:0,list:prev?prev.list:[],adj:prev?prev.adj:[],loading:true,err:'',busy:false};
@@ -2989,14 +2999,14 @@ function renderManage(msg){
   if(tCls==='all'&&k!==lastK){rows+=`<tr class="grp"><td colspan="7">${clsName(k)} · ${ALL.filter(x=>clsKey(x)===k).length}명</td></tr>`;lastK=k;}
   const d=dup[e.i],dn=d?d.map(x=>`<span class="dupnote">${x}</span>`).join(''):'';
   if(tmEdit===e.i){rows+=`<tr class="edit"><td><input id="tmNo" type="number" min="1" max="50" inputmode="numeric" value="${+e.b||''}" aria-label="번호"></td><td colspan="5" style="text-align:left"><input id="tmName" maxlength="10" autocomplete="off" spellcheck="false" value="${esc(e.n)}" aria-label="이름"> <span class="hint">별명도 괜찮지만 진짜 이름이 꼭 들어가야 해요</span></td><td class="mgbtns"><button class="gbtn" data-act="tm-save" ${dis}>저장</button><button class="sbtn" data-act="tm-cancel">취소</button></td></tr>`;continue;}
-  if(tmDel===e.i){rows+=`<tr class="del"><td colspan="7">정말 <b>${esc(e.n)}</b> (${+e.b||'-'}번) 계정을 지울까요? &nbsp;한글 ${rd(e,'meteor')} · 영어 ${rd(e,'meteor_en')} · 마지막 연결 ${ago(e.ts)||'-'}<br><small>그 크롬북의 코인·마을·기록은 다음에 게임을 열 때 모두 지워져요.</small> <span class="mgbtns"><button class="sbtn danger" data-act="tm-delok" ${dis}>정말 지우기</button><button class="sbtn" data-act="tm-cancel">취소</button></span></td></tr>`;continue;}
-  rows+=`<tr class="${d?'dup':''}"><td>${+e.b||'-'}</td><td style="text-align:left">${esc(e.n)}${e.tn?'<span class="tn">✏️ 선생님이 정함</span>':''}${dn}</td><td>${rd(e,'meteor')}</td><td>${rd(e,'meteor_en')}</td><td>${ago(e.ts)||'-'}</td><td>${verCell(e.v)}</td><td class="mgbtns"><button class="sbtn" data-act="tm-edit" data-t="${e.i}" ${dis}>이름·번호</button><button class="sbtn danger" data-act="tm-del" data-t="${e.i}" ${dis}>지우기</button></td></tr>`;}
+  if(tmDel===e.i){rows+=`<tr class="del"><td colspan="7">정말 <b>${esc(e.n)}</b> (${+e.b||'-'}번) 계정을 지울까요? &nbsp;한글 ${rd(e,'meteor')} · 영어 ${rd(e,'meteor_en')} · 마지막 연결 ${ago(e.ts)||'-'}<br><small>그 크롬북의 코인·마을·기록은 다음에 게임을 열 때 모두 지워져요. <b class="rswarn">크롬북 초기화로 계정을 잃은 학생이면 지우지 말고 [🔁 되살리기]를 쓰세요.</b></small> <span class="mgbtns"><button class="sbtn danger" data-act="tm-delok" ${dis}>정말 지우기</button><button class="sbtn" data-act="tm-cancel">취소</button></span></td></tr>`;continue;}
+  rows+=`<tr class="${d?'dup':''}"><td>${+e.b||'-'}</td><td style="text-align:left">${esc(e.n)}${e.tn?'<span class="tn">✏️ 선생님이 정함</span>':''}${dn}</td><td>${rd(e,'meteor')}</td><td>${rd(e,'meteor_en')}</td><td>${ago(e.ts)||'-'}</td><td>${verCell(e.v)}</td><td class="mgbtns"><button class="sbtn" data-act="tm-edit" data-t="${e.i}" ${dis}>이름·번호</button><button class="sbtn" data-act="tm-rs" data-t="${e.i}" ${dis}>🔁 되살리기</button><button class="sbtn danger" data-act="tm-del" data-t="${e.i}" ${dis}>지우기</button></td></tr>`;}
  const dupN=L.filter(e=>dup[e.i]).length,newN=L.filter(e=>vnum(e.v)===vnum(APP_VER)).length,anyV=ALL.some(e=>vnum(e.v));
- return tmViews()+`<p class="sub">🔗 ${tLoading?'불러오는 중…':live?`${ago(live.t)} 불러옴`:'아직 불러오지 못함'} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="t-refresh">새로고침</button></p>
+ return tmViews()+tmRsHTML()+`<p class="sub">🔗 ${tLoading?'불러오는 중…':live?`${ago(live.t)} 불러옴`:'아직 불러오지 못함'} &nbsp;<button class="sbtn sm" style="display:inline-block;width:auto" data-act="t-refresh">새로고침</button></p>
   <p class="msg ${msg&&msg.ok?'ok':''}" id="tMsg">${msg?esc(msg.t):''}</p>${chips}
   <p class="sub" style="margin:4px 0">${tCls==='all'?'모든 반':clsName(tCls)} ${L.length}명${dupN?` · <span class="dupnote">노란 줄 ${dupN}명</span> 같은 반에 번호나 이름이 겹쳐요`:''}${L.length?` · 최신 버전 ${newN}명 / ${L.length}명`:''}</p>${live&&ALL.length&&!anyV?'<p class="note" style="margin:0">게임 버전은 Apps Script를 새 버전으로 배포하고, 학생들이 새 게임을 한 번 열면 보여요.</p>':''}
   <div class="rankbox" style="max-height:330px">${L.length?`<table class="rank mg"><tr><th>번호</th><th>이름</th><th>한글</th><th>영어</th><th>마지막 연결</th><th>게임 버전</th><th></th></tr>${rows}</table>`:`<p class="empty">${live?'아직 시트에 학생이 없어요':tLoading?'목록을 불러오는 중이에요':'목록을 불러오지 못했어요. [새로고침]을 눌러 주세요'}</p>`}</div>
-  <p class="note">이름·번호를 바꾸면 그 학생이 다음에 게임을 열 때 크롬북에도 바뀌어요. 계정을 지우면 그 크롬북은 다음에 게임을 열 때 처음부터 시작해요.<br>그 크롬북이 게임을 열기 전이라면, 구글 시트의 [지운 학생] 탭에서 그 줄을 지워 되돌릴 수 있어요.</p>`;}
+  <p class="note">🔁 크롬북을 초기화했거나 바꿔서 계정을 잃은 학생은 [🔁 되살리기]로 코드를 만들어, 그 학생 크롬북의 처음 화면(새 계정을 이미 만들었으면 [내 기록] 맨 아래)에 넣게 해 주세요. 예전 계정은 지우지 마세요.<br>이름·번호를 바꾸면 그 학생이 다음에 게임을 열 때 크롬북에도 바뀌어요. 계정을 지우면 그 크롬북은 다음에 게임을 열 때 처음부터 시작해요.<br>그 크롬북이 게임을 열기 전이라면, 구글 시트의 [지운 학생] 탭에서 그 줄을 지워 되돌릴 수 있어요.</p>`;}
 function tmMsg(t){const m=$('tMsg');if(m){m.className='msg';m.textContent=t;}}
 async function tmSave(){if(tmBusy||!tmEdit)return;const no=parseInt((($('tmNo')||{}).value||''),10),name=(($('tmName')||{}).value||'').replace(/\s+/g,' ').trim().slice(0,10);
  if(!(no>=1&&no<=50)){tmMsg('번호를 1~50 사이 숫자로 써 주세요');return;}
@@ -3957,6 +3967,7 @@ const raidGap=()=>(RDS.fail?Math.min(30,8*RDS.fail):((RDS.j&&RDS.j.nx)||8))*1000
 function raidPoll(){clearTimeout(RDS.poll);const go=async()=>{if(!raidPollOn())return;await raidPull();if(!raidPollOn()||RDS.err==='old'||RDS.err==='nocls'||RDS.err==='nosync')return;RDS.poll=setTimeout(go,raidGap());};go();}
 // 시트에서 받은 것: 단계 보상 · 함께 싸우는 친구들의 공격
 function raidGotSrv(j,prev){const r=raidRoll();if(j.wk!==r.wk)return;
+ if(r.rsq){if(r.rsq===j.wk)for(const[p,bit]of RD_MS)if(bit===8?j.left<=0:j.left<=j.hp*p)r.got|=bit;delete r.rsq;saveGame();} // 계정 되살리기(2026-11-19)
  if(r.w>0){let gain=0,lab='';for(const[p,bit,c,l]of RD_MS){if(!(r.got&bit)&&(bit===8?j.left<=0:j.left<=j.hp*p)){r.got|=bit;gain+=c;lab=l;}}
   if(gain){SAVE.coins+=gain;SAVE.stats.coins+=gain;clog('rd','함께한 보상',1,gain);saveGame();if(RD)RD.ms+=gain;SFX.coin();
    const t=lab==='격파'?`🎉 우리 반이 보스를 쓰러뜨렸어요! 함께한 보상 +${gain} 코인`:`⚔️ 우리 반 보스 ${lab}! 함께한 보상 +${gain} 코인`;if(scr==='raid')raidToast(t,3200);else ttoast(t);}}
@@ -4245,7 +4256,139 @@ function renderLookBar(){const el=$('lookBar');if(!el)return;if(!ED){el.innerHTM
  else if(ED.mode==='friend')h=`<button class="lkb" data-act="look-fr">🎨 ${ED.fv.me?'내가':esc(ED.fv.name)+josa(ED.fv.name,'이','가')} 고른 풍경 · ${t}</button>`;
  else h=`<button class="lkb" data-act="look">🎨 내 마을 풍경 · ${t} <u>바꾸기</u></button>`;
  el.innerHTML=h;}
+/* ================= 계정 되살리기 (2026-11-19) =================
+   크롬북을 초기화했거나 바꿔서 계정을 잃었을 때: 선생님이 [학생 관리]에서 만든 6글자 코드를 넣으면
+   시트에 남은 것으로 같은 학생ID의 계정을 다시 만들어요(Code.gs restore_get).
+   - 돌아오는 것: 이름·번호·반, 코인·아이템·강화·스킨, 장식(창고·내 마을 자리·땅·섬 크기·광장), 최고 기록, 별가루 기준(cw0), 레이드 이번 주.
+   - 모험·자리 연습·되팔기 값은 [학생 가방]의 '되살리기(자료)'(bagSnap의 rs)가 있으면 되살리고, 없으면 처음부터(모험 최고 층 기록은 그대로).
+   - 이 크롬북에 다른 계정이 있으면: 그 계정의 코인·아이템·장식(처음 받은 장식은 빼고)·기록을 더하고, 강화·스킨·섬 넓히기에 쓴 코인은 돌려줘요.
+     모험은 되살린 자료가 없으면 이 크롬북 것을 이어요(선생님 결정 2026-11-19: 1층·Lv.1부터 다시, 최고 층 기록은 그대로).
+   - 되살린 뒤 restore_done으로 시트의 그 크롬북 새 계정 줄을 지워요(같은 반일 때만). 못 보내면 SAVE.rsDone에 남겨 다시 보내요. */
+let RSV={step:'code',from:'reg',busy:false,arm:false,msg:'',j:null,code:''},rsLock=false;
+const rsDv=()=>{let v=store.get('taja2_rsdv','');if(!v||typeof v!=='string'){v=rid()+rid();store.set('taja2_rsdv',v);}return v;};
+// 가방에 함께 올리는 되살리기 자료: 모험(체력 빼고)·자리 연습 별·되팔기 값
+function rsSnap(){const a=SAVE.adv||{},c=o=>JSON.parse(JSON.stringify(o||{}));
+ return{av:{lv:a.lv,xp:a.xp,pts:a.pts,st:c(a.st),eq:c(a.eq),mg:c(a.mg),ko:c(a.ko),en:c(a.en),best:c(a.best)},jr:{ko:(SAVE.jr.ko||[]).slice(),en:(SAVE.jr.en||[]).slice()},op:c(SAVE.oldp),pv:SAVE.pv||0};}
+// 가방이 바뀌었는지 볼 때는 모험 경험치를 빼요(낱말마다 바뀌어서 가방을 너무 자주 올리지 않게)
+const rsKey=rs=>rs&&rs.av?Object.assign({},rs,{av:Object.assign({},rs.av,{xp:0})}):rs;
+const rsNm=s=>String(s||'').replace(/\s+/g,' ').trim().slice(0,10);
+function rsOpen(from){RSV={step:'code',from:from==='me'&&SAVE?'me':'reg',busy:false,arm:false,msg:'',j:null,code:''};show('pReg',false);show('pMe',false);rsRender();setTimeout(()=>{const e=$('rsCode');if(e)e.focus();},60);}
+function rsClose(){show('pRs',false);RSV.j=null;if(RSV.from==='me'&&SAVE)openMe();else if(!SAVE)openReg();}
+function rsSum(j){const b=j.bag,g=j.g||{},d=b&&b.d||{};let dn=0;for(const k in d)if(Array.isArray(d[k]))dn+=(+d[k][0]||0)+(+d[k][1]||0)+(+d[k][2]||0);
+ const it=b?ITEM_IDS.reduce((a,id)=>a+(+((b.it||{})[id])||0),0):0,r=id=>+((g[id]||{}).r)||0,rs=b&&b.rs||{};
+ return{coins:b?+b.c||0:0,it,dn,n:(b&&+b.n)||(j.vg?+String(j.vg).split('|')[1]||10:10),ko:r('meteor'),en:r('meteor_en'),ak:r('adv'),ae:r('adv_en'),av:!!(rs.av&&typeof rs.av==='object'),jr:!!(rs.jr&&Array.isArray(rs.jr.ko)),at:b?+b.at||0:0};}
+function rsRender(){const j=RSV.j,dis=RSV.busy?'disabled':'',cur=SAVE&&j&&SAVE.id!==j.id?SAVE:null;let body;
+ if(RSV.step==='confirm'&&j){const s=rsSum(j),who=`${+j.gr||'-'}학년 ${+j.cl||'-'}반 ${+j.b||'-'}번 ${esc(j.n)}`,diff=cur&&(rsNm(cur.name)!==rsNm(j.n)||+cur.no!==+j.b);
+  const again=[s.av?'':'별지기 모험(1층·Lv.1부터, 최고 층 기록은 그대로)',s.jr?'':'자리 연습 단계 별'].filter(Boolean);
+  body=`<h2>🔁 이 계정이 맞나요?</h2><div class="rsbox"><b class="who">${who}</b><br>코인 <b>${s.coins.toLocaleString()}</b> · 아이템 ${s.it}개 · 장식 ${s.dn}개 · 섬 ${s.n}칸<br>별똥별 한글 ${s.ko}라운드 · 영어 ${s.en}라운드 · 모험 최고 한글 ${s.ak}층 · 영어 ${s.ae}층
+   <br><small>시트에 마지막으로 올라온 때 ${s.at?tfmt(s.at):j.ts?tfmt(j.ts):'-'}${j.bag?'':' · 코인·아이템·장식 자료가 시트에 없어요'}</small></div>
+  <div class="rslist">✅ 돌아와요: 코인·아이템·강화·스킨, 장식과 내 마을·땅·섬 크기, 광장 장식, 최고 기록, 레이드 피해${s.av?', 별지기 모험':''}${s.jr?', 자리 연습 별':''}
+   ${again.length?`<br>↩️ 처음부터 해요: ${again.join(', ')}`:''}
+   ${cur?`<br>➕ 지금 이 크롬북의 계정(${esc(cur.name)})에서 번 코인·아이템·장식은 더하고, 강화·스킨·섬 넓히기에 쓴 코인은 돌려줘요. 지금 계정은 시트에서 지워져요.`:''}</div>
+  ${diff?`<p class="rswarn">⚠️ 지금 이 크롬북의 계정(${+cur.no||'-'}번 ${esc(cur.name)})과 이름이나 번호가 달라요! 같은 학생이 맞는지 꼭 확인해 주세요.</p>`:''}
+  <p class="msg">${esc(RSV.msg)}</p><div class="btnrow"><button class="gbtn inline" data-act="rs-go" ${dis}>${RSV.busy?'되살리는 중…':RSV.arm?'정말 되살리기':'이 계정으로 되살리기'}</button><button class="sbtn inline" data-act="rs-back" ${dis}>뒤로</button></div>
+  ${RSV.arm&&!RSV.busy?'<p class="note">한 번 더 누르면 되살려요. 되살린 뒤 게임이 새로 열려요.</p>':''}`;}
+ else body=`<h2>🔁 예전 계정 되살리기</h2><p class="sub">크롬북을 초기화했거나 바꿔서 예전 계정을 잃었나요?<br>선생님께 받은 <b>6글자 코드</b>를 넣어요. (코드는 30분 동안 쓸 수 있어요)</p>
+  <div class="form" style="justify-content:center"><input id="rsCode" class="rscode" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="AB3K7Q" aria-label="되살리기 코드" value="${esc(RSV.code)}"></div>
+  ${SAVE?`<p class="note">지금 이 크롬북의 계정(${esc(SAVE.name)})에서 번 코인·아이템·장식은 되살린 계정에 더해져요.</p>`:''}
+  <p class="msg" id="rsMsg">${esc(RSV.msg)}</p><div class="btnrow"><button class="gbtn inline" data-act="rs-check" ${dis}>${RSV.busy?'찾는 중…':'확인'}</button><button class="sbtn inline" data-act="rs-back" ${dis}>뒤로</button></div>`;
+ openPanel('pRs',`<div class="panel wide rs">${body}</div>`);}
+async function rsCheck(){if(RSV.busy)return;const raw=(($('rsCode')||{}).value||'');RSV.code=raw;
+ if(HANGUL.test(raw)){RSV.msg='한글이 들어갔어요. 한/영 키를 눌러 영어로 바꾼 뒤 다시 써 주세요.';rsRender();return;}
+ const code=raw.toUpperCase().replace(/[^A-Z0-9]/g,'');
+ if(code.length!==6){RSV.msg='코드는 6글자예요. 선생님께 받은 코드를 그대로 써 주세요.';rsRender();return;}
+ if(!SYNC){RSV.msg='시트 연결이 없어서 되살릴 수 없어요.';rsRender();return;}
+ RSV.busy=true;RSV.msg='';rsRender();
+ const j=await pzReq({type:'restore_get',code,cur:SAVE?SAVE.id:'',dv:rsDv()});RSV.busy=false;
+ if(j&&j.ok&&j.id){RSV.j=j;RSV.step='confirm';RSV.arm=false;RSV.msg='';}
+ else RSV.msg=!j?'연결하지 못했어요. 인터넷을 확인하고 다시 눌러 주세요.':({code:'코드가 맞지 않거나 30분이 지났어요. 선생님께 새 코드를 받아 주세요.',used:'이 코드는 다른 크롬북에서 이미 썼어요. 선생님께 새 코드를 받아 주세요.',same:'지금 이 크롬북이 벌써 그 계정이에요.',deleted:'선생님이 지운 계정이라 되살릴 수 없어요.',none:'시트에서 그 학생을 찾지 못했어요. 선생님께 알려 주세요.',bad:'선생님이 Apps Script를 새 버전으로 올리면 되살릴 수 있어요.',busy:'시트가 바빠요. 잠시 뒤에 다시 눌러 주세요.'}[j.error]||'되살리지 못했어요. 잠시 뒤에 다시 눌러 주세요.');
+ if(!$('pRs').classList.contains('hidden'))rsRender();}
+async function rsGo(){if(RSV.busy||!RSV.j)return;if(!RSV.arm){RSV.arm=true;rsRender();return;}
+ RSV.busy=true;rsRender();rsLock=true;clearTimeout(pushT);pushT=0;
+ let ns=null;try{ns=rsBuild(RSV.j,SAVE&&SAVE.id!==RSV.j.id?SAVE:null);}catch(e){ns=null;}
+ if(!ns){rsLock=false;RSV.busy=false;RSV.arm=false;RSV.msg='되살리지 못했어요. 선생님께 알려 주세요.';rsRender();return;}
+ SAVE=ns;saveGame();
+ await Promise.race([rsDonePush(),new Promise(r=>setTimeout(r,6000))]);
+ location.reload();}
+// 되살린 크롬북: 시트에서 이 크롬북이 쓰던 새 계정 줄을 지워요(되살린 뒤 6시간 안에, 같은 반일 때만 Code.gs가 지워요)
+async function rsDonePush(){const d=SAVE&&SAVE.rsDone;if(!d||!SYNC)return;const j=await pzReq({type:'restore_done',id:d.id,cur:d.cur});
+ if(!SAVE||!SAVE.rsDone)return;if((j&&(j.ok||j.error==='none'))||Date.now()-(+d.t||0)>6*3600000){delete SAVE.rsDone;saveGame();}}
+// 시트에서 받은 것(j)으로 새 저장을 만들어요. cur: 이 크롬북에 있던 다른 계정(합쳐요)
+function rsBuild(j,cur){const b=j.bag&&typeof j.bag==='object'?j.bag:null,rs=b&&b.rs&&typeof b.rs==='object'?b.rs:{},now=Date.now(),wk=kstWeek(),today=kstDay();
+ const ns=defaultSave(rsNm(j.n)||'이름없음',+j.b||0,+j.gr||0,+j.cl||0);ns.id=String(j.id);
+ // 코인·아이템·강화·스킨
+ if(b){ns.coins=Math.max(0,Math.floor(+b.c||0));for(const id of ITEM_IDS)ns.inv[id]=Math.max(0,Math.min(99,Math.floor(+((b.it||{})[id])||0)));
+  for(const k in UPS)ns.up[k]=Math.max(0,Math.min(UPS[k].max,Math.floor(+((b.up||{})[k])||0)));
+  for(const k of Array.isArray(b.sk)?b.sk:[])if(SKINS[k])ns.skins[k]=1;}
+ ns.skin=SKINS[j.sk]&&ns.skins[j.sk]?j.sk:'base';
+ // 마을: '마을' 칸(놓은 자리·땅·섬 크기·풍경) + 가방(창고 개수) + 광장([광장] 탭)
+ const fv=j.vg?vgParse(j.vg):null,bn=b&&LAND.includes(+b.n)?+b.n:0;
+ const D={v:2,n:fv?fv.n:(bn||10),ground:fv?fv.ground:{},objs:fv?fv.objs.map(o=>({k:o.k,i:o.i,j:o.j,f:o.f})):[],stock:{}};
+ if(fv&&bn>D.n){const sh=(bn-D.n)/2,g2={};for(const k in D.ground){const[a,c]=k.split(',').map(Number);g2[(a+sh)+','+(c+sh)]=D.ground[k];}D.ground=g2;for(const o of D.objs){o.i+=sh;o.j+=sh;}D.n=bn;} // 섬을 넓힌 뒤 마을 칸이 아직 안 올라왔을 때
+ const pz={};for(const it of Array.isArray(j.pz)?j.pz:[]){if(!it||!DECO[it.k]||typeof it.c!=='string')continue;(pz[it.c]=pz[it.c]||[]).push({x:+it.x,y:+it.y,k:String(it.k)});}
+ ns.pz=pz;
+ if(b&&b.d&&typeof b.d==='object'){const placed={};for(const o of D.objs)placed[o.k]=(placed[o.k]||0)+1;for(const lab in pz)for(const r of pz[lab])placed[r.k]=(placed[r.k]||0)+1;
+  for(const k in b.d){const v=b.d[k];if(!DECO[k]||DECO[k].special||!Array.isArray(v))continue;const left=(+v[0]||0)+(+v[1]||0)+(+v[2]||0)-(placed[k]||0);if(left>0)D.stock[k]=Math.floor(left);}}
+ else if(!fv){const sd=starterDeco();D.n=sd.n;D.ground=sd.ground;D.objs=sd.objs;D.stock=sd.stock;} // 마을 자료가 하나도 없으면 처음 마을
+ if(!D.objs.some(o=>o.k==='cmemo'))D.stock.cmemo=1;ns.deco=D;ns.cmGot=1;ns.cm=7; // 우리 반 기념 장식: 마을에 없으면 창고에 하나(단계는 다음 연결 때 조용히 맞춰져요)
+ if(fv&&fv.lk)ns.look=lookFix(fv.lk);
+ // 최고 기록
+ for(const gm of READY){const v=(j.g||{})[gm.id]||{};ns.games[gm.id]={bestRound:Math.max(0,Math.floor(+v.r||0)),bestWords:Math.max(0,Math.floor(+v.w||0)),bestTasu:Math.max(0,Math.floor(+v.t||0)),plays:0,words:0};}
+ // 모험·자리 연습·되팔기 값: 되살리기 자료가 있으면 그대로, 없으면 처음부터(모험 최고 층 기록은 그대로)
+ const av=rs.av&&typeof rs.av==='object'?JSON.parse(JSON.stringify(rs.av)):null;
+ ns.adv=av?Object.assign(av,{hp:-1}):{};const ab=ns.adv.best&&typeof ns.adv.best==='object'?ns.adv.best:{};
+ ns.adv.best={ko:Math.max(+ab.ko||0,ns.games.adv?ns.games.adv.bestRound:0),en:Math.max(+ab.en||0,ns.games.adv_en?ns.games.adv_en.bestRound:0)};advFix(ns);
+ if(rs.jr&&Array.isArray(rs.jr.ko)&&Array.isArray(rs.jr.en)){ns.jr.ko=rs.jr.ko.slice(0,8);ns.jr.en=rs.jr.en.slice(0,8);}
+ if(rs.op&&typeof rs.op==='object'&&+rs.pv===2){ns.oldp=rs.op;ns.pv=2;}
+ // 레이드: 시트의 기준 타수·피해에서 이어요. 이번 주에 이미 받은 단계 보상은 다시 주지 않아요(rsq)
+ const rd=j.rd||{};ns.raid={rk:+rd.rk||0,rc:+rd.rc||0,wk,w:+rd.wk===wk?+rd.w||0:0,day:today,k:+rd.day===today?+rd.k||0:0,gwk:wk,got:0};raidFix(ns);if(ns.raid.w>0)ns.raid.rsq=wk;
+ ns.stats={coins:ns.coins,plays:0};ns.clog=(b&&Array.isArray(b.lg)?b.lg.filter(x=>x&&typeof x==='object').slice(-58):[]);ns.clog.push({t:now,k:'rs',x:'되살림',n:1,c:0,b:ns.coins});
+ ns.icap=1;ns.syncPending=true;ns.rsMsg=1;
+ if(cur)rsMerge(ns,cur,!!av);
+ // 별가루 기준: 시트의 '별가루 기준 낱말'에서 이어 세요(합친 계정의 낱말은 이미 그 계정 줄에서 셌어요)
+ const words=READY.reduce((a,gm)=>a+(+ns.games[gm.id].words||0),0)+(+ns.raid.words||0);ns.cw0=+j.cw>=0?+j.cw-words:0;
+ if(cur)ns.rsDone={id:ns.id,cur:cur.id,t:now};
+ return fixSave(ns);}
+// 이 크롬북에 있던 다른 계정 합치기
+function rsMerge(ns,cur,hasAv){const now=Date.now(),wk=kstWeek(),today=kstDay();let ref=0;
+ for(const k in UPS){const l=+((cur.up||{})[k])||0;for(let i=0;i<l;i++)ref+=UPS[k].cost[i]||0;}
+ for(const k in cur.skins||{})if(cur.skins[k]&&SKINS[k]&&k!=='base')ref+=SKINS[k].price;
+ for(const n of LAND)if(LAND_COST[n]&&n<=(+(cur.deco||{}).n||10))ref+=LAND_COST[n];
+ const ca=cur.adv||{},keepCur=!hasAv||(+ca.lv||1)>(+ns.adv.lv||1); // 모험: 되살린 자료가 없거나 이 크롬북 쪽이 더 높으면 이 크롬북 것을 이어요
+ if(keepCur){const best=ns.adv.best;ns.adv=JSON.parse(JSON.stringify(ca));ns.adv.best={ko:Math.max(+best.ko||0,+((ca.best||{}).ko)||0),en:Math.max(+best.en||0,+((ca.best||{}).en)||0)};advFix(ns);}
+ else{for(const k in ADV_EQ)for(let i=1;i<=(+((ca.eq||{})[k])||0);i++)ref+=advEqCost(i);for(const k in ADV_MG)for(let i=1;i<=(+((ca.mg||{})[k])||0);i++)ref+=advMgCost(i);
+  for(const l of['ko','en'])ns.adv.best[l]=Math.max(+ns.adv.best[l]||0,+((ca.best||{})[l])||0);}
+ let over=0;for(const id of ITEM_IDS){const t=(+ns.inv[id]||0)+(+((cur.inv||{})[id])||0),cap=Math.max(ITEM_MAX,+ns.inv[id]||0);if(t>cap){over+=(t-cap)*ITEMS[id].price;ns.inv[id]=cap;}else ns.inv[id]=t;}
+ const own=ownCounts(cur),st0={},sd=starterDeco();for(const o of sd.objs)st0[o.k]=(st0[o.k]||0)+1;for(const k in sd.stock)st0[k]=(st0[k]||0)+sd.stock[k];
+ for(const k in own){if(!DECO[k]||DECO[k].special)continue;const n=own[k]-(st0[k]||0);if(n>0)ns.deco.stock[k]=(ns.deco.stock[k]||0)+n;}
+ const add=Math.max(0,Math.floor(+cur.coins||0))+ref+over;ns.coins+=add;
+ for(const gm of READY){const a=ns.games[gm.id],c=(cur.games||{})[gm.id]||{};
+  if((+c.bestRound||0)>a.bestRound||((+c.bestRound||0)===a.bestRound&&(+c.bestWords||0)>a.bestWords)){a.bestRound=+c.bestRound||0;a.bestWords=+c.bestWords||0;}
+  a.bestTasu=Math.max(a.bestTasu,+c.bestTasu||0);a.plays+=+c.plays||0;a.words+=+c.words||0;}
+ const cj=cur.jr||{};for(const l of['ko','en'])ns.jr[l]=ns.jr[l].map((v,i)=>Math.max(+v||0,+((cj[l]||[])[i])||0));if(+cj.day===today){ns.jr.day=today;ns.jr.n=+cj.n||0;}ns.jr.plays=+cj.plays||0;
+ const cr=cur.raid||{};if(+cr.day===today)ns.raid.k+=+cr.k||0;if(+cr.gwk===wk)ns.raid.got|=+cr.got||0;ns.raid.plays+=+cr.plays||0;ns.raid.words+=+cr.words||0;ns.raid.best=Math.max(+ns.raid.best||0,+cr.best||0);
+ if(!ns.look||(ns.look.s==='auto'&&!ns.look.n))ns.look=lookFix(cur.look);
+ ns.stats.coins+=+((cur.stats||{}).coins)||0;ns.stats.plays+=+((cur.stats||{}).plays)||0;
+ ns.clog.push({t:now,k:'rs',x:'합친 계정',n:1,c:add,b:ns.coins});}
+// 선생님 모드 [학생 관리]: 되살리기 코드 만들기
+let tmRs=null;
+async function tmRsCode(t){if(tmBusy||!t)return;const e=((tLive&&tLive.list)||[]).find(x=>x.i===t);tmBusy=true;tmRs={t,n:e?e.n:'',busy:1};renderTeacher();
+ const j=await pzReq({type:'restore_code',pin:TPIN,t});tmBusy=false;
+ tmRs=j&&j.ok&&j.code?{t,code:String(j.code),n:j.n,b:j.b,gr:j.gr,cl:j.cl,until:Date.now()+(+j.ttl||1800)*1000}:{t,n:e?e.n:'',err:!j?'구글 시트에 연결하지 못했어요. 잠시 뒤에 다시 눌러 주세요.':j.error==='pin'?'선생님 비밀번호가 맞지 않아요. 선생님 모드를 닫고 다시 들어와 주세요.':j.error==='bad'?'Apps Script를 새 버전으로 배포해 주세요. (계정 되살리기가 들어 있는 새 Code.gs)':j.error==='none'?'시트에서 그 학생을 찾지 못했어요. [새로고침]을 눌러 주세요.':'코드를 만들지 못했어요. 잠시 뒤에 다시 눌러 주세요.'};
+ if(!$('pTeacher').classList.contains('hidden'))renderTeacher();}
+function tmRsHTML(){const r=tmRs;if(!r)return '';
+ if(r.busy)return `<div class="rsbox">🔁 ${esc(r.n)} 되살리기 코드를 만드는 중…</div>`;
+ if(r.err)return `<div class="rsbox"><span class="rswarn">🔁 ${esc(r.n)}: ${esc(r.err)}</span> <button class="sbtn sm" style="display:inline-block;width:auto" data-act="tm-rsx">닫기</button></div>`;
+ const left=Math.max(0,Math.round((r.until-Date.now())/60000)),cd=`${r.code.slice(0,3)} ${r.code.slice(3)}`,d=new Date(r.until);
+ return `<div class="rsbox">🔁 <b>${+r.gr||'-'}학년 ${+r.cl||'-'}반 ${+r.b||'-'}번 ${esc(r.n)}</b> 되살리기 코드 <b class="big">${esc(cd)}</b> <button class="sbtn sm" style="display:inline-block;width:auto" data-act="tm-rsx">닫기</button>
+  <br><small>${left>0?`${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}까지 (${left}분 남음)`:'30분이 지났어요. 다시 만들어 주세요.'} · 그 학생 크롬북의 처음 화면에서 [🔁 예전 계정 되살리기]에 넣어요. 새 계정을 이미 만들었으면 [내 기록] 맨 아래에 있어요.</small></div>`;}
 const ACT={
+ 'rs-open'(el){rsOpen(el.dataset.f);},
+ 'rs-check'(){rsCheck();},
+ 'rs-go'(){rsGo();},
+ 'rs-back'(){if(RSV.busy)return;if(RSV.step==='confirm'){RSV.step='code';RSV.arm=false;RSV.msg='';rsRender();}else rsClose();},
+ 'tm-rs'(el){tmRsCode(el.dataset.t);},
+ 'tm-rsx'(){tmRs=null;renderTeacher();},
  'reg-save'(){const v=readInfo('r');if(v.err){$('rMsg').textContent=v.err;return;}
   SAVE=defaultSave(v.name,v.no,v.gr,v.cl);priceInit(SAVE);saveGame();goHome();syncPush();ttoast('환영해요! 번개·얼음·방패를 하나씩 선물로 넣어 뒀어요');},
  'info-save'(){const v=readInfo('r');if(v.err){$('rMsg').textContent=v.err;return;}Object.assign(SAVE,{gr:v.gr,cl:v.cl,no:v.no,name:v.name});saveGame();show('pReg',false);renderProfile();syncPush();ttoast('고마워요! 이제 우리 반 랭킹과 광장을 쓸 수 있어요');},
@@ -4398,7 +4541,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.ke
  else if(id==='tPin'){e.preventDefault();ACT['t-pin']();}
  else if(id==='gAmt'){e.preventDefault();ACT['give-go']();}
  else if(id==='tpCl'){e.preventDefault();ACT['t-plaza']();}
- else if(id==='tmName'||id==='tmNo'){e.preventDefault();tmSave();}}});
+ else if(id==='tmName'||id==='tmNo'){e.preventDefault();tmSave();}
+ else if(id==='rsCode'){e.preventDefault();rsCheck();}}});
 
 document.addEventListener('input',e=>{if(e.target&&e.target.id==='gAmt'&&GV){GV.amt=Math.max(0,Math.floor(+e.target.value||0));GV.arm=false;GV.ok=false;giveSync();}});
 /* 선생님 비밀번호 칸: 한글 상태·Caps Lock 알림 */
@@ -4466,6 +4610,8 @@ if(SYNC&&SAVE)setTimeout(syncPush,1500);
 if(UPD.done)setTimeout(()=>ttoast('✨ 새 버전으로 바뀌었어요!'),900);
 let bootT=3200;if(SAVE&&SAVE.xbBack){delete SAVE.xbBack;saveGame();setTimeout(()=>ttoast('🧺 예전 화면에서 안 보이던 새 장식을 다시 꺼내 놓았어요'),bootT);bootT+=3600;}
 if(SAVE&&SAVE.icapMsg){const[m,b]=SAVE.icapMsg;delete SAVE.icapMsg;saveGame();setTimeout(()=>ttoast(`🎒 아이템은 종류마다 ${ITEM_MAX}개까지 가질 수 있어요. 넘는 아이템 ${m}개는 ${(+b).toLocaleString()}코인으로 돌려받았어요`),bootT);}
+if(SAVE&&SAVE.rsMsg){delete SAVE.rsMsg;saveGame();setTimeout(()=>{if(SAVE)ttoast(`🔁 예전 계정으로 돌아왔어요! ${SAVE.name} · 코인 ${SAVE.coins.toLocaleString()}`);},1200);} // 계정 되살리기(2026-11-19)
+if(SAVE&&SAVE.rsDone)setTimeout(rsDonePush,4000);
 requestAnimationFrame(loop);
 })();
 </script>
